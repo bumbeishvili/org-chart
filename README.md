@@ -2,7 +2,7 @@
 
 [Jsfiddle example](https://jsfiddle.net/dqt9svxg/1/)   
 [Codepen example](https://codepen.io/bumbeishvili/pen/arpJrv)  
-[Project page](https://www.bumbeishvili.github.io/d3-organization-chart)
+[Project page](https://bumbeishvili.github.io/d3-organization-chart/)
 
 
 
