@@ -1,6 +1,6 @@
 # D3 v5 organization chart
 
-[Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  
+[Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (Most Updated)
 [Jsfiddle example](https://jsfiddle.net/dqt9svxg/1/)   
 [Codepen example](https://codepen.io/bumbeishvili/pen/arpJrv)  
 [Project page](https://bumbeishvili.github.io/d3-organization-chart/)
