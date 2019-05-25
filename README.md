@@ -26,6 +26,7 @@ Org chart built with d3 v5
 npm i d3-org-chart
 ```
 
+### Usage
 ```
 const TreeChart = require ('https://bundle.run/d3-org-chart@1.0.4');
 
