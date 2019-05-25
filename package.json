@@ -16,6 +16,9 @@
     "hierarchy",
     "employee"
   ],
+  "dependencies": {
+    "module": "d3"
+  },
   "author": "David B.",
   "license": "ISC",
   "bugs": {
