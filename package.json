@@ -1,6 +1,6 @@
 {
   "name": "d3-org-chart",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Organization chart, created with d3",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "employee"
   ],
   "dependencies": {
-    "module": "d3"
+    "d3": "*"
   },
   "author": "David B.",
   "license": "ISC",
