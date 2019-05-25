@@ -1,0 +1,25 @@
+{
+  "name": "d3-org-chart",
+  "version": "1.0.0",
+  "description": "Organization chart, created with d3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bumbeishvili/d3-organization-chart.git"
+  },
+  "keywords": [
+    "d3",
+    "org-chart",
+    "hierarchy",
+    "employee"
+  ],
+  "author": "David B.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bumbeishvili/d3-organization-chart/issues"
+  },
+  "homepage": "https://github.com/bumbeishvili/d3-organization-chart#readme"
+}
