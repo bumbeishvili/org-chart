@@ -15,8 +15,8 @@ Org chart built with d3 v5
 ## Examples
 
 [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (Most Updated)   
-[Jsfiddle example](https://jsfiddle.net/dqt9svxg/1/)   
-[Codepen example](https://codepen.io/bumbeishvili/pen/arpJrv)  
+[Jsfiddle example](https://jsfiddle.net/k2ucqayn/)   
+[Codepen example](https://codepen.io/bumbeishvili/full/arpJrv)  
 
 
 
