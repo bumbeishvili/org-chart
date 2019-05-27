@@ -1,5 +1,5 @@
 # D3 v5 organization chart
-[![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.7&x2=0)](https://npmjs.org/package/d3-org-chart) 
+[![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.10&x2=0)](https://npmjs.org/package/d3-org-chart) 
 
 
 

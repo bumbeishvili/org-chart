@@ -1,4 +1,4 @@
-export default class TreeChart {
+class TreeChart {
     constructor() {
         // Exposed variables
         const attrs = {
