@@ -58,4 +58,10 @@ Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](http
 ## Authors
  [David   B ](https://davidb.dev)
 
+## Donate
+If this project helped you please consider donation. It allows me to find more time from my already busy schedule and put more features in graph (while still maintaining its flexibility) 
 
+Buy me a co-fi here   
+
+<a href="ko-fi.com/bumbeishvili
+"> ![Screen Shot 2019-11-19 at 14 54 00](https://user-images.githubusercontent.com/6873202/69140715-82b1e180-0adc-11ea-9616-f25a02630a35.png)</a>
