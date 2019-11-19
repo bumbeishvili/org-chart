@@ -63,5 +63,4 @@ If this project helped you please consider donation. It allows me to find more t
 
 Buy me a co-fi here   
 
-<a href="ko-fi.com/bumbeishvili
-"> ![Screen Shot 2019-11-19 at 14 54 00](https://user-images.githubusercontent.com/6873202/69140715-82b1e180-0adc-11ea-9616-f25a02630a35.png)</a>
+<a href="https://ko-fi.com/bumbeishvili"> ![Screen Shot 2019-11-19 at 14 54 00](https://user-images.githubusercontent.com/6873202/69140715-82b1e180-0adc-11ea-9616-f25a02630a35.png)</a>
