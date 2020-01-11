@@ -947,7 +947,7 @@ class TreeChart {
         return `rgba(${red},${green},${blue},${alpha})`;
     }
 
-    // Generate custom diagonal - play with it here - https://to.ly/1zhTK
+    // Generate custom diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges?collection=@bumbeishvili/work-components
     diagonal(s, t) {
 
         // Calculate some variables based on source and target (s,t) coordinates
