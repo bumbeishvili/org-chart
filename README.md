@@ -44,7 +44,6 @@ new TreeChart()
  
 ```
 
-See usage example - https://observablehq.com/@bumbeishvili/tree-chart-npm-demo
 
 ## Notes & appreciations 
 I created this org-chart when I was hired by [TeamApps](https://github.com/teamapps-org).
