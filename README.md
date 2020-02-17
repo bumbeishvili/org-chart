@@ -19,6 +19,10 @@ Org chart built with d3 v5
 [Codepen example](https://codepen.io/bumbeishvili/full/arpJrv)  
 
 
+## Integrations
+
+[Vue example](https://github.com/bumbeishvili/d3-organization-chart-integrations/tree/master/vue)
+
 
 ### Installing
 
