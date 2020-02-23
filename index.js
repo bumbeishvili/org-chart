@@ -27,7 +27,7 @@ class TreeChart {
 
         this.getChartState = () => attrs;
 
-        // Dinamically set getter and setter functions for Chart class
+        // Dynamically set getter and setter functions for Chart class
         Object.keys(attrs).forEach((key) => {
             //@ts-ignore
             this[key] = function (_) {
@@ -67,7 +67,7 @@ class TreeChart {
         };
     }
 
-    // This method retrieves passed node's children ID's (including node)      
+    // This method retrieves passed node's children IDs (including node)      
     getNodeChildrenIds({
         data,
         children,
