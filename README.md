@@ -52,7 +52,7 @@ new TreeChart()
 ## Notes & appreciations 
 I created this org-chart when I was hired by [TeamApps](https://github.com/teamapps-org).
 
-Although this Org chart was specifically created for [teamapps java web application framework](https://github.com/teamapps-org/teamapps) , it's very flexible and can be used in any envornment, where d3 and DOM is accessible. 
+Although this Org chart was specifically created for [teamapps java web application framework](https://github.com/teamapps-org/teamapps) , it's very flexible and can be used in any environment, where d3 and DOM is accessible. 
 
 Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](https://github.com/yamass), who assembled requirements for org-chart and had valuable pieces of advice afterwads.
 
