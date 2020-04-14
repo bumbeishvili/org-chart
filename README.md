@@ -21,8 +21,9 @@ Org chart built with d3 v5
 
 ## Integrations
 
-[Vue.js Integration](https://github.com/bumbeishvili/d3-organization-chart-integrations/tree/master/vue)
-[React integration](https://stackblitz.com/edit/d3-org-chart-react-integration)
+[Vue.js Integration](https://github.com/bumbeishvili/d3-organization-chart-integrations/tree/master/vue)  
+[React integration](https://stackblitz.com/edit/d3-org-chart-react-integration)  
+[Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration)  
 
 
 ### Installing
