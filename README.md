@@ -1,11 +1,6 @@
 # D3 v5 organization chart
 [![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.10&x2=0)](https://npmjs.org/package/d3-org-chart) 
 
-
-
-<img src="https://user-images.githubusercontent.com/6873202/74429052-a7b3b780-4e73-11ea-82c2-b65b5bd0c27d.gif"  width="600"  />
-
-
 <p align="center">
    <!-- Thanks Vasturiano for this trick -  https://github.com/vasturiano -->
      <a href="https://observablehq.com/@bumbeishvili/d3-v5-organization-chart"><img width="80%" src="https://user-images.githubusercontent.com/6873202/74429052-a7b3b780-4e73-11ea-82c2-b65b5bd0c27d.gif"></a>
