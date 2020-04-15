@@ -42,9 +42,9 @@ const TreeChart = require ('https://bundle.run/d3-org-chart@1.0.4');
 
 
 new TreeChart()
-   .container(container)
-   .data(data)
-   .svgWidth(width)
+   .container(<myDOMElement>)
+   .data(<myData>)
+   .svgWidth(700)
    .initialZoom(0.4)
    .onNodeClick(d=> console.log(d+' node clicked'))
    .render()
