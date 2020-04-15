@@ -10,16 +10,16 @@
 
 
 
-Org chart built with d3 v5
+Highly customizable org chart built with d3 v5.
 
-## Examples
+Check out examples
 
 [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (Most Updated)   
 [Jsfiddle example](https://jsfiddle.net/k2ucqayn/)   
 [Codepen example](https://codepen.io/bumbeishvili/full/arpJrv)  
 
 
-## Integrations
+Check out several libraries and frameworks integrations
 
 [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration)  
 [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration)  
