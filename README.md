@@ -26,6 +26,10 @@ Check out several libraries and frameworks integrations
 * [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration)  
 * [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration)  
 
+Custom components & algorithms I used
+
+* [Curved edges](https://observablehq.com/@bumbeishvili/curved-edges?collection=@bumbeishvili/work-components) - observablehq playground
+
 
 ### Installing
 
