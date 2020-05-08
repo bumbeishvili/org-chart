@@ -66,7 +66,8 @@ Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](http
 
 
 ## Authors
- [David   B (twitter)](https://twitter.com/dbumbeishvili)
+ [David   B (twitter)](https://twitter.com/dbumbeishvili)  
+ [David   B (linkedin)](https://www.linkedin.com/in/bumbeishvili/)  
 
 ## Donate
 If this project helped you please consider donation. It allows me to find more time from my already busy schedule and put more features in graph (while still maintaining its flexibility) 
