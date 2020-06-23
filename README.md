@@ -69,7 +69,4 @@ Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](http
  [David   B (twitter)](https://twitter.com/dbumbeishvili)  
  [David   B (linkedin)](https://www.linkedin.com/in/bumbeishvili/)  
 
-## Donate
-If this project helped you please consider donation. It allows me to find more time from my already busy schedule and put more features in graph (while still maintaining its flexibility) 
- 
-<a href='https://ko-fi.com/S6S018EES' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
