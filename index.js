@@ -526,7 +526,7 @@ class TreeChart {
             }) => imageHeight)
             .attr('xlink:href', ({
                 data
-            }) => data.nodeImage.url)
+            }) => data.nodeImage && data.nodeImage.url)
             .attr('viewbox', ({
                 imageWidth,
                 imageHeight
