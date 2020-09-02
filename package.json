@@ -1,6 +1,6 @@
 {
   "name": "d3-org-chart",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Organization chart, created with d3",
   "main": "index.js",
   "scripts": {
