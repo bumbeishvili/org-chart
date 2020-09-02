@@ -631,7 +631,7 @@ class TreeChart {
             }) => _children ? "lightsteelblue" : "#fff")
 
 
-
+        /*
         // Add node icon image inside node
         nodeEnter
             .patternify({
@@ -641,20 +641,20 @@ class TreeChart {
             })
             .attr('width', ({
                 data
-            }) => data.nodeIcon.size)
+            }) => data.nodeIcon && data.nodeIcon.size)
             .attr('height', ({
                 data
-            }) => data.nodeIcon.size)
+            }) => data.nodeIcon && data.nodeIcon.size)
             .attr("xlink:href", ({
                 data
-            }) => data.nodeIcon.icon)
+            }) => data.nodeIcon && data.nodeIcon.icon)
             .attr('x', ({
                 width
             }) => -width / 2 + 5)
             .attr('y', ({
                 height,
                 data
-            }) => height / 2 - data.nodeIcon.size - 5)
+            }) => height / 2 - (data.nodeIcon && data.nodeIcon.size || 0) - 5)
 
         // Add total descendants text
         nodeEnter
@@ -670,7 +670,7 @@ class TreeChart {
             .attr('y', ({
                 height,
                 data
-            }) => height / 2 - data.nodeIcon.size - 5)
+            }) => height / 2 -  (data.nodeIcon && data.nodeIcon.size) - 5)
             .text(({
                 data
             }) => `${data.totalSubordinates} Subordinates`)
@@ -688,7 +688,7 @@ class TreeChart {
             .attr('x', ({
                 width,
                 data
-            }) => -width / 2 + 10 + data.nodeIcon.size)
+            }) => -width / 2 + 10 + (data.nodeIcon && data.nodeIcon.size))
             .attr('y', ({
                 height
             }) => height / 2 - 10)
@@ -697,6 +697,7 @@ class TreeChart {
             }) => `${data.directSubordinates} Direct `)
             .attr('fill', attrs.nodeTextFill)
             .attr('font-weight', 'bold')
+          */
 
 
         // Defined node images wrapper group
@@ -1198,7 +1199,6 @@ class TreeChart {
     }
 
 }
-
 
  
 module.exports = TreeChart;
