@@ -1,5 +1,5 @@
 {
-  "name": "d3-org-chart",
+  "name": "aiz-d3-org-chart",
   "version": "1.0.13",
   "description": "Organization chart, created with d3",
   "main": "index.js",
@@ -17,7 +17,7 @@
     "employee"
   ],
   "dependencies": {
-    "d3": "*"
+    "d3": "5.16.0"
   },
   "author": "David B.",
   "license": "ISC",
