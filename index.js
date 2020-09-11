@@ -220,7 +220,7 @@ class TreeChart {
             .attr('font-family', attrs.defaultFont)
             .call(behaviors.zoom)
             .attr('cursor', 'move')
-            .style('background-color', styles?.backgroundColor ||  attrs.backgroundColor);
+            .style('background-color', attrs.styles?.backgroundColor ||  attrs.backgroundColor);
 
         attrs.svg = svg;
 
