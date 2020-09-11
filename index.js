@@ -16,6 +16,7 @@ class TreeChart {
             nodeTextFill: 'white',
             defaultFont: 'Helvetica',
             backgroundColor: '#fafafa',
+            styles: null,
             data: null,
             depth: 180,
             duration: 600,
@@ -214,6 +215,13 @@ class TreeChart {
             .call(behaviors.zoom)
             .attr('cursor', 'move')
             .style('background-color', attrs.backgroundColor);
+
+        const styles = attrs.styles;
+        if(styles && styles.constructor === Object ) { // 👈 null, undefined, and is object check
+            // assign dynamic styles to svg container
+            Object.assign(svg.style, styles);
+        }
+
         attrs.svg = svg;
 
         //Add container g element
@@ -871,7 +879,7 @@ class TreeChart {
             .attr('stroke-width', ({
                 data
             }) => data.borderWidth || attrs.strokeWidth)
-            .attr('fill', attrs.backgroundColor)
+            .attr('fill', styles?.backgroundColor || attrs.backgroundColor) // styles background color or default background color
             .attr('stroke', ({
                 borderColor
             }) => borderColor)
