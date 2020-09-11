@@ -216,10 +216,9 @@ class TreeChart {
             .attr('cursor', 'move')
             .style('background-color', attrs.backgroundColor);
 
-        const styles = attrs.styles;
-        if(styles && styles.constructor === Object ) { // 👈 null, undefined, and is object check
+        if(attrs.styles?.constructor === Object ) { // 👈 null, undefined, and is object check
             // assign dynamic styles to svg container
-            Object.assign(svg.style, styles);
+            Object.assign(svg.style, attrs.styles);
         }
 
         attrs.svg = svg;
@@ -879,7 +878,7 @@ class TreeChart {
             .attr('stroke-width', ({
                 data
             }) => data.borderWidth || attrs.strokeWidth)
-            .attr('fill', styles?.backgroundColor || attrs.backgroundColor) // styles background color or default background color
+            .attr('fill', attrs.styles?.backgroundColor || attrs.backgroundColor) // styles background color or default background color
             .attr('stroke', ({
                 borderColor
             }) => borderColor)
