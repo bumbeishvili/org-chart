@@ -217,8 +217,8 @@ class TreeChart {
             .style('background-color', attrs.backgroundColor);
 
         // assign dynamic style
-        if (attrs.styles?.constructor === Object) {
-            // 👈 null, undefined, and is object check
+        if (attrs.styles && typeof(attrs.styles) === 'object') {
+            // 👈 not null, not undefined, and is object check
             // assign dynamic styles to svg container
             Object.assign(svg._groups[0][0].style, attrs.styles);
             Object.assign(svg._parents[0].style, attrs.styles);
