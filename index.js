@@ -203,12 +203,6 @@ class TreeChart {
         attrs.root.children.forEach(d => this.expandSomeNodes(d));
 
         // *************************  DRAWING **************************
-
-        if(attrs.styles?.constructor === Object ) { // 👈 null, undefined, and is object check
-            // assign dynamic styles to svg container
-            Object.assign(container.style, attrs.styles);
-        }
-
         //Add svg
         const svg = container
             .patternify({
@@ -220,7 +214,15 @@ class TreeChart {
             .attr('font-family', attrs.defaultFont)
             .call(behaviors.zoom)
             .attr('cursor', 'move')
-            .style('background-color', styles?.backgroundColor ||  attrs.backgroundColor);
+            .style('background-color', attrs.backgroundColor);
+
+        // assign dynamic style
+        if (attrs.styles?.constructor === Object) {
+            // 👈 null, undefined, and is object check
+            // assign dynamic styles to svg container
+            Object.assign(svg._groups[0][0].style, attrs.styles);
+            Object.assign(svg._parents[0].style, attrs.styles);
+        }
 
         attrs.svg = svg;
 
