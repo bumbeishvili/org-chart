@@ -881,7 +881,7 @@ class TreeChart {
             .attr('stroke-width', ({
                 data
             }) => data.borderWidth || attrs.strokeWidth)
-            .attr('fill', attrs.styles?.backgroundColor || attrs.backgroundColor) // styles background color or default background color
+            .attr('fill', attrs.backgroundColor)
             .attr('stroke', ({
                 borderColor
             }) => borderColor)
