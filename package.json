@@ -1,6 +1,6 @@
 {
-  "name": "aiz-d3-org-chart",
-  "version": "1.1.6",
+  "name": "d3-org-chart",
+  "version": "1.1.1",
   "description": "Organization chart, created with d3",
   "main": "index.js",
   "scripts": {
