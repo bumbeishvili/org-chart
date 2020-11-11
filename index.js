@@ -31,11 +31,11 @@ class TreeChart {
         Object.keys(attrs).forEach((key) => {
             //@ts-ignore
             this[key] = function (_) {
-                var string = `attrs['${key}'] = _`;
                 if (!arguments.length) {
-                    return eval(`attrs['${key}'];`);
+                  return attrs[key];
+                } else {
+                  attrs[key] = _
                 }
-                eval(string);
                 return this;
             };
         });
