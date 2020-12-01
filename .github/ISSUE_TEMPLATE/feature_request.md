@@ -20,4 +20,4 @@ A clear and concise description of any alternative solutions or features you've 
 Add any other context or screenshots about the feature request here.
 
 
-There is a dev version in progress - check the roadmap here - https://github.com/bumbeishvili/d3-organization-chart/issues/14
+There is a **new** dev version in progress - check the roadmap here - https://github.com/bumbeishvili/d3-organization-chart/issues/14
