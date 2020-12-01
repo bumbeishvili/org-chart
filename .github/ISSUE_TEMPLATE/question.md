@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Before submit an issue, please make sure to check whether similar question was asked before. 
+Before submit of an issue, please make sure to check whether similar question was asked before. 
 You can search for it here - https://github.com/bumbeishvili/d3-organization-chart/issues
 
 ---
