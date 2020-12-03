@@ -195,11 +195,16 @@ class TreeChart {
             })
         })
 
-        // Collapse all children at first
-        attrs.root.children.forEach(d => this.collapse(d));
+        const children = attrs.root.children;
 
-        // Then expand some nodes, which have `expanded` property set
-        attrs.root.children.forEach(d => this.expandSomeNodes(d));
+        if(children) {
+            // Collapse all children at first
+            children.forEach(d => this.collapse(d));
+
+            // Then expand some nodes, which have `expanded` property set
+            children.forEach(d => this.expandSomeNodes(d));
+        }
+        
 
         // *************************  DRAWING **************************
         //Add svg
