@@ -1151,13 +1151,13 @@ class TreeChart {
         })
 
         // Expand all nodes first
-        attrs.root.children.forEach(this.expand);
+        attrs.root.children && attrs.root.children.forEach(this.expand);
 
         // Then collapse them all
-        attrs.root.children.forEach(d => this.collapse(d));
+        attrs.root.children && attrs.root.children.forEach(d => this.collapse(d));
 
         // Then only expand nodes, which have expanded proprty set to true
-        attrs.root.children.forEach(ch => this.expandSomeNodes(ch));
+        attrs.root.children && attrs.root.children.forEach(ch => this.expandSomeNodes(ch));
 
         // Redraw Graphs
         this.update(attrs.root)
