@@ -897,8 +897,25 @@ class TreeChart {
             }) => {
                 if (children) return '-';
                 return '+';
-            })
-            .attr('y', this.isEdge() ? 10 : 0)
+            });
+
+        // Align '+/-' text inside button
+        const textNodes = nodeUpdate.select('.node-button-text');
+        const textNodesGroups = textNodes && textNodes._groups;
+
+        if (textNodesGroups && textNodesGroups.length) {
+            textNodesGroups[0].forEach((el) => {
+                if (this.isFirefox()) {
+                    el.setAttribute('y', el.textContent === '+' ? 8 : 11);
+                } else if (this.isChrome()) {
+                    el.setAttribute('y', el.textContent === '+' ? 2 : 0);
+                } else if (this.isEdge()) {
+                    el.setAttribute('y', 10);
+                } else {
+                    el.setAttribute('y', 0);
+                }
+            });
+        }
 
         // Remove any exiting nodes after transition
         const nodeExitTransition = nodesSelection.exit()
@@ -939,6 +956,16 @@ class TreeChart {
     // This function detects whether current browser is edge
     isEdge() {
         return window.navigator.userAgent.includes("Edge");
+    }
+
+    // This function detects whether current browser is firefox
+    isFirefox() {
+        return window.navigator.userAgent.includes("Firefox");
+    }
+
+    // This function detects whether current browser is chrome
+    isChrome() {
+        return window.navigator.userAgent.includes("Chrome");
     }
 
     /* Function converts rgba objects to rgba color string 
