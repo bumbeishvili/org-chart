@@ -1,5 +1,6 @@
 # D3 v5 organization chart
 [![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.1.1&x2=0)](https://npmjs.org/package/d3-org-chart) 
+[![](https://img.shields.io/npm/dm/d3-org-chart)](https://npmjs.org/package/d3-org-chart)
 
 <p align="center">
    <!-- Thanks Vasturiano for this trick -  https://github.com/vasturiano -->
