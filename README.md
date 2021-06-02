@@ -14,6 +14,18 @@
 
 Highly customizable org chart built with d3 v5.
 
+Have you impressivelly  customized  org chart and want to be features on this page? Just email me at me@davidb.dev and include screenshot  of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
+
+
+Featured customizations:
+
+| | | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+|<img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://user-images.githubusercontent.com/6873202/120426599-753c0f80-c381-11eb-9695-c63808c98951.png"> <div style="100%">Light gradient version with horizontal layout</div>  |  <img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://user-images.githubusercontent.com/6873202/120426591-6f462e80-c381-11eb-9f77-2cf85b216a41.png"> <div style="100%">Compact layout</div> |
+
+
+
+
 Check out examples
 
 * [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (Most Updated)   
