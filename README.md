@@ -14,7 +14,7 @@
 
 Highly customizable org chart built with d3 v5.
 
-Have you impressivelly  customized  org chart and want to be features on this page? Just email me at me@davidb.dev and include screenshot  of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
+Have you impressivelly  customized  org chart and want to be featured on this page? Just email me at me@davidb.dev and include screenshot  of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
 
 
 Featured customizations:
