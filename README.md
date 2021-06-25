@@ -26,11 +26,15 @@ Featured customizations:
 
 
 
+
 Check out examples
 
-* [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (Most Updated)   
+* [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (latest stable)   
 * [Jsfiddle example](https://jsfiddle.net/k2ucqayn/)   
 * [Codepen example](https://codepen.io/bumbeishvili/full/arpJrv)  
+* [Observable Dev version](https://observablehq.com/d/e106c59dbd9f6151) (Unstable - latest)
+
+
 
 
 Check out several libraries and frameworks integrations
