@@ -80,6 +80,10 @@ Although this Org chart was specifically created for [teamapps java web applicat
 
 Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](https://github.com/yamass), who assembled requirements for org-chart and had valuable pieces of advice afterwads.
 
+Also, thanks for all people who made generous [donations](https://ko-fi.com/bumbeishvili), it gives me motivation to further improve this org chart component.
+
+Thanks [contractzen](https://www.contractzen.com/)  for the significant contribution, which made implementation of some of the most important features (optimal layout, exporting ) possible.
+
 
 
 ## Author
