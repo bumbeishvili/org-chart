@@ -1,0 +1,29 @@
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="./build/d3-org-chart.js"></script>
+
+<div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
+
+
+<a href="https://github.com/bumbeishvili/d3-organization-chart">
+    <img style="position:fixed;top:0;right:0;border:0;z-index:2;" width="149" height="149"
+        src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
+</a>
+
+
+<script>
+    d3.csv('data.csv')
+        .then(dataFlattened => {
+
+            const data = dataFlattened;
+
+            console.log(d3.orgChart)
+            new d3.orgChart()
+                .container('.chart-container')
+                .data(data)
+                .svgWidth(window.innerWidth)
+                .svgHeight(window.innerWidth)
+                .initialZoom(0.6)
+                .onNodeClick(d => console.log(d + ' node clicked'))
+                .render()
+        })
+</script>
