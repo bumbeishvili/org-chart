@@ -1,29 +1,135 @@
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="./build/d3-org-chart.js"></script>
+<!DOCTYPE html>
 
-<div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>OrgChart</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./build/d3-org-chart.js"></script>
+
+    <div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
 
 
-<a href="https://github.com/bumbeishvili/d3-organization-chart">
-    <img style="position:fixed;top:0;right:0;border:0;z-index:2;" width="149" height="149"
-        src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
-</a>
+    <a href="https://github.com/bumbeishvili/d3-organization-chart">
+        <img style="position:fixed;top:0;right:0;border:0;z-index:2;" width="149" height="149"
+            src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
+    </a>
+
+    <div class="chart-container" style=" padding-top:10px; width:1000px; height:600px "> </div>
+
+    <script>
+        console.log(d3)
+        d3.csv('data.csv')
+            .then(dataFlattened => {
+
+                const data = dataFlattened.map((d) => {
+                    const width = 350; //Math.round(Math.random()*50+300);
+                    const height = 160; // Math.round(Math.random()*20+130);
+                    const cornerShape = "ORIGINAL"; //['ORIGINAL','ROUNDED','CIRCLE']
+                    const nodeImageWidth = 100;
+                    const nodeImageHeight = 100;
+                    const centerTopDistance = 0;
+                    const centerLeftDistance = 0;
+                    const expanded = false; //d.id=="O-6"
+
+                    const titleMarginLeft = nodeImageWidth / 2 + 20 + centerLeftDistance;
+                    const contentMarginLeft = width / 2 + 25;
+                    return {
+                        nodeId: d.id,
+                        parentNodeId: d.parentId,
+                        width: width,
+                        height: height,
+                        borderWidth: 0.6,
+                        borderRadius: 0,
+                        borderColor: {
+                            red: 15,
+                            green: 140,
+                            blue: 121,
+                            alpha: 0.7
+                        },
+                        backgroundColor: {
+                            red: 247,
+                            green: 247,
+                            blue: 249,
+                            alpha: 0.4
+                        },
+                        nodeIcon: {
+                            size: 50
+                        },
+                        nodeImage: {
+                            url: d.imageUrl,
+                            width: nodeImageWidth,
+                            height: nodeImageHeight,
+                            centerTopDistance: 66,
+                            centerLeftDistance: 66,
+                            cornerShape: "CIRCLE", // ORIGINAL,CIRCLE
+                            shadow: false,
+                            borderWidth: 0,
+                            borderColor: {
+                                red: 19,
+                                green: 123,
+                                blue: 128,
+                                alpha: 0
+                            }
+                        },
+                        template: `<div style="color:#2A2A2A;height:160px;margin-top:-30px;background-image: linear-gradient(to right , #FFFFFF, #ECEDF0);">
+                  <div style="margin-left:${titleMarginLeft + 77}px;
+                              margin-top:30px;
+                              padding-top:20px;
+                              font-size:20px;
+                              font-weight:bold;
+                         ">${d.name} </div>
+                 <div style="margin-left:${titleMarginLeft + 77}px;
+                              margin-top:3px;
+                              font-size:16px;
+                         ">${d.positionName} </div>
+
+                 <div style="margin-left:${titleMarginLeft + 77}px;
+                              margin-top:3px;
+                              font-size:14px;
+                         ">${d.unit?.value}</div>
+
+                 <div style="margin-left:${contentMarginLeft + 70}px;
+                             margin-top:15px;
+                             font-size:13px;
+                             position:absolute;
+                             bottom:5px;
+                            ">
+                      <div>${d.office}</div>
+                      <div style="margin-top:5px">${d.area}</div>
+                 </div>
+              </div>`,
+                        //  connectorLineColor:{
+                        //    red:59,
+                        //    green:60,
+                        //    blue:63,
+                        //    alpha:1
+                        //  },
+                        connectorLineWidth: 2,
+                        dashArray: "",
+                        expanded: expanded
+                    };
+                });
 
 
-<script>
-    d3.csv('data.csv')
-        .then(dataFlattened => {
 
-            const data = dataFlattened;
 
-            console.log(d3.orgChart)
-            new d3.orgChart()
-                .container('.chart-container')
-                .data(data)
-                .svgWidth(window.innerWidth)
-                .svgHeight(window.innerWidth)
-                .initialZoom(0.6)
-                .onNodeClick(d => console.log(d + ' node clicked'))
-                .render()
-        })
-</script>
+                new d3.OrgChart()
+                    .container('.chart-container')
+                    .data(data)
+                    .svgWidth(window.innerWidth)
+                    .svgHeight(window.innerWidth)
+                    .initialZoom(0.6)
+                    .onNodeClick(d => console.log(d + ' node clicked'))
+                    .render()
+            })
+    </script>
+
+</body>
