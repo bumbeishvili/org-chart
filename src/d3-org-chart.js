@@ -1,6 +1,6 @@
 import { selection, select } from "d3-selection";
 import { max } from "d3-array";
-import { tree,stratify } from "d3-hierarchy";
+import { tree, stratify } from "d3-hierarchy";
 import { zoom } from "d3-zoom";
 
 const d3 = {
@@ -35,6 +35,7 @@ export default class OrgChart {
             dropShadowId: null,
             initialZoom: 1,
             onNodeClick: (d) => d,
+            template:d=>'Sample Node Content, override using chart.template(data=>data.htmlContent)',
             layout: "h" // h, v
         };
 
@@ -244,10 +245,7 @@ export default class OrgChart {
             .call(behaviors.zoom)
             .on("dblclick.zoom", null)
             .attr("cursor", "move")
-            .style(
-                "background-image",
-                "linear-gradient(to right , #fcfaf8, #E3E7EC);padding-top:10px"
-            );
+
         attrs.svg = svg;
 
         //Add container g element
@@ -278,96 +276,6 @@ export default class OrgChart {
 
         // ************************** ROUNDED AND SHADOW IMAGE  WORK USING SVG FILTERS **********************
 
-        //Adding defs element for rounded image
-        attrs.defs = svg.patternify({
-            tag: "defs",
-            selector: "image-defs"
-        });
-
-        // Adding defs element for image's shadow
-        const filterDefs = svg.patternify({
-            tag: "defs",
-            selector: "filter-defs"
-        });
-
-        // Adding shadow element - (play with svg filter here - https://bit.ly/2HwnfyL)
-        const filter = filterDefs
-            .patternify({
-                tag: "filter",
-                selector: "shadow-filter-element"
-            })
-            .attr("id", attrs.dropShadowId)
-            .attr("y", `${-200}%`)
-            .attr("x", `${-200}%`)
-            .attr("height", `${400}%`)
-            .attr("width", `${400}%`);
-
-        // Add gaussian blur element for shadows - we can control shadow length with this
-        filter
-            .patternify({
-                tag: "feGaussianBlur",
-                selector: "feGaussianBlur-element"
-            })
-            .attr("in", "SourceAlpha")
-            .attr("stdDeviation", 5.1)
-            .attr("result", "blur");
-
-        // Add fe-offset element for shadows -  we can control shadow positions with it
-        filter
-            .patternify({
-                tag: "feOffset",
-                selector: "feOffset-element"
-            })
-            .attr("in", "blur")
-            .attr("result", "offsetBlur")
-            .attr("dx", 15.28)
-            .attr("dy", 10.48)
-            .attr("x", -350)
-            .attr("y", -140);
-
-        // Add fe-flood element for shadows - we can control shadow color and opacity with this element
-        filter
-            .patternify({
-                tag: "feFlood",
-                selector: "feFlood-element"
-            })
-            .attr("in", "offsetBlur")
-            .attr("flood-color", "black")
-            .attr("flood-opacity", 0.2)
-            .attr("result", "offsetColor");
-
-        // Add feComposite element for shadows
-        filter
-            .patternify({
-                tag: "feComposite",
-                selector: "feComposite-element"
-            })
-            .attr("in", "offsetColor")
-            .attr("in2", "offsetBlur")
-            .attr("operator", "in")
-            .attr("result", "offsetBlur");
-
-        // Add feMerge element for shadows
-        const feMerge = filter.patternify({
-            tag: "feMerge",
-            selector: "feMerge-element"
-        });
-
-        // Add feMergeNode element for shadows
-        feMerge
-            .patternify({
-                tag: "feMergeNode",
-                selector: "feMergeNode-blur"
-            })
-            .attr("in", "offsetBlur");
-
-        // Add another feMergeNode element for shadows
-        feMerge
-            .patternify({
-                tag: "feMergeNode",
-                selector: "feMergeNode-graphic"
-            })
-            .attr("in", "SourceGraphic");
 
         // Display tree contenrs
         this.update(attrs.root);
@@ -463,47 +371,6 @@ export default class OrgChart {
             let height = d.data.height;
             let dropShadowId = `none`;
 
-            // Override default values based on data
-            if (d.data.nodeImage && d.data.nodeImage.shadow) {
-                dropShadowId = `url(#${attrs.dropShadowId})`;
-            }
-            if (d.data.nodeImage && d.data.nodeImage.width) {
-                imageWidth = d.data.nodeImage.width;
-            }
-            if (d.data.nodeImage && d.data.nodeImage.height) {
-                imageHeight = d.data.nodeImage.height;
-            }
-            if (d.data.nodeImage && d.data.nodeImage.borderColor) {
-                imageBorderColor = this.rgbaObjToColor(d.data.nodeImage.borderColor);
-            }
-            if (d.data.nodeImage && d.data.nodeImage.borderWidth) {
-                imageBorderWidth = d.data.nodeImage.borderWidth;
-            }
-            if (d.data.nodeImage && d.data.nodeImage.centerTopDistance) {
-                imageCenterTopDistance = d.data.nodeImage.centerTopDistance;
-            }
-            if (d.data.nodeImage && d.data.nodeImage.centerLeftDistance) {
-                imageCenterLeftDistance = d.data.nodeImage.centerLeftDistance;
-            }
-            if (d.data.borderColor) {
-                borderColor = this.rgbaObjToColor(d.data.borderColor);
-            }
-            if (d.data.backgroundColor) {
-                backgroundColor = this.rgbaObjToColor(d.data.backgroundColor);
-            }
-            if (
-                d.data.nodeImage &&
-                d.data.nodeImage.cornerShape.toLowerCase() == "circle"
-            ) {
-                imageRx = Math.max(imageWidth, imageHeight);
-            }
-            if (
-                d.data.nodeImage &&
-                d.data.nodeImage.cornerShape.toLowerCase() == "rounded"
-            ) {
-                imageRx = Math.min(imageWidth, imageHeight) / 6;
-            }
-
             // Extend node object with calculated properties
             return Object.assign(d, {
                 imageWidth,
@@ -535,44 +402,6 @@ export default class OrgChart {
                 d.y = x;
             });
         }
-        // ------------------- FILTERS ---------------------
-
-        // Add patterns for each node (it's needed for rounded image implementation)
-        const patternsSelection = attrs.defs
-            .selectAll(".pattern")
-            .data(nodes, ({ id }) => id);
-
-        // Define patterns enter selection
-        const patternEnterSelection = patternsSelection.enter().append("pattern");
-
-        // Patters update selection
-        const patterns = patternEnterSelection
-            .merge(patternsSelection)
-            .attr("class", "pattern")
-            .attr("height", 1)
-            .attr("width", 1)
-            .attr("id", ({ id }) => id);
-
-        // Add images to patterns
-        const patternImages = patterns
-            .patternify({
-                tag: "image",
-                selector: "pattern-image",
-                data: (d) => [d]
-            })
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("height", ({ imageWidth }) => imageWidth)
-            .attr("width", ({ imageHeight }) => imageHeight)
-            .attr("xlink:href", ({ data }) => data.nodeImage && data.nodeImage.url)
-            .attr(
-                "viewbox",
-                ({ imageWidth, imageHeight }) => `0 0 ${imageWidth * 2} ${imageHeight}`
-            )
-            .attr("preserveAspectRatio", "xMidYMin slice");
-
-        // Remove patterns exit selection after animation
-        patternsSelection.exit().transition().duration(attrs.duration).remove();
 
         // --------------------------  LINKS ----------------------
         // Get links selection
@@ -606,9 +435,6 @@ export default class OrgChart {
             .attr("fill", "none")
             .attr("stroke-width", ({ data }) => data.connectorLineWidth || 2)
             .attr("stroke", ({ data }) => {
-                if (data.connectorLineColor) {
-                    return this.rgbaObjToColor(data.connectorLineColor);
-                }
                 return "#767b9b";
             })
             .attr("stroke-dasharray", ({ data }) => {
@@ -680,73 +506,6 @@ export default class OrgChart {
                 _children ? "lightsteelblue" : "#fff"
             );
 
-        /*
-            // Add node icon image inside node
-            nodeEnter
-                .patternify({
-                    tag: 'image',
-                    selector: 'node-icon-image',
-                    data: d => [d]
-                })
-                .attr('width', ({
-                    data
-                }) => data.nodeIcon && data.nodeIcon.size)
-                .attr('height', ({
-                    data
-                }) => data.nodeIcon && data.nodeIcon.size)
-                .attr("xlink:href", ({
-                    data
-                }) => data.nodeIcon && data.nodeIcon.icon)
-                .attr('x', ({
-                    width
-                }) => -width / 2 + 5)
-                .attr('y', ({
-                    height,
-                    data
-                }) => height / 2 - (data.nodeIcon && data.nodeIcon.size || 0) - 5)
-    
-            // Add total descendants text
-            nodeEnter
-                .patternify({
-                    tag: 'text',
-                    selector: 'node-icon-text-total',
-                    data: d => [d]
-                })
-                .text('test')
-                .attr('x', ({
-                    width
-                }) => -width / 2 + 7)
-                .attr('y', ({
-                    height,
-                    data
-                }) => height / 2 -  (data.nodeIcon && data.nodeIcon.size) - 5)
-                .text(({
-                    data
-                }) => `${data.totalSubordinates} Subordinates`)
-                .attr('fill', attrs.nodeTextFill)
-                .attr('font-weight', 'bold')
-    
-            // Add direct descendants text
-            nodeEnter
-                .patternify({
-                    tag: 'text',
-                    selector: 'node-icon-text-direct',
-                    data: d => [d]
-                })
-                .text('test')
-                .attr('x', ({
-                    width,
-                    data
-                }) => -width / 2 + 10 + (data.nodeIcon && data.nodeIcon.size))
-                .attr('y', ({
-                    height
-                }) => height / 2 - 10)
-                .text(({
-                    data
-                }) => `${data.directSubordinates} Direct `)
-                .attr('fill', attrs.nodeTextFill)
-                .attr('font-weight', 'bold')
-              */
 
         // Node update styles
         const nodeUpdate = nodeEnter
@@ -757,19 +516,6 @@ export default class OrgChart {
         const fo = nodeUpdate.patternify({
             tag: "foreignObject",
             selector: "node-foreign-object",
-            data: (d) => [d]
-        });
-
-        const nodeImageGroups = nodeUpdate.patternify({
-            tag: "g",
-            selector: "node-image-group",
-            data: (d) => [d]
-        });
-
-        // Add background rectangle for node image
-        nodeImageGroups.patternify({
-            tag: "rect",
-            selector: "node-image-rect",
             data: (d) => [d]
         });
 
@@ -815,27 +561,6 @@ export default class OrgChart {
             .attr("transform", ({ x, y }) => `translate(${x},${y})`)
             .attr("opacity", 1);
 
-        // Move images to desired positions
-        nodeUpdate
-            .selectAll(".node-image-group")
-            .attr("transform", ({ imageWidth, width, imageHeight, height }) => {
-                let x = -imageWidth / 2 - width / 2;
-                let y = -imageHeight / 2 - height / 2;
-                return `translate(${x},${y})`;
-            });
-
-        // Style node image rectangles
-        nodeUpdate
-            .select(".node-image-rect")
-            .attr("fill", ({ id }) => `url(#${id})`)
-            .attr("width", ({ imageWidth }) => imageWidth)
-            .attr("height", ({ imageHeight }) => imageHeight)
-            .attr("stroke", ({ imageBorderColor }) => imageBorderColor)
-            .attr("stroke-width", ({ imageBorderWidth }) => imageBorderWidth)
-            .attr("rx", ({ imageRx }) => imageRx)
-            .attr("y", ({ imageCenterTopDistance }) => imageCenterTopDistance)
-            .attr("x", ({ imageCenterLeftDistance }) => imageCenterLeftDistance)
-            .attr("filter", ({ dropShadowId }) => dropShadowId);
 
         // Style node rectangles
         nodeUpdate
@@ -844,14 +569,8 @@ export default class OrgChart {
             .attr("height", ({ data }) => data.height)
             .attr("x", ({ data }) => -data.width / 2)
             .attr("y", ({ data }) => -data.height / 2)
-            .attr("rx", ({ data }) => data.borderRadius || 0)
-            .attr("stroke-width", ({ data }) =>
-                data.borderWidth != null ? data.borderWidth : attrs.strokeWidth
-            )
             .attr("cursor", "pointer")
-            .attr("stroke", ({ borderColor }) => borderColor)
             .style("fill", ({ backgroundColor }) => backgroundColor)
-            .attr("filter", ({ dropShadowId }) => dropShadowId);
 
         // Move node button group to the desired position
         nodeUpdate
@@ -929,13 +648,6 @@ export default class OrgChart {
     // This function detects whether current browser is edge
     isEdge() {
         return window.navigator.userAgent.includes("Edge");
-    }
-
-    /* Function converts rgba objects to rgba color string 
-        {red:110,green:150,blue:255,alpha:1}  => rgba(110,150,255,1)
-      */
-    rgbaObjToColor({ red, green, blue, alpha }) {
-        return `rgba(${red},${green},${blue},${alpha})`;
     }
 
     // Generate horizontal diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges-horizontal-d3-v3-v4-v5-v6
@@ -1022,7 +734,7 @@ export default class OrgChart {
             .style("width", ({ width }) => `${width}px`)
             .style("height", ({ height }) => `${height}px`)
             .style("color", "white")
-            .html(({ data }) => data.template);
+            .html(({ data }) => attrs.template(data));
     }
 
     // Toggle children on click.

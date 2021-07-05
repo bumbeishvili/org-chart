@@ -28,7 +28,6 @@
         console.log(d3)
         d3.csv('data.csv')
             .then(dataFlattened => {
-
                 const data = dataFlattened.map((d) => {
                     const width = 350; //Math.round(Math.random()*50+300);
                     const height = 160; // Math.round(Math.random()*20+130);
@@ -59,25 +58,6 @@
                             green: 247,
                             blue: 249,
                             alpha: 0.4
-                        },
-                        nodeIcon: {
-                            size: 50
-                        },
-                        nodeImage: {
-                            url: d.imageUrl,
-                            width: nodeImageWidth,
-                            height: nodeImageHeight,
-                            centerTopDistance: 66,
-                            centerLeftDistance: 66,
-                            cornerShape: "CIRCLE", // ORIGINAL,CIRCLE
-                            shadow: false,
-                            borderWidth: 0,
-                            borderColor: {
-                                red: 19,
-                                green: 123,
-                                blue: 128,
-                                alpha: 0
-                            }
                         },
                         template: `<div style="color:#2A2A2A;height:160px;margin-top:-30px;background-image: linear-gradient(to right , #FFFFFF, #ECEDF0);">
                   <div style="margin-left:${titleMarginLeft + 77}px;
@@ -112,9 +92,9 @@
                         //    blue:63,
                         //    alpha:1
                         //  },
-                        connectorLineWidth: 2,
-                        dashArray: "",
-                        expanded: expanded
+                        //connectorLineWidth: 2,
+                        //dashArray: "",
+                        //expanded: expanded
                     };
                 });
 
@@ -126,6 +106,9 @@
                     .data(data)
                     .svgWidth(window.innerWidth)
                     .svgHeight(window.innerWidth)
+                    .template(d => {
+                        return 'test';
+                    })
                     .initialZoom(0.6)
                     .onNodeClick(d => console.log(d + ' node clicked'))
                     .render()
