@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "nodemon ",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-selection:d3,d3-array:d3,d3-hierarchy:d3,d3-zoom:d3  -f umd -n d3 -o build/d3-org-chart.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-selection:d3,d3-array:d3,d3-hierarchy:d3,d3-zoom:d3,d3-flextree:d3  -f umd -n d3 -o build/d3-org-chart.js -- index.js",
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js"
@@ -37,6 +37,7 @@
     "d3-selection": "3",
     "d3-array": "3",
     "d3-hierarchy": "3",
-    "d3-zoom": "3"
+    "d3-zoom": "3",
+    "d3-flextree": "2.1.1"
   }
 }

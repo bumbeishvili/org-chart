@@ -13,6 +13,10 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./build/d3-org-chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
+
+
+
 
     <div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
 
@@ -43,22 +47,8 @@
                     return {
                         nodeId: d.id,
                         parentNodeId: d.parentId,
-                        width: width,
-                        height: height,
                         borderWidth: 0.6,
                         borderRadius: 0,
-                        borderColor: {
-                            red: 15,
-                            green: 140,
-                            blue: 121,
-                            alpha: 0.7
-                        },
-                        backgroundColor: {
-                            red: 247,
-                            green: 247,
-                            blue: 249,
-                            alpha: 0.4
-                        },
                         template: `<div style="color:#2A2A2A;height:160px;margin-top:-30px;background-image: linear-gradient(to right , #FFFFFF, #ECEDF0);">
                   <div style="margin-left:${titleMarginLeft + 77}px;
                               margin-top:30px;
@@ -105,11 +95,18 @@
                     .container('.chart-container')
                     .data(data)
                     .svgWidth(window.innerWidth)
-                    .svgHeight(window.innerWidth)
+                    .svgHeight(window.innerHeight)
                     .template(d => {
                         return 'test';
                     })
-                    .initialZoom(0.6)
+                    .initialZoom(1)
+                    .neighbourMargin(d3Node => 20)
+                    .childrenMargin(d3Node => 240)
+                    .nodeDimensions(d3Node => {
+                        const width = 100;
+                        const height = 100;
+                        return [width + Math.round(Math.random() * 100), height ]
+                    })
                     .onNodeClick(d => console.log(d + ' node clicked'))
                     .render()
             })

@@ -2,6 +2,7 @@ import { selection, select } from "d3-selection";
 import { max } from "d3-array";
 import { tree, stratify } from "d3-hierarchy";
 import { zoom } from "d3-zoom";
+import { flextree } from 'd3-flextree';
 
 const d3 = {
     selection,
@@ -9,12 +10,13 @@ const d3 = {
     max,
     tree,
     stratify,
-    zoom
+    zoom,
 }
+console.log({ flextree })
 
 export default class OrgChart {
     constructor() {
-        // Exposed variables
+        // Exposed variables 
         const attrs = {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
             svgWidth: 800,
@@ -25,17 +27,18 @@ export default class OrgChart {
             marginLeft: 0,
             container: "body",
             defaultTextFill: "#2C3E50",
-            nodeTextFill: "white",
             defaultFont: "Helvetica",
-            backgroundColor: "#DFE3E9",
             data: null,
             depth: 180,
             duration: 600,
             strokeWidth: 3,
-            dropShadowId: null,
             initialZoom: 1,
+            nodeDefaultBackground: 'white',
+            nodeDimensions: d => [100, 100],
+            neighbourMargin: d => 10,
+            childrenMargin: d => 20,
             onNodeClick: (d) => d,
-            template:d=>'Sample Node Content, override using chart.template(data=>data.htmlContent)',
+            template: d => 'Sample Node Content, override using chart.template(data=>data.htmlContent)',
             layout: "h" // h, v
         };
 
@@ -116,7 +119,7 @@ export default class OrgChart {
             // Rescale container element accordingly
             attrs.centerG.attr(
                 "transform",
-                ` translate(${calc.nodeMaxWidth / 2}, ${calc.centerY}) scale(${attrs.initialZoom
+                ` translate(0, ${calc.centerY}) scale(${attrs.initialZoom
                 })`
             );
         } else {
@@ -140,9 +143,6 @@ export default class OrgChart {
         const containerRect = container.node().getBoundingClientRect();
         if (containerRect.width > 0) attrs.svgWidth = containerRect.width;
 
-        //Attach drop shadow id to attrs object
-        this.setDropShadowId(attrs);
-
         //Calculated properties
         const calc = {
             id: null,
@@ -160,7 +160,6 @@ export default class OrgChart {
         attrs.calc = calc;
 
         // Get maximum node width and height
-        calc.nodeMaxWidth = d3.max(attrs.data, ({ width }) => width);
         calc.nodeMaxHeight = d3.max(attrs.data, ({ height }) => height);
 
         // Calculate max node depth (it's needed for layout heights calculation)
@@ -169,29 +168,10 @@ export default class OrgChart {
         calc.centerY = calc.chartHeight / 2;
 
         if (attrs.layout == "h") {
-            attrs.depth = calc.nodeMaxWidth + 100;
+            attrs.depth = 200
         }
 
-        //********************  LAYOUTS  ***********************
-        const layouts = {
-            treemap: null
-        };
-        attrs.layouts = layouts;
 
-        // Generate tree layout function
-        layouts.treemap = d3.tree().size([calc.chartWidth, calc.chartHeight]);
-
-        if (attrs.layout == "h") {
-            layouts.treemap.nodeSize([
-                calc.nodeMaxHeight + 30,
-                calc.nodeMaxWidth + attrs.depth
-            ]);
-        } else {
-            layouts.treemap.nodeSize([
-                calc.nodeMaxWidth + 100,
-                calc.nodeMaxHeight + attrs.depth
-            ]);
-        }
 
         // ******************* BEHAVIORS . **********************
         const behaviors = {
@@ -209,6 +189,24 @@ export default class OrgChart {
             .id(({ nodeId }) => nodeId)
             .parentId(({ parentNodeId }) => parentNodeId)(attrs.data);
 
+        attrs.root.each(node => {
+            const dimensions = attrs.nodeDimensions(node);
+            const width = dimensions[0];
+            const height = dimensions[1];
+            Object.assign(node, { width, height })
+        })
+
+        attrs.flexTreeLayout = flextree({
+            nodeSize: node => {
+                const dim = attrs.nodeDimensions(node);
+                const neighbourMargin = attrs.neighbourMargin(node)
+                const childrenMargin = attrs.childrenMargin(node);
+                return [dim[0] + neighbourMargin, dim[1] + neighbourMargin + childrenMargin];
+            }
+        });
+
+        attrs.flexTreeLayout(attrs.root);
+
         // Set child nodes enter appearance positions
         attrs.root.x0 = 0;
         attrs.root.y0 = 0;
@@ -216,13 +214,13 @@ export default class OrgChart {
         /** Get all nodes as array (with extended parent & children properties set)
                 This way we can access any node's parent directly using node.parent - pretty cool, huh?
             */
-        attrs.allNodes = attrs.layouts.treemap(attrs.root).descendants();
+        attrs.allNodes = attrs.root.descendants();
 
         // Assign direct children and total subordinate children's cound
         attrs.allNodes.forEach((d) => {
             Object.assign(d.data, {
-                directSubordinates: d.children ? d.children.length : 0,
-                totalSubordinates: d.descendants().length - 1
+                _directSubordinates: d.children ? d.children.length : 0,
+                _totalSubordinates: d.descendants().length - 1
             });
         });
 
@@ -259,6 +257,12 @@ export default class OrgChart {
                 `translate(${calc.chartLeftMargin},${calc.chartTopMargin})`
             );
 
+        chart.patternify({ tag: 'circle', selector: 'center-circle' })
+            .attr('r', 10)
+            .attr('cx', calc.chartWidth / 2)
+            .attr('cy', calc.chartHeight / 2)
+
+
         // Add one more container g element, for better positioning controls
         attrs.centerG = chart
             .patternify({
@@ -267,7 +271,7 @@ export default class OrgChart {
             })
             .attr("transform", () => {
                 if (attrs.layout === "h")
-                    return `translate(${calc.nodeMaxWidth},${calc.centerY}) scale(${attrs.initialZoom})`;
+                    return `translate(0,${calc.centerY}) scale(${attrs.initialZoom})`;
                 return `translate(${calc.centerX},${calc.nodeMaxHeight / 2}) scale(${attrs.initialZoom
                     })`;
             });
@@ -290,27 +294,6 @@ export default class OrgChart {
         });
 
         return this;
-    }
-
-    // This function sets drop shadow ID to the passed object
-    setDropShadowId(d) {
-        // If it's already set, then return
-        if (d.dropShadowId) return;
-
-        // Generate drop shadow ID
-        let id = `${d.id}-drop-shadow`;
-
-        // If DOM object is available, then use UID method to generated shadow id
-        //@ts-ignore
-        if (typeof DOM != "undefined") {
-            //@ts-ignore
-            id = DOM.uid(d.id).id;
-        }
-
-        // Extend passed object with drop shadow ID
-        Object.assign(d, {
-            dropShadowId: id
-        });
     }
 
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
@@ -350,41 +333,21 @@ export default class OrgChart {
         const calc = attrs.calc;
 
         //  Assigns the x and y position for the nodes
-        const treeData = attrs.layouts.treemap(attrs.root);
+        const treeData = attrs.flexTreeLayout(attrs.root);
 
         // Get tree nodes and links and attach some properties
         const nodes = treeData.descendants().map((d) => {
             // If at least one property is already set, then we don't want to reset other properties
             if (d.width) return d;
 
-            // Declare properties with deffault values
-            let imageWidth = 100;
-            let imageHeight = 100;
-            let imageBorderColor = "steelblue";
-            let imageBorderWidth = 0;
-            let imageRx = 0;
-            let imageCenterTopDistance = 0;
-            let imageCenterLeftDistance = 0;
-            let borderColor = "steelblue";
-            let backgroundColor = "steelblue";
-            let width = d.data.width;
-            let height = d.data.height;
-            let dropShadowId = `none`;
+            const dimensions = attrs.nodeDimensions(node);
+            const width = dimensions[0];
+            const height = dimensions[1];
 
             // Extend node object with calculated properties
             return Object.assign(d, {
-                imageWidth,
-                imageHeight,
-                imageBorderColor,
-                imageBorderWidth,
-                borderColor,
-                backgroundColor,
-                imageRx,
                 width,
                 height,
-                imageCenterTopDistance,
-                imageCenterLeftDistance,
-                dropShadowId
             });
         });
 
@@ -392,7 +355,7 @@ export default class OrgChart {
         const links = treeData.descendants().slice(1);
 
         // Set constant depth for each nodes
-        nodes.forEach((d) => (d.y = d.depth * attrs.depth));
+        // nodes.forEach((d) => (d.y = d.depth * attrs.depth));
 
         if (attrs.layout === "h") {
             // Switch x and y coordinates for horizontal layout
@@ -502,9 +465,6 @@ export default class OrgChart {
                 selector: "node-rect",
                 data: (d) => [d]
             })
-            .style("fill", ({ _children }) =>
-                _children ? "lightsteelblue" : "#fff"
-            );
 
 
         // Node update styles
@@ -565,19 +525,20 @@ export default class OrgChart {
         // Style node rectangles
         nodeUpdate
             .select(".node-rect")
-            .attr("width", ({ data }) => data.width)
-            .attr("height", ({ data }) => data.height)
-            .attr("x", ({ data }) => -data.width / 2)
-            .attr("y", ({ data }) => -data.height / 2)
+            .attr("width", ({ width }) => width)
+            .attr("height", ({ height }) => height)
+            .attr("x", ({ width }) => -width / 2)
+            .attr("y", ({ height }) => -height / 2)
             .attr("cursor", "pointer")
-            .style("fill", ({ backgroundColor }) => backgroundColor)
+            .attr("fill", attrs.nodeDefaultBackground)
+            .attr("stroke", 'black')
 
         // Move node button group to the desired position
         nodeUpdate
             .select(".node-button-g")
-            .attr("transform", ({ data }) => {
-                if (attrs.layout == "h") return `translate(${data.width / 2},0)`;
-                return `translate(0,${data.height / 2})`;
+            .attr("transform", ({ data, width, height }) => {
+                if (attrs.layout == "h") return `translate(${width / 2},0)`;
+                return `translate(0,${height / 2})`;
             })
             .attr("opacity", ({ children, _children }) => {
                 if (children || _children) {
@@ -591,7 +552,6 @@ export default class OrgChart {
             .select(".node-button-circle")
             .attr("r", 16)
             .attr("stroke-width", ({ data }) => data.borderWidth || attrs.strokeWidth)
-            .attr("fill", attrs.backgroundColor)
             .attr("stroke", ({ borderColor }) => borderColor);
 
         // Restyle button texts
@@ -856,8 +816,8 @@ export default class OrgChart {
         // Store direct and total descendants count
         attrs.allNodes.forEach((d) => {
             Object.assign(d.data, {
-                directSubordinates: d.children ? d.children.length : 0,
-                totalSubordinates: d.descendants().length - 1
+                _directSubordinates: d.children ? d.children.length : 0,
+                _totalSubordinates: d.descendants().length - 1
             });
         });
 
