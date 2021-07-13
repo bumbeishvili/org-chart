@@ -38,7 +38,13 @@ export default class OrgChart {
             childrenMargin: d => 20,
             onNodeClick: (d) => d,
             nodeContent: d => 'Sample Node Content, override using chart.template(data=>data.htmlContent)',
-            layout: "bottom",// top, left,right, bottom
+            layout: "right",// top, left,right, bottom
+            icons: {
+                "left": d => d ? `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>` : `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>`,
+                "bottom": d => d ? `<div style="margin-top:-20px;font-size:25px">ˬ</div>` : `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
+                "right": d => d ? `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>` : `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>`,
+                "top": d => d ? `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>` : `<div style="margin-top:-20px;font-size:25px">ˬ</div>`,
+            },
             layoutBindings: {
                 "left": {
                     "nodeJoinX": node => node.x + node.width,
@@ -95,9 +101,9 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y - height})`,
                 },
                 "right": {
-                    "nodeJoinX": node => node.x-node.width,
-                    "nodeJoinY": node => node.y-node.height/4,
-                    "linkJoinX": node => node.x-node.width,
+                    "nodeJoinX": node => node.x - node.width,
+                    "nodeJoinY": node => node.y - node.height / 4,
+                    "linkJoinX": node => node.x - node.width,
                     "linkJoinY": node => node.y,
                     "linkX": node => node.x,
                     "linkY": node => node.y,
@@ -105,12 +111,12 @@ export default class OrgChart {
                     "linkParentY": node => node.parent.y,
                     "buttonX": node => 0,
                     "buttonY": node => node.height / 2,
-                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX,chartWidth }) => `translate(${chartWidth - rootMargin},${centerY}) scale(${scale})`,
+                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX, chartWidth }) => `translate(${chartWidth - rootMargin},${centerY}) scale(${scale})`,
                     "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin }) => [height + siblingsMargin, width + childrenMargin],
                     "zoomTransform": ({ centerY, scale }) => `translate(${0},${centerY}) scale(${scale})`,
                     "diagonal": this.hdiagonal.bind(this),
                     "swap": d => { const x = d.x; d.x = -d.y; d.y = x; },
-                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x-width},${y - height / 2})`,
+                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width},${y - height / 2})`,
                 },
             }
         };
@@ -531,21 +537,27 @@ export default class OrgChart {
             })
             .on("click", (event, d) => this.onButtonClick(event, d));
 
-        // Add expand collapse button circle
-        nodeButtonGroups.patternify({
-            tag: "circle",
-            selector: "node-button-circle",
-            data: (d) => [d]
-        });
-
-        // Add button text
-        nodeButtonGroups
+        // Add expand collapse button content
+        const nodeFo = nodeButtonGroups
             .patternify({
-                tag: "text",
-                selector: "node-button-text",
+                tag: "foreignObject",
+                selector: "node-button-foreign-object",
                 data: (d) => [d]
             })
-            .attr("pointer-events", "none");
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('x', -10)
+            .attr('y', -10)
+            .patternify({
+                tag: "xhtml:div",
+                selector: "node-button-div",
+                data: (d) => [d]
+            })
+            .style('display', 'flex')
+            .style('width', '100%')
+            .style('height', '100%')
+
+
 
         // Transition to the proper position for the node
         nodeUpdate
@@ -568,6 +580,7 @@ export default class OrgChart {
             .attr("cursor", "pointer")
             .attr("fill", attrs.nodeDefaultBackground)
             .attr("stroke", 'black')
+            .attr("stroke-width", 0.1)
 
         // Move node button group to the desired position
         nodeUpdate
@@ -586,9 +599,10 @@ export default class OrgChart {
 
         // Restyle node button circle
         nodeUpdate
-            .select(".node-button-circle")
-            .attr("r", 16)
-            .attr("stroke", ({ borderColor }) => borderColor);
+            .select(".node-button-foreign-object .node-button-div")
+            .html(({ children }) => {
+                return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${attrs.icons[attrs.layout](children)}  </div>`;
+            })
 
         // Restyle button texts
         nodeUpdate
