@@ -21,25 +21,98 @@ export default class OrgChart {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
             svgWidth: 800,
             svgHeight: 600,
-            marginTop: 0,
-            marginBottom: 0,
-            marginRight: 0,
-            marginLeft: 0,
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
             data: null,
-            depth: 180,
             duration: 600,
-            strokeWidth: 3,
             initialZoom: 1,
-            nodeDefaultBackground: 'white',
+            rootMargin: 40,
+            nodeDefaultBackground: 'none',
+            linkUpdate: (d, i, arr) => { },
+            nodeUpdate: (d, i, arr) => { },
             nodeDimensions: d => [100, 100],
-            neighbourMargin: d => 10,
+            nodeWidth: d => 100,
+            nodeHeight: d => 100,
+            siblingsMargin: d => 10,
             childrenMargin: d => 20,
             onNodeClick: (d) => d,
-            template: d => 'Sample Node Content, override using chart.template(data=>data.htmlContent)',
-            layout: "h" // h, v
+            nodeContent: d => 'Sample Node Content, override using chart.template(data=>data.htmlContent)',
+            layout: "bottom",// top, left,right, bottom
+            layoutBindings: {
+                "left": {
+                    "nodeJoinX": node => node.x + node.width,
+                    "nodeJoinY": node => node.y,
+                    "linkJoinX": node => node.x + node.width,
+                    "linkJoinY": node => node.y,
+                    "linkX": node => node.x,
+                    "linkY": node => node.y,
+                    "linkParentX": node => node.parent.x + node.parent.width,
+                    "linkParentY": node => node.parent.y,
+                    "buttonX": node => node.width,
+                    "buttonY": node => node.height / 2,
+                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX }) => `translate(${rootMargin},${centerY}) scale(${scale})`,
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin }) => [height + siblingsMargin, width + childrenMargin],
+                    "zoomTransform": ({ centerY, scale }) => `translate(${0},${centerY}) scale(${scale})`,
+                    "diagonal": this.hdiagonal.bind(this),
+                    "swap": d => { const x = d.x; d.x = d.y; d.y = x; },
+                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x},${y - height / 2})`,
+                },
+                "top": {
+                    "nodeJoinX": node => node.x,
+                    "nodeJoinY": node => node.y + node.height,
+                    "linkJoinX": node => node.x,
+                    "linkJoinY": node => node.y + node.height,
+                    "linkX": node => node.x,
+                    "linkY": node => node.y,
+                    "linkParentX": node => node.parent.x,
+                    "linkParentY": node => node.parent.y + node.parent.height,
+                    "buttonX": node => node.width / 2,
+                    "buttonY": node => node.height,
+                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX }) => `translate(${centerX},${rootMargin}) scale(${scale})`,
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin }) => [width + siblingsMargin, height + childrenMargin],
+                    "zoomTransform": ({ centerX, scale }) => `translate(${centerX},0}) scale(${scale})`,
+                    "diagonal": this.diagonal.bind(this),
+                    "swap": d => { },
+                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y})`,
+                },
+                "bottom": {
+                    "nodeJoinX": node => node.x - node.width / 4,
+                    "nodeJoinY": node => node.y - node.height,
+                    "linkJoinX": node => node.x,
+                    "linkJoinY": node => node.y - node.height,
+                    "linkX": node => node.x,
+                    "linkY": node => node.y,
+                    "linkParentX": node => node.parent.x,
+                    "linkParentY": node => node.parent.y - node.parent.height,
+                    "buttonX": node => node.width / 2,
+                    "buttonY": node => 0,
+                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX, chartHeight }) => `translate(${centerX},${chartHeight - rootMargin}) scale(${scale})`,
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin }) => [width + siblingsMargin, height + childrenMargin],
+                    "zoomTransform": ({ centerX, scale }) => `translate(${centerX},0}) scale(${scale})`,
+                    "diagonal": this.diagonal.bind(this),
+                    "swap": d => { d.y = -d.y; },
+                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y - height})`,
+                },
+                "right": {
+                    "nodeJoinX": node => node.x-node.width,
+                    "nodeJoinY": node => node.y-node.height/4,
+                    "linkJoinX": node => node.x-node.width,
+                    "linkJoinY": node => node.y,
+                    "linkX": node => node.x,
+                    "linkY": node => node.y,
+                    "linkParentX": node => node.parent.x - node.parent.width,
+                    "linkParentY": node => node.parent.y,
+                    "buttonX": node => 0,
+                    "buttonY": node => node.height / 2,
+                    "centerTransform": ({ root, rootMargin, centerY, scale, centerX,chartWidth }) => `translate(${chartWidth - rootMargin},${centerY}) scale(${scale})`,
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin }) => [height + siblingsMargin, width + childrenMargin],
+                    "zoomTransform": ({ centerY, scale }) => `translate(${0},${centerY}) scale(${scale})`,
+                    "diagonal": this.hdiagonal.bind(this),
+                    "swap": d => { const x = d.x; d.x = -d.y; d.y = x; },
+                    "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x-width},${y - height / 2})`,
+                },
+            }
         };
 
         this.getChartState = () => attrs;
@@ -61,7 +134,6 @@ export default class OrgChart {
     }
 
     initializeEnterExitUpdatePattern() {
-
         d3.selection.prototype.patternify = function (params) {
             var container = this;
             var selector = params.selector;
@@ -115,28 +187,17 @@ export default class OrgChart {
         // Store passed zoom level
         attrs.initialZoom = zoomLevel;
 
-        if (attrs.layout === "h") {
-            // Rescale container element accordingly
-            attrs.centerG.attr(
-                "transform",
-                ` translate(0, ${calc.centerY}) scale(${attrs.initialZoom
-                })`
-            );
-        } else {
-            // Rescale container element accordingly
-            attrs.centerG.attr(
-                "transform",
-                ` translate(${calc.centerX}, ${calc.nodeMaxHeight / 2}) scale(${attrs.initialZoom
-                })`
-            );
-        }
+        return attrs.layoutBindings[attrs.layout].zoomTransform({
+            centerX: calc.centerX,
+            centerY: calc.centerY,
+            scale: attrs.initialZoom,
+        });
+
     }
 
     render() {
         //InnerFunctions which will update visuals
-
         const attrs = this.getChartState();
-        const thisObjRef = this;
 
         //Drawing containers
         const container = d3.select(attrs.container);
@@ -145,35 +206,17 @@ export default class OrgChart {
 
         //Calculated properties
         const calc = {
-            id: null,
-            chartTopMargin: null,
-            chartLeftMargin: null,
-            chartWidth: null,
-            chartHeight: null
+            id: `ID${Math.floor(Math.random() * 1000000)}`, // id for event handlings,
+            chartWidth: attrs.svgWidth,
+            chartHeight: attrs.svgHeight
         };
-        calc.id = `ID${Math.floor(Math.random() * 1000000)}`; // id for event handlings
-        calc.chartLeftMargin = attrs.marginLeft;
-        calc.chartTopMargin = attrs.marginTop;
-        calc.chartWidth = attrs.svgWidth - attrs.marginRight - calc.chartLeftMargin;
-        calc.chartHeight =
-            attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
         attrs.calc = calc;
 
-        // Get maximum node width and height
-        calc.nodeMaxHeight = d3.max(attrs.data, ({ height }) => height);
-
         // Calculate max node depth (it's needed for layout heights calculation)
-        attrs.depth = calc.nodeMaxHeight + 100;
         calc.centerX = calc.chartWidth / 2;
         calc.centerY = calc.chartHeight / 2;
 
-        if (attrs.layout == "h") {
-            attrs.depth = 200
-        }
-
-
-
-        // ******************* BEHAVIORS . **********************
+        // ******************* BEHAVIORS  **********************
         const behaviors = {
             zoom: null
         };
@@ -189,19 +232,24 @@ export default class OrgChart {
             .id(({ nodeId }) => nodeId)
             .parentId(({ parentNodeId }) => parentNodeId)(attrs.data);
 
-        attrs.root.each(node => {
-            const dimensions = attrs.nodeDimensions(node);
-            const width = dimensions[0];
-            const height = dimensions[1];
+        attrs.root.each((node, i, arr) => {
+            let width = attrs.nodeWidth(node);
+            let height = attrs.nodeHeight(node);
             Object.assign(node, { width, height })
         })
 
         attrs.flexTreeLayout = flextree({
             nodeSize: node => {
-                const dim = attrs.nodeDimensions(node);
-                const neighbourMargin = attrs.neighbourMargin(node)
+                const width = attrs.nodeWidth(node);
+                const height = attrs.nodeHeight(node);
+                const siblingsMargin = attrs.siblingsMargin(node)
                 const childrenMargin = attrs.childrenMargin(node);
-                return [dim[0] + neighbourMargin, dim[1] + neighbourMargin + childrenMargin];
+                return attrs.layoutBindings[attrs.layout].nodeFlexSize({
+                    width,
+                    height,
+                    siblingsMargin,
+                    childrenMargin
+                });
             }
         });
 
@@ -252,10 +300,6 @@ export default class OrgChart {
                 tag: "g",
                 selector: "chart"
             })
-            .attr(
-                "transform",
-                `translate(${calc.chartLeftMargin},${calc.chartTopMargin})`
-            );
 
         chart.patternify({ tag: 'circle', selector: 'center-circle' })
             .attr('r', 10)
@@ -270,10 +314,15 @@ export default class OrgChart {
                 selector: "center-group"
             })
             .attr("transform", () => {
-                if (attrs.layout === "h")
-                    return `translate(0,${calc.centerY}) scale(${attrs.initialZoom})`;
-                return `translate(${calc.centerX},${calc.nodeMaxHeight / 2}) scale(${attrs.initialZoom
-                    })`;
+                return attrs.layoutBindings[attrs.layout].centerTransform({
+                    centerX: calc.centerX,
+                    centerY: calc.centerY,
+                    scale: attrs.initialZoom,
+                    rootMargin: attrs.rootMargin,
+                    root: attrs.root,
+                    chartHeight: calc.chartHeight,
+                    chartWidth: calc.chartWidth
+                })
             });
 
         attrs.chart = chart;
@@ -328,7 +377,7 @@ export default class OrgChart {
     }
 
     // This function basically redraws visible graph, based on nodes state
-    update({ x0, y0, x, y }) {
+    update({ x0, y0, x, y, width, height }) {
         const attrs = this.getChartState();
         const calc = attrs.calc;
 
@@ -341,8 +390,8 @@ export default class OrgChart {
             if (d.width) return d;
 
             const dimensions = attrs.nodeDimensions(node);
-            const width = dimensions[0];
-            const height = dimensions[1];
+            const width = dimensions[1];
+            const height = dimensions[0];
 
             // Extend node object with calculated properties
             return Object.assign(d, {
@@ -354,17 +403,7 @@ export default class OrgChart {
         // Get all links
         const links = treeData.descendants().slice(1);
 
-        // Set constant depth for each nodes
-        // nodes.forEach((d) => (d.y = d.depth * attrs.depth));
-
-        if (attrs.layout === "h") {
-            // Switch x and y coordinates for horizontal layout
-            nodes.forEach((d) => {
-                const x = d.x;
-                d.x = d.y;
-                d.y = x;
-            });
-        }
+        nodes.forEach(attrs.layoutBindings[attrs.layout].swap)
 
         // --------------------------  LINKS ----------------------
         // Get links selection
@@ -378,16 +417,10 @@ export default class OrgChart {
             .insert("path", "g")
             .attr("class", "link")
             .attr("d", (d) => {
-                const o = {
-                    x: x0,
-                    y: y0
-                };
-
-                if (attrs.layout == "h") {
-                    return this.hdiagonal(o, o);
-                } else {
-                    return this.diagonal(o, o);
-                }
+                const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+                const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+                const o = { x: xo, y: yo };
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o);
             });
 
         // Get links update selection
@@ -396,27 +429,28 @@ export default class OrgChart {
         // Styling links
         linkUpdate
             .attr("fill", "none")
-            .attr("stroke-width", ({ data }) => data.connectorLineWidth || 2)
+            .attr("stroke-width", 2)
             .attr("stroke", ({ data }) => {
                 return "#767b9b";
             })
-            .attr("stroke-dasharray", ({ data }) => {
-                if (data.dashArray) {
-                    return data.dashArray;
-                }
-                return "";
-            });
+
+        // Allow external modifications
+        linkUpdate.each(attrs.linkUpdate);
 
         // Transition back to the parent element position
         linkUpdate
             .transition()
             .duration(attrs.duration)
             .attr("d", (d) => {
-                if (attrs.layout == "h") {
-                    return this.hdiagonal(d, d.parent);
-                } else {
-                    return this.diagonal(d, d.parent);
-                }
+                const n = {
+                    x: attrs.layoutBindings[attrs.layout].linkX(d),
+                    y: attrs.layoutBindings[attrs.layout].linkY(d)
+                };
+                const p = {
+                    x: attrs.layoutBindings[attrs.layout].linkParentX(d),
+                    y: attrs.layoutBindings[attrs.layout].linkParentY(d),
+                };
+                return attrs.layoutBindings[attrs.layout].diagonal(n, p);
             });
 
         // Remove any  links which is exiting after animation
@@ -425,16 +459,10 @@ export default class OrgChart {
             .transition()
             .duration(attrs.duration)
             .attr("d", (d) => {
-                const o = {
-                    x: x,
-                    y: y
-                };
-
-                if (attrs.layout == "h") {
-                    return this.hdiagonal(o, o);
-                } else {
-                    return this.diagonal(o, o);
-                }
+                const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
+                const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
+                const o = { x: xo, y: yo };
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o);
             })
             .remove();
 
@@ -449,7 +477,12 @@ export default class OrgChart {
             .enter()
             .append("g")
             .attr("class", "node")
-            .attr("transform", (d) => `translate(${x0},${y0})`)
+            .attr("transform", (d) => {
+                if (d == attrs.root) return `translate(${x0},${y0})`
+                const xj = attrs.layoutBindings[attrs.layout].nodeJoinX({ x: x0, y: y0, width, height });
+                const yj = attrs.layoutBindings[attrs.layout].nodeJoinY({ x: x0, y: y0, width, height });
+                return `translate(${xj},${yj})`
+            })
             .attr("cursor", "pointer")
             .on("click", (event, { data }) => {
                 if ([...event.srcElement.classList].includes("node-button-circle")) {
@@ -466,11 +499,12 @@ export default class OrgChart {
                 data: (d) => [d]
             })
 
-
         // Node update styles
         const nodeUpdate = nodeEnter
             .merge(nodesSelection)
             .style("font", "12px sans-serif");
+
+        nodeUpdate.each(attrs.nodeUpdate);
 
         // Add foreignObject element inside rectangle
         const fo = nodeUpdate.patternify({
@@ -518,17 +552,19 @@ export default class OrgChart {
             .transition()
             .attr("opacity", 0)
             .duration(attrs.duration)
-            .attr("transform", ({ x, y }) => `translate(${x},${y})`)
-            .attr("opacity", 1);
+            .attr("transform", ({ x, y, width, height }) => {
+                return attrs.layoutBindings[attrs.layout].nodeUpdateTransform({ x, y, width, height });
 
+            })
+            .attr("opacity", 1);
 
         // Style node rectangles
         nodeUpdate
             .select(".node-rect")
             .attr("width", ({ width }) => width)
             .attr("height", ({ height }) => height)
-            .attr("x", ({ width }) => -width / 2)
-            .attr("y", ({ height }) => -height / 2)
+            .attr("x", ({ width }) => 0)
+            .attr("y", ({ height }) => 0)
             .attr("cursor", "pointer")
             .attr("fill", attrs.nodeDefaultBackground)
             .attr("stroke", 'black')
@@ -537,8 +573,9 @@ export default class OrgChart {
         nodeUpdate
             .select(".node-button-g")
             .attr("transform", ({ data, width, height }) => {
-                if (attrs.layout == "h") return `translate(${width / 2},0)`;
-                return `translate(0,${height / 2})`;
+                const x = attrs.layoutBindings[attrs.layout].buttonX({ width, height });
+                const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
+                return `translate(${x},${y})`
             })
             .attr("opacity", ({ children, _children }) => {
                 if (children || _children) {
@@ -551,7 +588,6 @@ export default class OrgChart {
         nodeUpdate
             .select(".node-button-circle")
             .attr("r", 16)
-            .attr("stroke-width", ({ data }) => data.borderWidth || attrs.strokeWidth)
             .attr("stroke", ({ borderColor }) => borderColor);
 
         // Restyle button texts
@@ -576,7 +612,11 @@ export default class OrgChart {
             .attr("opacity", 1)
             .transition()
             .duration(attrs.duration)
-            .attr("transform", (d) => `translate(${x},${y})`)
+            .attr("transform", (d) => {
+                const ex = attrs.layoutBindings[attrs.layout].nodeJoinX({ x, y, width, height });
+                const ey = attrs.layoutBindings[attrs.layout].nodeJoinY({ x, y, width, height });
+                return `translate(${ex},${ey})`
+            })
             .on("end", function () {
                 d3.select(this).remove();
             })
@@ -687,14 +727,13 @@ export default class OrgChart {
             .selectAll(".node-foreign-object")
             .attr("width", ({ width }) => width)
             .attr("height", ({ height }) => height)
-            .attr("x", ({ width }) => -width / 2)
-            .attr("y", ({ height }) => -height / 2);
+            .attr("x", ({ width }) => 0)
+            .attr("y", ({ height }) => 0);
         attrs.svg
             .selectAll(".node-foreign-object-div")
             .style("width", ({ width }) => `${width}px`)
             .style("height", ({ height }) => `${height}px`)
-            .style("color", "white")
-            .html(({ data }) => attrs.template(data));
+            .html(attrs.nodeContent);
     }
 
     // Toggle children on click.
