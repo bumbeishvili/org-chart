@@ -11,14 +11,19 @@
 
 <body>
 
+    <div class=action-buttons>
+        <button onclick='chart.setExpanded("O-6164",true)'>Expand O-6164</button>
+        <button onclick='chart.setExpanded("O-6164",false)'>Collapse O-6164</button>
+        <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})'>Add node as roots' child</button>
+        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",expanded:true})'>Insert node at 5-th level</button>
+        <button onclick='chart.removeNode("O-6070")'>Remove O-6070</button>
+    </div>
+
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./build/d3-org-chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
 
-
-
-
-    <div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
 
 
     <a href="https://github.com/bumbeishvili/d3-organization-chart">
@@ -26,32 +31,15 @@
             src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
     </a>
 
-    <div class="chart-container" style=" padding-top:10px; width:1000px; height:600px "> </div>
+    <div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
 
     <script>
-        console.log(d3)
+        var chart;
         d3.csv('data.csv')
             .then(dataFlattened => {
-                const data = dataFlattened.map((d,i) => {
-                    const width = 350; //Math.round(Math.random()*50+300);
-                    const height = 160; // Math.round(Math.random()*20+130);
-                    const cornerShape = "ORIGINAL"; //['ORIGINAL','ROUNDED','CIRCLE']
-                    const nodeImageWidth = 100;
-                    const nodeImageHeight = 100;
-                    const centerLeftDistance = 0;
-                    const expanded = false; //d.id=="O-6"
-
-                    const titleMarginLeft = nodeImageWidth / 2 + 20 + centerLeftDistance;
-                    const contentMarginLeft = width / 2 + 25;
-                    return d;
-                });
-
-
-
-
-                new d3.OrgChart()
+                chart = new d3.OrgChart()
                     .container('.chart-container')
-                    .data(data)
+                    .data(dataFlattened)
                     // .svgHeight(window.innerHeight)
                     // .initialZoom(1)
                     // .nodeWidth((d3Node) => {

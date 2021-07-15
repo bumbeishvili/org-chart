@@ -12,8 +12,6 @@ const d3 = {
     stratify,
     zoom,
 }
-console.log({ flextree })
-
 export default class OrgChart {
     constructor() {
         // Exposed variables 
@@ -25,20 +23,23 @@ export default class OrgChart {
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
             data: null,
-            duration: 600,
+            duration: 400,
             initialZoom: 1,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
-            linkUpdate: (d, i, arr) => { },
+            linkUpdate: function (d, i, arr) {
+                d3.select(this)
+                    .attr("stroke", "lightgray")
+            },
             nodeUpdate: (d, i, arr) => { },
             nodeWidth: d3Node => 200,
             nodeHeight: d => 100,
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
             onNodeClick: (d) => d,
-            nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node Content, override using <br/> <br/> 
+            nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node(id=${d.id}), override using <br/> <br/> 
             <code>chart<br/>
             &nbsp;.nodeContent({data}=>{ <br/>
              &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
@@ -155,9 +156,7 @@ export default class OrgChart {
             // Pattern in action
             var selection = container.selectAll("." + selector).data(data, (d, i) => {
                 if (typeof d === "object") {
-                    if (d.id) {
-                        return d.id;
-                    }
+                    if (d.id) { return d.id; }
                 }
                 return i;
             });
@@ -169,26 +168,26 @@ export default class OrgChart {
     }
 
     // This method retrieves passed node's children IDs (including node)
-    getNodeChildrenIds({ data, children, _children }, nodeIdsStore) {
+    getNodeChildren({ data, children, _children }, nodeStore) {
         // Store current node ID
-        nodeIdsStore.push(data.nodeId);
+        nodeStore.push(data);
 
         // Loop over children and recursively store descendants id (expanded nodes)
         if (children) {
             children.forEach((d) => {
-                this.getNodeChildrenIds(d, nodeIdsStore);
+                this.getNodeChildren(d, nodeStore);
             });
         }
 
         // Loop over _children and recursively store descendants id (collapsed nodes)
         if (_children) {
             _children.forEach((d) => {
-                this.getNodeChildrenIds(d, nodeIdsStore);
+                this.getNodeChildren(d, nodeStore);
             });
         }
 
         // Return result
-        return nodeIdsStore;
+        return nodeStore;
     }
 
     // This method can be invoked via chart.setZoomFactor API, it zooms to particulat scale
@@ -238,19 +237,6 @@ export default class OrgChart {
         behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d));
 
         //****************** ROOT node work ************************
-
-        // Convert flat data to hierarchical
-        attrs.root = d3
-            .stratify()
-            .id(d => attrs.nodeId(d))
-            .parentId(d => attrs.parentNodeId(d))(attrs.data);
-
-        attrs.root.each((node, i, arr) => {
-            let width = attrs.nodeWidth(node);
-            let height = attrs.nodeHeight(node);
-            Object.assign(node, { width, height })
-        })
-
         attrs.flexTreeLayout = flextree({
             nodeSize: node => {
                 const width = attrs.nodeWidth(node);
@@ -266,30 +252,7 @@ export default class OrgChart {
             }
         });
 
-        attrs.flexTreeLayout(attrs.root);
-
-        // Set child nodes enter appearance positions
-        attrs.root.x0 = 0;
-        attrs.root.y0 = 0;
-
-        /** Get all nodes as array (with extended parent & children properties set)
-                This way we can access any node's parent directly using node.parent - pretty cool, huh?
-            */
-        attrs.allNodes = attrs.root.descendants();
-
-        // Assign direct children and total subordinate children's cound
-        attrs.allNodes.forEach((d) => {
-            Object.assign(d.data, {
-                _directSubordinates: d.children ? d.children.length : 0,
-                _totalSubordinates: d.descendants().length - 1
-            });
-        });
-
-        // Collapse all children at first
-        attrs.root.children.forEach((d) => this.collapse(d));
-
-        // Then expand some nodes, which have `expanded` property set
-        attrs.root.children.forEach((d) => this.expandSomeNodes(d));
+        this.setLayouts({ expandNodesFirst: false });
 
         // *************************  DRAWING **************************
         //Add svg
@@ -357,27 +320,34 @@ export default class OrgChart {
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
     addNode(obj) {
         const attrs = this.getChartState();
-        attrs.data.push(obj);
+        const found = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.nodeId(obj))[0];
+        if (!found) {
+            attrs.data.push(obj);
+            // Update state of nodes and redraw graph
+            this.updateNodesState();
+        } else {
+            console.error(`Node with id "${attrs.nodeId(obj)}" already exists in tree`)
+        }
 
-        // Update state of nodes and redraw graph
-        this.updateNodesState();
         return this;
     }
 
     // This function can be invoked via chart.removeNode API, and it removes node from tree at runtime
     removeNode(nodeId) {
         const attrs = this.getChartState();
-        const node = attrs.allNodes.filter(({ data }) => data.nodeId == nodeId)[0];
+        const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == nodeId)[0];
 
         // Remove all node childs
         if (node) {
             // Retrieve all children nodes ids (including current node itself)
-            const nodeChildrenIds = this.getNodeChildrenIds(node, []);
+            node.descendants()
+                .forEach(d => d.data._filteredOut = true)
+
+            const descendants = this.getNodeChildren(node, [], attrs.nodeId);
+            descendants.forEach(d => d._filtered = true)
 
             // Filter out retrieved nodes and reassign data
-            attrs.data = attrs.data.filter(
-                (d) => !nodeChildrenIds.includes(d.nodeId)
-            );
+            attrs.data = attrs.data.filter(d => !d._filtered);
 
             const updateNodesState = this.updateNodesState.bind(this);
             // Update state of nodes and redraw graph
@@ -478,7 +448,7 @@ export default class OrgChart {
         // Get nodes selection
         const nodesSelection = attrs.centerG
             .selectAll("g.node")
-            .data(nodes, ({ id }) => id);
+            .data(nodes, ({ data }) => attrs.nodeId(data));
 
         // Enter any new nodes at the parent's previous position.
         const nodeEnter = nodesSelection
@@ -496,7 +466,7 @@ export default class OrgChart {
                 if ([...event.srcElement.classList].includes("node-button-circle")) {
                     return;
                 }
-                attrs.onNodeClick(data.nodeId);
+                attrs.onNodeClick(attrs.nodeId(data));
             });
 
         // Add background rectangle for the nodes
@@ -583,7 +553,7 @@ export default class OrgChart {
             .attr("fill", attrs.nodeDefaultBackground)
             .attr("stroke", 'black')
             .attr("stroke-width", 0.1)
-            .attr('rx',3)
+            .attr('rx', 3)
 
         // Move node button group to the desired position
         nodeUpdate
@@ -781,10 +751,10 @@ export default class OrgChart {
     }
 
     // This function can be invoked via chart.setExpanded API, it expands or collapses particular node
-    setExpanded(id, expandedFlag) {
+    setExpanded(id, expandedFlag = true) {
         const attrs = this.getChartState();
         // Retrieve node by node Id
-        const node = attrs.allNodes.filter(({ data }) => data.nodeId == id)[0];
+        const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == id)[0];
 
         // If node exists, set expansion flag
         if (node) node.data.expanded = expandedFlag;
@@ -840,18 +810,35 @@ export default class OrgChart {
     // This function updates nodes state and redraws graph, usually after data change
     updateNodesState() {
         const attrs = this.getChartState();
+
+        this.setLayouts({ expandNodesFirst: true });
+
+        // Redraw Graphs
+        this.update(attrs.root);
+    }
+
+    setLayouts({ expandNodesFirst = true }) {
+        const attrs = this.getChartState();
         // Store new root by converting flat data to hierarchy
         attrs.root = d3
             .stratify()
             .id((d) => attrs.nodeId(d))
             .parentId(d => attrs.parentNodeId(d))(attrs.data);
 
+        attrs.root.each((node, i, arr) => {
+            let width = attrs.nodeWidth(node);
+            let height = attrs.nodeHeight(node);
+            Object.assign(node, { width, height })
+        })
+
+        attrs.flexTreeLayout(attrs.root);
+
         // Store positions, where children appear during their enter animation
         attrs.root.x0 = 0;
         attrs.root.y0 = 0;
 
-        // Store all nodes in flat format (although, now we can browse parent, see depth e.t.c. )
-        attrs.allNodes = attrs.layouts.treemap(attrs.root).descendants();
+
+        attrs.allNodes = attrs.root.descendants();
 
         // Store direct and total descendants count
         attrs.allNodes.forEach((d) => {
@@ -861,17 +848,16 @@ export default class OrgChart {
             });
         });
 
-        // Expand all nodes first
-        attrs.root.children.forEach(this.expand);
+        if (expandNodesFirst) {
+            // Expand all nodes first
+            attrs.root.children.forEach(this.expand);
+        }
 
         // Then collapse them all
         attrs.root.children.forEach((d) => this.collapse(d));
 
         // Then only expand nodes, which have expanded proprty set to true
         attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
-
-        // Redraw Graphs
-        this.update(attrs.root);
     }
 
     // Function which collapses passed node and it's descendants
