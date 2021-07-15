@@ -20,7 +20,7 @@ export default class OrgChart {
         const attrs = {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
             svgWidth: 800,
-            svgHeight: 600,
+            svgHeight: window.innerHeight,
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
@@ -29,16 +29,22 @@ export default class OrgChart {
             initialZoom: 1,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
+            nodeId: d => d.nodeId || d.id,
+            parentNodeId: d => d.parentNodeId || d.parentId,
             linkUpdate: (d, i, arr) => { },
             nodeUpdate: (d, i, arr) => { },
-            nodeDimensions: d => [100, 100],
-            nodeWidth: d => 100,
+            nodeWidth: d3Node => 200,
             nodeHeight: d => 100,
-            siblingsMargin: d => 10,
-            childrenMargin: d => 20,
+            siblingsMargin: d3Node => 20,
+            childrenMargin: d => 60,
             onNodeClick: (d) => d,
-            nodeContent: d => 'Sample Node Content, override using chart.template(data=>data.htmlContent)',
-            layout: "right",// top, left,right, bottom
+            nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node Content, override using <br/> <br/> 
+            <code>chart<br/>
+            &nbsp;.nodeContent({data}=>{ <br/>
+             &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
+             &nbsp;})</code></div>`,
+            layout: "top",// top, left,right, bottom
+            buttonContent: ({ children, layout, icons }) => `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${icons[layout](children)}  </div>`,
             icons: {
                 "left": d => d ? `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>` : `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>`,
                 "bottom": d => d ? `<div style="margin-top:-20px;font-size:25px">ˬ</div>` : `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
@@ -48,7 +54,7 @@ export default class OrgChart {
             layoutBindings: {
                 "left": {
                     "nodeJoinX": node => node.x + node.width,
-                    "nodeJoinY": node => node.y,
+                    "nodeJoinY": node => node.y - node.height / 2,
                     "linkJoinX": node => node.x + node.width,
                     "linkJoinY": node => node.y,
                     "linkX": node => node.x,
@@ -65,7 +71,7 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x},${y - height / 2})`,
                 },
                 "top": {
-                    "nodeJoinX": node => node.x,
+                    "nodeJoinX": node => node.x - node.width / 2,
                     "nodeJoinY": node => node.y + node.height,
                     "linkJoinX": node => node.x,
                     "linkJoinY": node => node.y + node.height,
@@ -83,8 +89,8 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y})`,
                 },
                 "bottom": {
-                    "nodeJoinX": node => node.x - node.width / 4,
-                    "nodeJoinY": node => node.y - node.height,
+                    "nodeJoinX": node => node.x - node.width / 2,
+                    "nodeJoinY": node => node.y - node.height - node.height,
                     "linkJoinX": node => node.x,
                     "linkJoinY": node => node.y - node.height,
                     "linkX": node => node.x,
@@ -101,8 +107,8 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y - height})`,
                 },
                 "right": {
-                    "nodeJoinX": node => node.x - node.width,
-                    "nodeJoinY": node => node.y - node.height / 4,
+                    "nodeJoinX": node => node.x - node.width - node.width,
+                    "nodeJoinY": node => node.y - node.height / 2,
                     "linkJoinX": node => node.x - node.width,
                     "linkJoinY": node => node.y,
                     "linkX": node => node.x,
@@ -209,6 +215,7 @@ export default class OrgChart {
         const container = d3.select(attrs.container);
         const containerRect = container.node().getBoundingClientRect();
         if (containerRect.width > 0) attrs.svgWidth = containerRect.width;
+        attrs.container = container;
 
         //Calculated properties
         const calc = {
@@ -235,8 +242,8 @@ export default class OrgChart {
         // Convert flat data to hierarchical
         attrs.root = d3
             .stratify()
-            .id(({ nodeId }) => nodeId)
-            .parentId(({ parentNodeId }) => parentNodeId)(attrs.data);
+            .id(d => attrs.nodeId(d))
+            .parentId(d => attrs.parentNodeId(d))(attrs.data);
 
         attrs.root.each((node, i, arr) => {
             let width = attrs.nodeWidth(node);
@@ -333,9 +340,6 @@ export default class OrgChart {
 
         attrs.chart = chart;
 
-        // ************************** ROUNDED AND SHADOW IMAGE  WORK USING SVG FILTERS **********************
-
-
         // Display tree contenrs
         this.update(attrs.root);
 
@@ -343,9 +347,8 @@ export default class OrgChart {
         // This function restyles foreign object elements ()
 
         d3.select(window).on(`resize.${attrs.id}`, () => {
-            const containerRect = container.node().getBoundingClientRect();
-            //  if (containerRect.width > 0) attrs.svgWidth = containerRect.width;
-            //	main();
+            const containerRect = attrs.container.node().getBoundingClientRect();
+            attrs.svg.attr('width', containerRect.width)
         });
 
         return this;
@@ -395,9 +398,8 @@ export default class OrgChart {
             // If at least one property is already set, then we don't want to reset other properties
             if (d.width) return d;
 
-            const dimensions = attrs.nodeDimensions(node);
-            const width = dimensions[1];
-            const height = dimensions[0];
+            const width = attrs.nodeWidth(node)
+            const height = attrs.nodeHeight(node)
 
             // Extend node object with calculated properties
             return Object.assign(d, {
@@ -581,6 +583,7 @@ export default class OrgChart {
             .attr("fill", attrs.nodeDefaultBackground)
             .attr("stroke", 'black')
             .attr("stroke-width", 0.1)
+            .attr('rx',3)
 
         // Move node button group to the desired position
         nodeUpdate
@@ -601,7 +604,7 @@ export default class OrgChart {
         nodeUpdate
             .select(".node-button-foreign-object .node-button-div")
             .html(({ children }) => {
-                return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${attrs.icons[attrs.layout](children)}  </div>`;
+                return attrs.buttonContent({ children, layout: attrs.layout, icons: attrs.icons })
             })
 
         // Restyle button texts
@@ -635,22 +638,6 @@ export default class OrgChart {
                 d3.select(this).remove();
             })
             .attr("opacity", 0);
-
-        // On exit reduce the node rects size to 0
-        nodeExitTransition
-            .selectAll(".node-rect")
-            .attr("width", 10)
-            .attr("height", 10)
-            .attr("x", 0)
-            .attr("y", 0);
-
-        // On exit reduce the node image rects size to 0
-        nodeExitTransition
-            .selectAll(".node-image-rect")
-            .attr("width", 10)
-            .attr("height", 10)
-            .attr("x", ({ width }) => width / 2)
-            .attr("y", ({ height }) => height / 2);
 
         // Store the old positions for transition.
         nodes.forEach((d) => {
@@ -856,8 +843,8 @@ export default class OrgChart {
         // Store new root by converting flat data to hierarchy
         attrs.root = d3
             .stratify()
-            .id(({ nodeId }) => nodeId)
-            .parentId(({ parentNodeId }) => parentNodeId)(attrs.data);
+            .id((d) => attrs.nodeId(d))
+            .parentId(d => attrs.parentNodeId(d))(attrs.data);
 
         // Store positions, where children appear during their enter animation
         attrs.root.x0 = 0;

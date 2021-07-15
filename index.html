@@ -32,7 +32,7 @@
         console.log(d3)
         d3.csv('data.csv')
             .then(dataFlattened => {
-                const data = dataFlattened.map((d) => {
+                const data = dataFlattened.map((d,i) => {
                     const width = 350; //Math.round(Math.random()*50+300);
                     const height = 160; // Math.round(Math.random()*20+130);
                     const cornerShape = "ORIGINAL"; //['ORIGINAL','ROUNDED','CIRCLE']
@@ -43,47 +43,7 @@
 
                     const titleMarginLeft = nodeImageWidth / 2 + 20 + centerLeftDistance;
                     const contentMarginLeft = width / 2 + 25;
-                    return {
-                        nodeId: d.id,
-                        parentNodeId: d.parentId,
-                        imageUrl: d.imageUrl,
-                        template: `<div style="color:#2A2A2A;height:160px;margin-top:-30px;background-image: linear-gradient(to right , #FFFFFF, #ECEDF0);">
-                  <div style="margin-left:${titleMarginLeft + 77}px;
-                              margin-top:30px;
-                              padding-top:20px;
-                              font-size:20px;
-                              font-weight:bold;
-                         ">${d.name} </div>
-                 <div style="margin-left:${titleMarginLeft + 77}px;
-                              margin-top:3px;
-                              font-size:16px;
-                         ">${d.positionName} </div>
-
-                 <div style="margin-left:${titleMarginLeft + 77}px;
-                              margin-top:3px;
-                              font-size:14px;
-                         ">${d.unit?.value}</div>
-
-                 <div style="margin-left:${contentMarginLeft + 70}px;
-                             margin-top:15px;
-                             font-size:13px;
-                             position:absolute;
-                             bottom:5px;
-                            ">
-                      <div>${d.office}</div>
-                      <div style="margin-top:5px">${d.area}</div>
-                 </div>
-              </div>`,
-                        //  connectorLineColor:{
-                        //    red:59,
-                        //    green:60,
-                        //    blue:63,
-                        //    alpha:1
-                        //  },
-                        //connectorLineWidth: 2,
-                        //dashArray: "",
-                        //expanded: expanded
-                    };
+                    return d;
                 });
 
 
@@ -92,45 +52,42 @@
                 new d3.OrgChart()
                     .container('.chart-container')
                     .data(data)
-                    .svgWidth(window.innerWidth)
-                    .svgHeight(window.innerHeight)
-                    .initialZoom(1)
-                    .nodeWidth((d3Node) => {
-                        let i = 0;
-                        if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
-                        return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
-                    })
-                    .nodeHeight((d3Node) => {
-                        let i = 0;
-                        if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
-                        return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
-                    })
-                    .siblingsMargin(d3Node => 0)
-                    .childrenMargin(d3Node => 60)
-                    .onNodeClick(d => console.log(d + ' node clicked'))
-                    .linkUpdate(function (d3Node, i, arr) {
-                        const link = this;
-                        d3.select(link)
-                            .attr('stroke-dasharray', !i ? '2 2' : 'none')
-                            .attr('stroke-width', 3)
-                    })
-                    .nodeUpdate(function (data, i, arr) {
-                        d3.select(this).on('click.node', (event, d, i) => {
-                            console.log(d.nodeId + ' node clicked')
-                        })
-                    })
-                    .nodeContent(function (d, i, arr) {
-                        console.log(d)
-                        return `
-                           <div style="padding:0px">
-                             <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
-                             Children Direct:${d.data._directSubordinates}
-                             Children Total:${d.data._totalSubordinates}
-                            
-                            </div>
-                        
-                        `;
-                    })
+                    // .svgHeight(window.innerHeight)
+                    // .initialZoom(1)
+                    // .nodeWidth((d3Node) => {
+                    //     let i = 0;
+                    //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
+                    //     return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
+                    // })
+                    // .nodeHeight((d3Node) => {
+                    //     let i = 0;
+                    //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
+                    //     return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
+                    // })
+                    // .siblingsMargin(d3Node => 0)
+                    // .childrenMargin(d3Node => 60)
+                    // .onNodeClick(d => console.log(d + ' node clicked'))
+                    // .linkUpdate(function (d3Node, i, arr) {
+                    //     const link = this;
+                    //     d3.select(link)
+                    //         .attr('stroke-dasharray', !i ? '2 2' : 'none')
+                    //         .attr('stroke-width', 3)
+                    // })
+                    // .nodeUpdate(function (data, i, arr) {
+                    //     d3.select(this).on('click.node', (event, d, i) => {
+                    //         console.log(d.nodeId + ' node clicked')
+                    //     })
+                    // })
+                    // .nodeContent(function (d, i, arr) {
+                    //     console.log(d)
+                    //     return `
+                    //        <div style="padding:0px">
+                    //          <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
+                    //          Children Direct:${d.data._directSubordinates}
+                    //          Children Total:${d.data._totalSubordinates}
+                    //         </div>
+                    //     `;
+                    // })
                     .render()
             })
     </script>
