@@ -20,6 +20,7 @@ export default class OrgChart {
         // Exposed variables 
         const attrs = {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
+            firstDraw: true,
             svgWidth: 800,
             svgHeight: window.innerHeight - 100,
             container: "body",
@@ -248,13 +249,16 @@ export default class OrgChart {
         calc.centerY = calc.chartHeight / 2;
 
         // ******************* BEHAVIORS  **********************
-        const behaviors = {
-            zoom: null
-        };
+        if (attrs.firstDraw) {
+            const behaviors = {
+                zoom: null
+            };
 
-        // Get zooming function
-        behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d));
-        attrs.zoomBehavior = behaviors.zoom;
+            // Get zooming function
+            behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d));
+            attrs.zoomBehavior = behaviors.zoom;
+        }
+
         //****************** ROOT node work ************************
         attrs.flexTreeLayout = flextree({
             nodeSize: node => {
@@ -283,9 +287,13 @@ export default class OrgChart {
             .attr("width", attrs.svgWidth)
             .attr("height", attrs.svgHeight)
             .attr("font-family", attrs.defaultFont)
-            .call(behaviors.zoom)
-            .on("dblclick.zoom", null)
-            .attr("cursor", "move")
+
+        if (attrs.firstDraw) {
+            svg.call(attrs.zoomBehavior)
+                .on("dblclick.zoom", null)
+                .attr("cursor", "move")
+        }
+
 
         attrs.svg = svg;
 
@@ -304,7 +312,9 @@ export default class OrgChart {
                 tag: "g",
                 selector: "center-group"
             })
-            .attr("transform", () => {
+
+        if (attrs.firstDraw) {
+            attrs.centerG.attr("transform", () => {
                 return attrs.layoutBindings[attrs.layout].centerTransform({
                     centerX: calc.centerX,
                     centerY: calc.centerY,
@@ -315,6 +325,8 @@ export default class OrgChart {
                     chartWidth: calc.chartWidth
                 })
             });
+        }
+
 
         attrs.centerG.patternify({ tag: 'circle', selector: 'center-circle' })
             .attr('r', 10)
@@ -324,6 +336,7 @@ export default class OrgChart {
         // Display tree contenrs
         this.update(attrs.root);
 
+
         //#########################################  UTIL FUNCS ##################################
         // This function restyles foreign object elements ()
 
@@ -331,6 +344,10 @@ export default class OrgChart {
             const containerRect = d3.select(attrs.container).node().getBoundingClientRect();
             attrs.svg.attr('width', containerRect.width)
         });
+
+        if (attrs.firstDraw) {
+            attrs.firstDraw = false;
+        }
 
         return this;
     }
@@ -632,7 +649,22 @@ export default class OrgChart {
             d.x0 = d.x;
             d.y0 = d.y;
         });
+
+
+        // CHECK FOR CENTERING
+        const centeredNode = attrs.allNodes.filter(d => d.data._centered)[0]
+        if (centeredNode) {
+            centeredNode.data._centered = null;
+            this.fit({
+                animate: true,
+                scale: false,
+                node: centeredNode
+            })
+        }
+
     }
+
+
 
     // This function detects whether current browser is edge
     isEdge() {
@@ -770,6 +802,7 @@ export default class OrgChart {
 
     // This function can be invoked via chart.setExpanded API, it expands or collapses particular node
     setExpanded(id, expandedFlag = true) {
+
         const attrs = this.getChartState();
         // Retrieve node by node Id
         const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == id)[0];
@@ -777,23 +810,25 @@ export default class OrgChart {
         // If node exists, set expansion flag
         if (node) node.data.expanded = expandedFlag;
 
+        return this;
 
-        // First expand all nodes
-        [attrs.root].forEach((d) => this.expand(d));
 
-        // Expand root's chilren in case they are collapsed
-        if (attrs.root._children) {
-            attrs.root._children.forEach((d) => this.expand(d));
-        }
+        // // First expand all nodes
+        // [attrs.root].forEach((d) => this.expand(d));
 
-        // Then collapse all nodes
-        attrs.root.children.forEach((d) => this.collapse(d));
+        // // Expand root's chilren in case they are collapsed
+        // if (attrs.root._children) {
+        //     attrs.root._children.forEach((d) => this.expand(d));
+        // }
 
-        // Then expand only the nodes, which were previously expanded, or have an expand flag set
-        attrs.root.children.forEach((d) => this.expandSomeNodes(d));
+        // // Then collapse all nodes
+        // attrs.root.children.forEach((d) => this.collapse(d));
 
-        // Redraw graph
-        this.update(attrs.root);
+        // // Then expand only the nodes, which were previously expanded, or have an expand flag set
+        // attrs.root.children.forEach((d) => this.expandSomeNodes(d));
+
+        // // Redraw graph
+        // this.update(attrs.root);
     }
 
     // Method which only expands nodes, which have property set "expanded=true"
@@ -922,10 +957,11 @@ export default class OrgChart {
 
     zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
         console.log({ params })
-        const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration } = this.getChartState()
-        let scale = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
+        const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration,lastTransform } = this.getChartState()
+        let scaleVal = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
         let identity = d3.zoomIdentity.translate(w / 2, h / 2)
-        if (params.scale) identity = identity.scale(scale)
+        identity = identity.scale(params.scale ? scaleVal : lastTransform.k)
+
         identity = identity.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
         // Transition zoom wrapper component into specified bounds
         svg.transition().duration(params.animate ? duration : 0).call(zoomBehavior.transform, identity);
@@ -951,15 +987,20 @@ export default class OrgChart {
         });
     }
 
-    center(nodeId) {
+    setCentered(nodeId) {
         const attrs = this.getChartState();
-        this.setExpanded(nodeId)
+        // this.setExpanded(nodeId)
         const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
-        this.fit({
-            animate: true,
-            scale: false,
-            node,
-        })
+        node.data._centered = true;
+        node.data.expanded = true;
+        return this;
+        // this.fit({
+        //     animate: true,
+        //     scale: false,
+        //     node,
+        // })
+        // this.update(attrs.root);
     }
+
 
 }
