@@ -11,29 +11,46 @@
 
 <body>
 
-    <div class=action-buttons>
-        <button onclick='chart.setExpanded("O-6164",true)'>Expand O-6164</button>
-        <button onclick='chart.setExpanded("O-6164",false)'>Collapse O-6164</button>
-        <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})'>Add node as roots' child</button>
-        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",expanded:true})'>Insert node at 5-th level</button>
-        <button onclick='chart.removeNode("O-6070")'>Remove O-6070</button>
+    <!----------------   ORG CHART NON ESSENTIAL CONTENT ------------>
+    <link href="https://unpkg.com/microtip/microtip.css" rel="stylesheet">
+
+    <div class="action-buttons" style="margin:0 40px">
+
+
+        <button onclick='chart.setExpanded("O-6164")' aria-label='chart.setExpanded("O-6164")'
+            data-microtip-position="bottom" role="tooltip">Expand O-6164</button>
+        <button onclick='chart.setExpanded("O-6164",false)' aria-label='chart.setExpanded("O-6164",false)'
+            data-microtip-position="bottom" role="tooltip">Collapse O-6164</button>
+        <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})' aria-label='chart.addNode({id:"root child",parentId:"O-6066"})'
+            data-microtip-position="bottom" role="tooltip">Add node as roots' child</button>
+        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",expanded:true})'
+            aria-label='chart.addNode({id:"5-th level node", parentId:"O-6164", expanded:true})' data-microtip-position="bottom" role="tooltip">Insert node at 5-th
+            level</button> 
+        <button onclick='chart.removeNode("O-6067")' aria-label='chart.removeNode("O-6067")'
+            data-microtip-position="bottom" role="tooltip">Remove O-6067</button>
+        <button onclick='chart.layout(["top","right","bottom","left"][index++%4]).render()'
+            aria-label='chart.layout(["top","right","bottom","left"][index++%4]).render()' data-microtip-position="bottom" role="tooltip">Swap Layouts
+        </button>
+        <button onclick='chart.fit()' aria-label='chart.fit()' data-microtip-position="bottom"
+            role="tooltip">Fit </button>
+        <button onclick='chart.center("O-6162")' aria-label='chart.center("O-6162")'
+            data-microtip-position="bottom" role="tooltip">Center O-6162 </button>
     </div>
-
-
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="./build/d3-org-chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
-
-
 
     <a href="https://github.com/bumbeishvili/d3-organization-chart">
         <img style="position:fixed;top:0;right:0;border:0;z-index:2;" width="149" height="149"
             src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
     </a>
 
-    <div class="chart-container" style=" padding-top:10px;  height:1200px "> </div>
+    <!----------------  ORG CHART ESSENTIAL CONTENT ---------------->
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./build/d3-org-chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
+    <div class="chart-container" style=" padding-top:10px;  height:1200px ;background-color:white"> </div>
 
     <script>
+        var index = 0;
         var chart;
         d3.csv('data.csv')
             .then(dataFlattened => {

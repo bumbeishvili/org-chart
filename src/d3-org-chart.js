@@ -1,24 +1,27 @@
 import { selection, select } from "d3-selection";
-import { max } from "d3-array";
+import { max, min } from "d3-array";
 import { tree, stratify } from "d3-hierarchy";
-import { zoom } from "d3-zoom";
+import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
 
 const d3 = {
     selection,
     select,
     max,
+    min,
     tree,
     stratify,
     zoom,
+    zoomIdentity
 }
 export default class OrgChart {
     constructor() {
+        console.log('window.innerheight', window.innerHeight)
         // Exposed variables 
         const attrs = {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
             svgWidth: 800,
-            svgHeight: window.innerHeight,
+            svgHeight: window.innerHeight - 100,
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
@@ -29,6 +32,7 @@ export default class OrgChart {
             nodeDefaultBackground: 'none',
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
+            zoomBehavior: null,
             linkUpdate: function (d, i, arr) {
                 d3.select(this)
                     .attr("stroke", "lightgray")
@@ -54,6 +58,10 @@ export default class OrgChart {
             },
             layoutBindings: {
                 "left": {
+                    "nodeLeftX": node => 0,
+                    "nodeRightX": node => node.width,
+                    "nodeTopY": node => - node.height / 2,
+                    "nodeBottomY": node => node.height / 2,
                     "nodeJoinX": node => node.x + node.width,
                     "nodeJoinY": node => node.y - node.height / 2,
                     "linkJoinX": node => node.x + node.width,
@@ -72,6 +80,10 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x},${y - height / 2})`,
                 },
                 "top": {
+                    "nodeLeftX": node => -node.width / 2,
+                    "nodeRightX": node => node.width / 2,
+                    "nodeTopY": node => 0,
+                    "nodeBottomY": node => node.height,
                     "nodeJoinX": node => node.x - node.width / 2,
                     "nodeJoinY": node => node.y + node.height,
                     "linkJoinX": node => node.x,
@@ -90,6 +102,10 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y})`,
                 },
                 "bottom": {
+                    "nodeLeftX": node => -node.width / 2,
+                    "nodeRightX": node => node.width / 2,
+                    "nodeTopY": node => -node.height,
+                    "nodeBottomY": node => 0,
                     "nodeJoinX": node => node.x - node.width / 2,
                     "nodeJoinY": node => node.y - node.height - node.height,
                     "linkJoinX": node => node.x,
@@ -108,6 +124,10 @@ export default class OrgChart {
                     "nodeUpdateTransform": ({ x, y, width, height }) => `translate(${x - width / 2},${y - height})`,
                 },
                 "right": {
+                    "nodeLeftX": node => -node.width,
+                    "nodeRightX": node => 0,
+                    "nodeTopY": node => - node.height / 2,
+                    "nodeBottomY": node => node.height / 2,
                     "nodeJoinX": node => node.x - node.width - node.width,
                     "nodeJoinY": node => node.y - node.height / 2,
                     "linkJoinX": node => node.x - node.width,
@@ -214,7 +234,6 @@ export default class OrgChart {
         const container = d3.select(attrs.container);
         const containerRect = container.node().getBoundingClientRect();
         if (containerRect.width > 0) attrs.svgWidth = containerRect.width;
-        attrs.container = container;
 
         //Calculated properties
         const calc = {
@@ -235,7 +254,7 @@ export default class OrgChart {
 
         // Get zooming function
         behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d));
-
+        attrs.zoomBehavior = behaviors.zoom;
         //****************** ROOT node work ************************
         attrs.flexTreeLayout = flextree({
             nodeSize: node => {
@@ -277,10 +296,6 @@ export default class OrgChart {
                 selector: "chart"
             })
 
-        chart.patternify({ tag: 'circle', selector: 'center-circle' })
-            .attr('r', 10)
-            .attr('cx', calc.chartWidth / 2)
-            .attr('cy', calc.chartHeight / 2)
 
 
         // Add one more container g element, for better positioning controls
@@ -301,6 +316,9 @@ export default class OrgChart {
                 })
             });
 
+        attrs.centerG.patternify({ tag: 'circle', selector: 'center-circle' })
+            .attr('r', 10)
+
         attrs.chart = chart;
 
         // Display tree contenrs
@@ -310,7 +328,7 @@ export default class OrgChart {
         // This function restyles foreign object elements ()
 
         d3.select(window).on(`resize.${attrs.id}`, () => {
-            const containerRect = attrs.container.node().getBoundingClientRect();
+            const containerRect = d3.select(attrs.container).node().getBoundingClientRect();
             attrs.svg.attr('width', containerRect.width)
         });
 
@@ -759,8 +777,9 @@ export default class OrgChart {
         // If node exists, set expansion flag
         if (node) node.data.expanded = expandedFlag;
 
+
         // First expand all nodes
-        attrs.root.children.forEach((d) => this.expand(d));
+        [attrs.root].forEach((d) => this.expand(d));
 
         // Expand root's chilren in case they are collapsed
         if (attrs.root._children) {
@@ -853,11 +872,14 @@ export default class OrgChart {
             attrs.root.children.forEach(this.expand);
         }
 
+
+
         // Then collapse them all
         attrs.root.children.forEach((d) => this.collapse(d));
 
         // Then only expand nodes, which have expanded proprty set to true
         attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
+
     }
 
     // Function which collapses passed node and it's descendants
@@ -897,4 +919,47 @@ export default class OrgChart {
             this.restyleForeignObjectElements();
         }
     }
+
+    zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
+        console.log({ params })
+        const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration } = this.getChartState()
+        let scale = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
+        let identity = d3.zoomIdentity.translate(w / 2, h / 2)
+        if (params.scale) identity = identity.scale(scale)
+        identity = identity.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+        // Transition zoom wrapper component into specified bounds
+        svg.transition().duration(params.animate ? duration : 0).call(zoomBehavior.transform, identity);
+        centerG.transition().duration(params.animate ? duration : 0).attr('transform', 'translate(0,0)')
+    }
+
+    fit({ animate = true, node, scale = true } = {}) {
+        const attrs = this.getChartState();
+        const { root } = attrs;
+        const descendants = node ? [node] : root.descendants();
+        console.log({ descendants })
+        const minX = d3.min(descendants, d => d.x + attrs.layoutBindings[attrs.layout].nodeLeftX(d))
+        const maxX = d3.max(descendants, d => d.x + attrs.layoutBindings[attrs.layout].nodeRightX(d))
+        const minY = d3.min(descendants, d => d.y + attrs.layoutBindings[attrs.layout].nodeTopY(d))
+        const maxY = d3.max(descendants, d => d.y + attrs.layoutBindings[attrs.layout].nodeBottomY(d))
+
+        this.zoomTreeBounds({
+            params: { animate: animate, scale },
+            x0: minX - 0,
+            x1: maxX + 0,
+            y0: minY - 0,
+            y1: maxY + 0,
+        });
+    }
+
+    center(nodeId) {
+        const attrs = this.getChartState();
+        this.setExpanded(nodeId)
+        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        this.fit({
+            animate: true,
+            scale: false,
+            node,
+        })
+    }
+
 }
