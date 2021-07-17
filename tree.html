@@ -15,12 +15,15 @@
     <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
     <style>
         [data-tooltip]:focus:after {
-            display:none;
-            border-bottom-color: none !important;;
+            display: none;
+            border-bottom-color: none !important;
+            ;
         }
+
         [data-tooltip]:focus:before {
-            display:none;
-            border-bottom-color: none !important;;
+            display: none;
+            border-bottom-color: none !important;
+            ;
         }
     </style>
 
@@ -47,6 +50,14 @@
         </button>
         <button onclick='chart.setCentered("O-6162").render()' class="simptip-position-bottom"
             data-tooltip='chart.setCentered("O-6162").render()'>Center O-6162 </button>
+        <button onclick='chart.setHighlighted("O-6162").render()' class="simptip-position-bottom"
+            data-tooltip='chart.setHighlighted("O-6162").render()'>Highlight O-6162 </button>
+        <button onclick='chart.setUpToTheRootHighlighted("O-6162").render()' class="simptip-position-bottom"
+            data-tooltip='chart.setUpToTheRootHighlighted("O-6162").render()'>Highlight O-6162 to root </button>
+        <button onclick='chart.clearHighlighting()' class="simptip-position-bottom"
+            data-tooltip='chart.clearHighlighting().render()'>Clear highlighting </button>
+
+
     </div>
 
     <a href="https://github.com/bumbeishvili/d3-organization-chart">

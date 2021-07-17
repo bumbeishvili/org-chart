@@ -31,14 +31,26 @@ export default class OrgChart {
             initialZoom: 1,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
+            lastTransform: { x: 0, y: 0, k: 1 },
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
             zoomBehavior: null,
             linkUpdate: function (d, i, arr) {
                 d3.select(this)
-                    .attr("stroke", "lightgray")
+                    .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
+                    .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 2)
+
+                if (d.data._upToTheRootHighlighted) {
+                    d3.select(this).raise()
+                }
             },
-            nodeUpdate: (d, i, arr) => { },
+            nodeUpdate: function (d, i, arr) {
+                console.log('updating node')
+                d3.select(this)
+                    .select('.node-rect')
+                    .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'black')
+                    .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 0.1)
+            },
             nodeWidth: d3Node => 200,
             nodeHeight: d => 100,
             siblingsMargin: d3Node => 20,
@@ -313,6 +325,16 @@ export default class OrgChart {
                 selector: "center-group"
             })
 
+        attrs.linksWrapper = attrs.centerG.patternify({
+            tag: "g",
+            selector: "links-wrapper"
+        })
+
+        attrs.nodesWrapper = attrs.centerG.patternify({
+            tag: "g",
+            selector: "nodes-wrapper"
+        })
+
         if (attrs.firstDraw) {
             attrs.centerG.attr("transform", () => {
                 return attrs.layoutBindings[attrs.layout].centerTransform({
@@ -420,7 +442,7 @@ export default class OrgChart {
 
         // --------------------------  LINKS ----------------------
         // Get links selection
-        const linkSelection = attrs.centerG
+        const linkSelection = attrs.linksWrapper
             .selectAll("path.link")
             .data(links, ({ id }) => id);
 
@@ -442,10 +464,6 @@ export default class OrgChart {
         // Styling links
         linkUpdate
             .attr("fill", "none")
-            .attr("stroke-width", 2)
-            .attr("stroke", ({ data }) => {
-                return "#767b9b";
-            })
 
         // Allow external modifications
         linkUpdate.each(attrs.linkUpdate);
@@ -481,7 +499,7 @@ export default class OrgChart {
 
         // --------------------------  NODES ----------------------
         // Get nodes selection
-        const nodesSelection = attrs.centerG
+        const nodesSelection = attrs.nodesWrapper
             .selectAll("g.node")
             .data(nodes, ({ data }) => attrs.nodeId(data));
 
@@ -516,8 +534,6 @@ export default class OrgChart {
         const nodeUpdate = nodeEnter
             .merge(nodesSelection)
             .style("font", "12px sans-serif");
-
-        nodeUpdate.each(attrs.nodeUpdate);
 
         // Add foreignObject element inside rectangle
         const fo = nodeUpdate.patternify({
@@ -585,10 +601,8 @@ export default class OrgChart {
             .attr("x", ({ width }) => 0)
             .attr("y", ({ height }) => 0)
             .attr("cursor", "pointer")
-            .attr("fill", attrs.nodeDefaultBackground)
-            .attr("stroke", 'black')
-            .attr("stroke-width", 0.1)
             .attr('rx', 3)
+            .attr("fill", attrs.nodeDefaultBackground)
 
         // Move node button group to the desired position
         nodeUpdate
@@ -627,6 +641,8 @@ export default class OrgChart {
                 return "+";
             })
             .attr("y", this.isEdge() ? 10 : 0);
+
+        nodeUpdate.each(attrs.nodeUpdate)
 
         // Remove any exiting nodes after transition
         const nodeExitTransition = nodesSelection
@@ -773,7 +789,7 @@ export default class OrgChart {
             d._children = null;
 
             // Set each children as expanded
-            d.children.forEach(({ data }) => (data.expanded = true));
+            d.children.forEach(({ data }) => (data._expanded = true));
         }
 
         // Redraw Graph
@@ -783,7 +799,7 @@ export default class OrgChart {
     // This function changes `expanded` property to descendants
     setExpansionFlagToChildren({ data, children, _children }, flag) {
         // Set flag to the current property
-        data.expanded = flag;
+        data._expanded = flag;
 
         // Loop over and recursively update expanded children's descendants
         if (children) {
@@ -808,7 +824,7 @@ export default class OrgChart {
         const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == id)[0];
 
         // If node exists, set expansion flag
-        if (node) node.data.expanded = expandedFlag;
+        if (node) node.data._expanded = expandedFlag;
 
         return this;
 
@@ -834,7 +850,7 @@ export default class OrgChart {
     // Method which only expands nodes, which have property set "expanded=true"
     expandSomeNodes(d) {
         // If node has expanded property set
-        if (d.data.expanded) {
+        if (d.data._expanded) {
             // Retrieve node's parent
             let parent = d.parent;
 
@@ -957,7 +973,7 @@ export default class OrgChart {
 
     zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
         console.log({ params })
-        const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration,lastTransform } = this.getChartState()
+        const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration, lastTransform } = this.getChartState()
         let scaleVal = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
         let identity = d3.zoomIdentity.translate(w / 2, h / 2)
         identity = identity.scale(params.scale ? scaleVal : lastTransform.k)
@@ -992,15 +1008,36 @@ export default class OrgChart {
         // this.setExpanded(nodeId)
         const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
         node.data._centered = true;
-        node.data.expanded = true;
+        node.data._expanded = true;
         return this;
-        // this.fit({
-        //     animate: true,
-        //     scale: false,
-        //     node,
-        // })
-        // this.update(attrs.root);
     }
+
+    setHighlighted(nodeId) {
+        const attrs = this.getChartState();
+        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        node.data._highlighted = true;
+        node.data._expanded = true;
+        return this;
+    }
+
+    setUpToTheRootHighlighted(nodeId) {
+        const attrs = this.getChartState();
+        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        node.data._upToTheRootHighlighted = true;
+        node.data._expanded = true;
+        node.ancestors().forEach(d => d.data._upToTheRootHighlighted = true)
+        return this;
+    }
+
+    clearHighlighting() {
+        const attrs = this.getChartState();
+        attrs.allNodes.forEach(d => {
+            d.data._highlighted = false;
+            d.data._upToTheRootHighlighted = false;
+        })
+        this.update(attrs.root)
+    }
+
 
 
 }
