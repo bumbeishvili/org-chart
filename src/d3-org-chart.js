@@ -242,7 +242,7 @@ export default class OrgChart {
 
         //InnerFunctions which will update visuals
         const attrs = this.getChartState();
-        if (!attrs.data || attrs.data.length==0) {
+        if (!attrs.data || attrs.data.length == 0) {
             console.log('ORG CHART - Data is empty')
             return this;
         }
@@ -392,7 +392,7 @@ export default class OrgChart {
             console.log(`ORG CHART - ADD - Parent node with id "${attrs.parentNodeId(obj)}" not found in the tree`)
             return this;
         }
-        if(obj._centered && !obj._expanded) obj._expanded = true;
+        if (obj._centered && !obj._expanded) obj._expanded = true;
         attrs.data.push(obj);
 
         // Update state of nodes and redraw graph
@@ -1052,4 +1052,32 @@ export default class OrgChart {
         this.update(attrs.root)
     }
 
+    // It can take selector which would go fullscreen
+    fullscreen(elem) {
+        const attrs = this.getChartState();
+        const el = d3.select(elem || attrs.container).node();
+
+        d3.select(document).on('fullscreenchange.' + attrs.id, function (d) {
+            const fsElement = document.fullscreenElement || document.mozFullscreenElement || document.webkitFullscreenElement;
+            console.log({ fsElement })
+            if (fsElement == el) {
+                setTimeout(d => {
+                    console.log('setting svg height')
+                    attrs.svg.attr('height', window.innerHeight - 40);
+                }, 500)
+            } else {
+                attrs.svg.attr('height', attrs.svgHeight)
+            }
+        })
+
+        if (el.requestFullscreen) {
+            el.requestFullscreen();
+        } else if (el.mozRequestFullScreen) {
+            el.mozRequestFullScreen();
+        } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) {
+            el.msRequestFullscreen();
+        }
+    }
 }
