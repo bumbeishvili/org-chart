@@ -36,9 +36,9 @@
             data-tooltip='chart.setExpanded("O-6164",false).render()'>Collapse O-6164</button>
         <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})' class="simptip-position-bottom"
             data-tooltip='chart.addNode({id:"root child",parentId:"O-6066"})'>Add node as roots' child</button>
-        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",expanded:true})'
+        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'
             class="simptip-position-bottom"
-            data-tooltip='chart.addNode({id:"5-th level node",parentId:"O-6164",expanded:true})'>Insert node at 5-th
+            data-tooltip='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'>Insert node at 5-th
             level</button>
         <button onclick='chart.removeNode("O-6067")' class="simptip-position-bottom"
             data-tooltip='chart.removeNode("O-6067")'>Remove O-6067</button>
@@ -79,7 +79,7 @@
             .then(dataFlattened => {
                 chart = new d3.OrgChart()
                     .container('.chart-container')
-                    .data(dataFlattened.filter(d => !d.parentId))
+                    .data(dataFlattened)
                     // .svgHeight(window.innerHeight)
                     // .initialZoom(1)
                     // .nodeWidth((d3Node) => {

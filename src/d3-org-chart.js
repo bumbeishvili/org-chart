@@ -242,7 +242,7 @@ export default class OrgChart {
 
         //InnerFunctions which will update visuals
         const attrs = this.getChartState();
-        if (!attrs.data || !attrs.data.length) {
+        if (!attrs.data || attrs.data.length==0) {
             console.log('ORG CHART - Data is empty')
             return this;
         }
@@ -392,6 +392,7 @@ export default class OrgChart {
             console.log(`ORG CHART - ADD - Parent node with id "${attrs.parentNodeId(obj)}" not found in the tree`)
             return this;
         }
+        if(obj._centered && !obj._expanded) obj._expanded = true;
         attrs.data.push(obj);
 
         // Update state of nodes and redraw graph
