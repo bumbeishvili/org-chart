@@ -92,8 +92,9 @@
                     //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
                     //     return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
                     // })
-                    // .siblingsMargin(d3Node => 0)
-                    // .childrenMargin(d3Node => 60)
+                    .siblingsMargin(d3Node => 0)
+                    .childrenMargin(d3Node => 60)
+                    .neightbourMargin((n1, n2) => 60)
                     // .onNodeClick(d => console.log(d + ' node clicked'))
                     // .linkUpdate(function (d3Node, i, arr) {
                     //     const link = this;

@@ -55,6 +55,7 @@ export default class OrgChart {
             nodeHeight: d => 100,
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
+            neightbourMargin: (n1, n2) => 60,
             onNodeClick: (d) => d,
             nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node(id=${d.id}), override using <br/> <br/> 
             <code>chart<br/>
@@ -285,7 +286,8 @@ export default class OrgChart {
                     childrenMargin
                 });
             }
-        });
+        })
+            .spacing((nodeA, nodeB) => nodeA.parent == nodeB.parent ? 0 : attrs.neightbourMargin(nodeA, nodeB));
 
         this.setLayouts({ expandNodesFirst: false });
 
