@@ -16,7 +16,6 @@ const d3 = {
 }
 export default class OrgChart {
     constructor() {
-        console.log('window.innerheight', window.innerHeight)
         // Exposed variables 
         const attrs = {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
@@ -45,7 +44,6 @@ export default class OrgChart {
                 }
             },
             nodeUpdate: function (d, i, arr) {
-                console.log('updating node')
                 d3.select(this)
                     .select('.node-rect')
                     .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'black')
@@ -241,8 +239,13 @@ export default class OrgChart {
     }
 
     render() {
+
         //InnerFunctions which will update visuals
         const attrs = this.getChartState();
+        if (!attrs.data || !attrs.data.length) {
+            console.log('ORG CHART - Data is empty')
+            return this;
+        }
 
         //Drawing containers
         const container = d3.select(attrs.container);
@@ -379,14 +382,20 @@ export default class OrgChart {
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
     addNode(obj) {
         const attrs = this.getChartState();
-        const found = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.nodeId(obj))[0];
-        if (!found) {
-            attrs.data.push(obj);
-            // Update state of nodes and redraw graph
-            this.updateNodesState();
-        } else {
-            console.error(`Node with id "${attrs.nodeId(obj)}" already exists in tree`)
+        const nodeFound = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.nodeId(obj))[0];
+        const parentFound = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.parentNodeId(obj))[0];
+        if (nodeFound) {
+            console.log(`ORG CHART - ADD - Node with id "${attrs.nodeId(obj)}" already exists in tree`)
+            return this;
         }
+        if (!parentFound) {
+            console.log(`ORG CHART - ADD - Parent node with id "${attrs.parentNodeId(obj)}" not found in the tree`)
+            return this;
+        }
+        attrs.data.push(obj);
+
+        // Update state of nodes and redraw graph
+        this.updateNodesState();
 
         return this;
     }
@@ -395,23 +404,27 @@ export default class OrgChart {
     removeNode(nodeId) {
         const attrs = this.getChartState();
         const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == nodeId)[0];
+        if (!node) {
+            console.log(`ORG CHART - REMOVE - Node with id "${nodeId}" not found in the tree`);
+            return this;
+        }
 
         // Remove all node childs
-        if (node) {
-            // Retrieve all children nodes ids (including current node itself)
-            node.descendants()
-                .forEach(d => d.data._filteredOut = true)
+        // Retrieve all children nodes ids (including current node itself)
+        node.descendants()
+            .forEach(d => d.data._filteredOut = true)
 
-            const descendants = this.getNodeChildren(node, [], attrs.nodeId);
-            descendants.forEach(d => d._filtered = true)
+        const descendants = this.getNodeChildren(node, [], attrs.nodeId);
+        descendants.forEach(d => d._filtered = true)
 
-            // Filter out retrieved nodes and reassign data
-            attrs.data = attrs.data.filter(d => !d._filtered);
+        // Filter out retrieved nodes and reassign data
+        attrs.data = attrs.data.filter(d => !d._filtered);
 
-            const updateNodesState = this.updateNodesState.bind(this);
-            // Update state of nodes and redraw graph
-            updateNodesState();
-        }
+        const updateNodesState = this.updateNodesState.bind(this);
+        // Update state of nodes and redraw graph
+        updateNodesState();
+
+        return this;
     }
 
     // This function basically redraws visible graph, based on nodes state
@@ -818,36 +831,6 @@ export default class OrgChart {
         }
     }
 
-    // This function can be invoked via chart.setExpanded API, it expands or collapses particular node
-    setExpanded(id, expandedFlag = true) {
-
-        const attrs = this.getChartState();
-        // Retrieve node by node Id
-        const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == id)[0];
-
-        // If node exists, set expansion flag
-        if (node) node.data._expanded = expandedFlag;
-
-        return this;
-
-
-        // // First expand all nodes
-        // [attrs.root].forEach((d) => this.expand(d));
-
-        // // Expand root's chilren in case they are collapsed
-        // if (attrs.root._children) {
-        //     attrs.root._children.forEach((d) => this.expand(d));
-        // }
-
-        // // Then collapse all nodes
-        // attrs.root.children.forEach((d) => this.collapse(d));
-
-        // // Then expand only the nodes, which were previously expanded, or have an expand flag set
-        // attrs.root.children.forEach((d) => this.expandSomeNodes(d));
-
-        // // Redraw graph
-        // this.update(attrs.root);
-    }
 
     // Method which only expands nodes, which have property set "expanded=true"
     expandSomeNodes(d) {
@@ -920,18 +903,21 @@ export default class OrgChart {
             });
         });
 
-        if (expandNodesFirst) {
-            // Expand all nodes first
-            attrs.root.children.forEach(this.expand);
+        if (attrs.root.children) {
+            if (expandNodesFirst) {
+                // Expand all nodes first
+                attrs.root.children.forEach(this.expand);
+            }
+
+
+
+            // Then collapse them all
+            attrs.root.children.forEach((d) => this.collapse(d));
+
+            // Then only expand nodes, which have expanded proprty set to true
+            attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
         }
 
-
-
-        // Then collapse them all
-        attrs.root.children.forEach((d) => this.collapse(d));
-
-        // Then only expand nodes, which have expanded proprty set to true
-        attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
 
     }
 
@@ -974,7 +960,6 @@ export default class OrgChart {
     }
 
     zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
-        console.log({ params })
         const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration, lastTransform } = this.getChartState()
         let scaleVal = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
         let identity = d3.zoomIdentity.translate(w / 2, h / 2)
@@ -990,7 +975,6 @@ export default class OrgChart {
         const attrs = this.getChartState();
         const { root } = attrs;
         const descendants = node ? [node] : root.descendants();
-        console.log({ descendants })
         const minX = d3.min(descendants, d => d.x + attrs.layoutBindings[attrs.layout].nodeLeftX(d))
         const maxX = d3.max(descendants, d => d.x + attrs.layoutBindings[attrs.layout].nodeRightX(d))
         const minY = d3.min(descendants, d => d.y + attrs.layoutBindings[attrs.layout].nodeTopY(d))
@@ -1005,10 +989,29 @@ export default class OrgChart {
         });
     }
 
+    // This function can be invoked via chart.setExpanded API, it expands or collapses particular node
+    setExpanded(id, expandedFlag = true) {
+
+        const attrs = this.getChartState();
+        // Retrieve node by node Id
+        const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == id)[0];
+
+        if (!node) {
+            console.log(`ORG CHART - ${expandedFlag ? "EXPAND" : "COLLAPSE"} - Node with id (${id})  not found in the tree`)
+            return this;
+        }
+        node.data._expanded = expandedFlag;
+        return this;
+    }
+
     setCentered(nodeId) {
         const attrs = this.getChartState();
         // this.setExpanded(nodeId)
         const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        if (!node) {
+            console.log(`ORG CHART - CENTER - Node with id (${nodeId}) not found in the tree`)
+            return this;
+        }
         node.data._centered = true;
         node.data._expanded = true;
         return this;
@@ -1017,6 +1020,10 @@ export default class OrgChart {
     setHighlighted(nodeId) {
         const attrs = this.getChartState();
         const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        if (!node) {
+            console.log(`ORG CHART - HIGHLIGHT - Node with id (${nodeId})  not found in the tree`);
+            return this
+        }
         node.data._highlighted = true;
         node.data._expanded = true;
         return this;
@@ -1025,6 +1032,10 @@ export default class OrgChart {
     setUpToTheRootHighlighted(nodeId) {
         const attrs = this.getChartState();
         const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        if (!node) {
+            console.log(`ORG CHART - HIGHLIGHTROOT - Node with id (${nodeId}) not found in the tree`)
+            return this;
+        }
         node.data._upToTheRootHighlighted = true;
         node.data._expanded = true;
         node.ancestors().forEach(d => d.data._upToTheRootHighlighted = true)
@@ -1039,7 +1050,5 @@ export default class OrgChart {
         })
         this.update(attrs.root)
     }
-
-
 
 }
