@@ -1080,4 +1080,16 @@ export default class OrgChart {
             el.msRequestFullscreen();
         }
     }
+
+    // Zoom in exposed method
+    zoomIn() {
+        const { svg, zoomBehavior } = this.getChartState();
+        svg.transition().call(zoomBehavior.scaleBy, 1.3);
+    }
+
+    // Zoom out exposed method
+    zoomOut() {
+        const { svg, zoomBehavior } = this.getChartState();
+        svg.transition().call(zoomBehavior.scaleBy, 0.78);
+    }
 }
