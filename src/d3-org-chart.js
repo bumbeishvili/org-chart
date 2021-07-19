@@ -46,8 +46,8 @@ export default class OrgChart {
             nodeUpdate: function (d, i, arr) {
                 d3.select(this)
                     .select('.node-rect')
-                    .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'black')
-                    .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 0.1)
+                    .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
+                    .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 1)
             },
             nodeWidth: d3Node => 200,
             nodeHeight: d => 100,
@@ -1091,5 +1091,122 @@ export default class OrgChart {
     zoomOut() {
         const { svg, zoomBehavior } = this.getChartState();
         svg.transition().call(zoomBehavior.scaleBy, 0.78);
+    }
+
+    toDataURL(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            }
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+    }
+
+    exportImg({ full = false, scale = 3 } = {}) {
+        const that = this;
+        const attrs = this.getChartState();
+        const { svg, root, allNodes } = attrs
+        let count = 0;
+        const selection = svg.selectAll('img')
+        let total = selection.size()
+        selection
+            .each(function () {
+                that.toDataURL(this.src, (dataUrl) => {
+                    this.src = dataUrl;
+                    if (++count == total) {
+                        that.downloadImage(svg.node(), scale, false, d => {
+                            that.update(root)
+                        })
+                    }
+                })
+            })
+    }
+
+    exportSvg() {
+        const { svg } = this.getChartState();
+        this.downloadImage(svg.node(), true)
+    }
+
+    downloadImage(foreignObjectSVG, scale = 2, isSvg = false, onAlreadySerialized = d => { }) {
+        // Retrieve svg node
+        const svgNode = foreignObjectSVG;
+
+        if (isSvg) {
+            let source = serializeString(svgNode);
+            //add xml declaration
+            source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+            //convert svg source to URI data scheme.
+            var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+            saveAs(url, "graph.svg");
+            onAlreadySerialized()
+            return;
+        }
+        // Get image quality index (basically,  index you can zoom in)
+        const quality = scale
+        // Create image
+        const image = new Image();
+        image.onload = () => {
+            // Create image canvas
+            const canvas = document.createElement('canvas');
+            // Set width and height based on SVG node
+            const rect = svgNode.getBoundingClientRect();
+            canvas.width = rect.width * quality;
+            canvas.height = rect.height * quality;
+            // Draw background
+            const context = canvas.getContext('2d');
+            context.fillStyle = '#FAFAFA';
+            context.fillRect(0, 0, rect.width * quality, rect.height * quality);
+            context.drawImage(image, 0, 0, rect.width * quality, rect.height * quality);
+            // Set some image metadata
+            let dt = canvas.toDataURL('image/png');
+            // Invoke saving function
+            saveAs(dt, 'graph.png');
+        };
+
+        var url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(serializeString(svgNode));
+
+        onAlreadySerialized()
+
+        image.src = url// URL.createObjectURL(blob);
+        // This function invokes save window
+        function saveAs(uri, filename) {
+            // create link
+            var link = document.createElement('a');
+            if (typeof link.download === 'string') {
+                document.body.appendChild(link); // Firefox requires the link to be in the body
+                link.download = filename;
+                link.href = uri;
+                link.click();
+                document.body.removeChild(link); // remove the link when done
+            } else {
+                location.replace(uri);
+            }
+        }
+        // This function serializes SVG and sets all necessary attributes
+        function serializeString(svg) {
+            const xmlns = 'http://www.w3.org/2000/xmlns/';
+            const xlinkns = 'http://www.w3.org/1999/xlink';
+            const svgns = 'http://www.w3.org/2000/svg';
+            svg = svg.cloneNode(true);
+            const fragment = window.location.href + '#';
+            const walker = document.createTreeWalker(svg, NodeFilter.SHOW_ELEMENT, null, false);
+            while (walker.nextNode()) {
+                for (const attr of walker.currentNode.attributes) {
+                    if (attr.value.includes(fragment)) {
+                        attr.value = attr.value.replace(fragment, '#');
+                    }
+                }
+            }
+            svg.setAttributeNS(xmlns, 'xmlns', svgns);
+            svg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
+            const serializer = new XMLSerializer();
+            const string = serializer.serializeToString(svg);
+            return string;
+        }
     }
 }

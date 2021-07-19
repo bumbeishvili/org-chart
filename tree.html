@@ -12,6 +12,8 @@
 <body>
 
     <!----------------   ORG CHART NON ESSENTIAL CONTENT ------------>
+
+    <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
     <style>
         [data-tooltip]:focus:after {
@@ -42,12 +44,13 @@
             level</button>
         <button onclick='chart.removeNode("O-6067")' class="simptip-position-bottom"
             data-tooltip='chart.removeNode("O-6067")'>Remove O-6067</button>
-        <button onclick='chart.layout(["right","bottom","left","top"][index++%4]).render()'
-            class="simptip-position-bottom"
-            data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]).render()'>Swap Layouts
-        </button>
         <button onclick='chart.fit()' class="simptip-position-bottom" data-tooltip='chart.fit()'>Fit
         </button>
+        <button onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
+            class="simptip-position-bottom"
+            data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'>Swap Layouts
+        </button>
+
         <button onclick='chart.setCentered("O-6162").render()' class="simptip-position-bottom"
             data-tooltip='chart.setCentered("O-6162").render()'>Center O-6162 </button>
         <button onclick='chart.setHighlighted("O-6162").render()' class="simptip-position-bottom"
@@ -59,8 +62,14 @@
         <button onclick='chart.fullscreen()' class="simptip-position-bottom" data-tooltip='chart.fullscreen()'>Full
             Screen </button>
         <button onclick='chart.zoomIn()' class="simptip-position-bottom" data-tooltip='chart.zoomIn()'>Zoom In </button>
-        <button onclick='chart.zoomOut()' class="simptip-position-bottom" data-tooltip='chart.zoomOut()'>Zoom Out </button>
-
+        <button onclick='chart.zoomOut()' class="simptip-position-bottom" data-tooltip='chart.zoomOut()'>Zoom Out
+        </button>
+        <button onclick='chart.exportImg()' class="simptip-position-bottom" data-tooltip='chart.exportImg()'>Export
+            Current Image
+        </button>
+        <button onclick='chart.exportSvg()' class="simptip-position-bottom" data-tooltip='chart.exportSvg()'>Export
+            SVG
+        </button>
 
     </div>
 
@@ -111,16 +120,17 @@
                     //         console.log(d.nodeId + ' node clicked')
                     //     })
                     // })
-                    // .nodeContent(function (d, i, arr) {
-                    //     console.log(d)
-                    //     return `
-                    //        <div style="padding:0px">
-                    //          <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
-                    //          Children Direct:${d.data._directSubordinates}
-                    //          Children Total:${d.data._totalSubordinates}
-                    //         </div>
-                    //     `;
-                    // })
+                    .nodeContent(function (d, i, arr) {
+                        console.log(d)
+                        return `
+                           <div style="padding:0px">
+                             <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
+                             
+                             Children Direct:${d.data._directSubordinates}
+                             Children Total:${d.data._totalSubordinates}
+                            </div>
+                        `;
+                    })
                     .render()
             })
     </script>
