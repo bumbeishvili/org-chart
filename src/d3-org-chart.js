@@ -988,6 +988,7 @@ export default class OrgChart {
             y0: minY - 0,
             y1: maxY + 0,
         });
+        return this;
     }
 
     // This function can be invoked via chart.setExpanded API, it expands or collapses particular node
@@ -1130,6 +1131,14 @@ export default class OrgChart {
     exportSvg() {
         const { svg } = this.getChartState();
         this.downloadImage(svg.node(), true)
+        return this;
+    }
+
+    expandAll() {
+        const { allNodes, root } = this.getChartState();
+        allNodes.forEach(d => d.data._expanded = true);
+        this.render()
+        return this;
     }
 
     downloadImage(foreignObjectSVG, scale = 2, isSvg = false, onAlreadySerialized = d => { }) {
