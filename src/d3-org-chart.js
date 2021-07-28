@@ -25,11 +25,13 @@ export default class OrgChart {
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
+            connectionsData: [],
             data: null,
             duration: 400,
             initialZoom: 1,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
+            connections: [],
             lastTransform: { x: 0, y: 0, k: 1 },
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
@@ -49,6 +51,7 @@ export default class OrgChart {
                     .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
                     .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 1)
             },
+            connectionsUpdate: d => d,
             nodeWidth: d3Node => 200,
             nodeHeight: d => 100,
             siblingsMargin: d3Node => 20,
@@ -453,8 +456,9 @@ export default class OrgChart {
 
         // Get all links
         const links = treeData.descendants().slice(1);
-
         nodes.forEach(attrs.layoutBindings[attrs.layout].swap)
+
+        // Connections
 
         // --------------------------  LINKS ----------------------
         // Get links selection
@@ -682,7 +686,6 @@ export default class OrgChart {
             d.y0 = d.y;
         });
 
-
         // CHECK FOR CENTERING
         const centeredNode = attrs.allNodes.filter(d => d.data._centered)[0]
         if (centeredNode) {
@@ -695,8 +698,6 @@ export default class OrgChart {
         }
 
     }
-
-
 
     // This function detects whether current browser is edge
     isEdge() {

@@ -27,15 +27,24 @@
             border-bottom-color: none !important;
             ;
         }
+
+        [data-tooltip]:after {
+            height: auto !important;
+            padding: 11px 11px 11px 11px !important;
+            content: attr(data-tooltip);
+            white-space: pre;
+            line-height: 16px !important;
+            text-align: left !important;
+        }
     </style>
 
     <div class="action-buttons" style="margin:0 100px">
 
 
         <button onclick='chart.setExpanded("O-6164").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setExpanded("O-6164").render()'>Expand O-6164</button>
+            data-tooltip='chart.setExpanded("O-6164") &#xa; .render()'>Expand O-6164</button>
         <button onclick='chart.setExpanded("O-6164",false).render()' class="simptip-position-bottom"
-            data-tooltip='chart.setExpanded("O-6164",false).render()'>Collapse O-6164</button>
+            data-tooltip='chart.setExpanded("O-6164",false) &#xa; .render()'>Collapse O-6164</button>
         <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})' class="simptip-position-bottom"
             data-tooltip='chart.addNode({id:"root child",parentId:"O-6066"})'>Add node as roots' child</button>
         <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'
@@ -48,17 +57,18 @@
         </button>
         <button onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
             class="simptip-position-bottom"
-            data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'>Swap Layouts
+            data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]) &#xa; .render() &#xa; .fit()'>Swap
+            Layouts
         </button>
 
         <button onclick='chart.setCentered("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setCentered("O-6162").render()'>Center O-6162 </button>
+            data-tooltip='chart.setCentered("O-6162") &#xa; .render()'>Center O-6162 </button>
         <button onclick='chart.setHighlighted("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setHighlighted("O-6162").render()'>Highlight O-6162 </button>
+            data-tooltip='chart.setHighlighted("O-6162") &#xa; .render()'>Highlight O-6162 </button>
         <button onclick='chart.setUpToTheRootHighlighted("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setUpToTheRootHighlighted("O-6162").render()'>Highlight O-6162 to root </button>
+            data-tooltip='chart.setUpToTheRootHighlighted("O-6162") &#xa; .render()'>Highlight O-6162 to root </button>
         <button onclick='chart.clearHighlighting()' class="simptip-position-bottom"
-            data-tooltip='chart.clearHighlighting().render()'>Clear highlighting </button>
+            data-tooltip='chart.clearHighlighting() &#xa; .render()'>Clear highlighting </button>
         <button onclick='chart.fullscreen()' class="simptip-position-bottom" data-tooltip='chart.fullscreen()'>Full
             Screen </button>
         <button onclick='chart.zoomIn()' class="simptip-position-bottom" data-tooltip='chart.zoomIn()'>Zoom In </button>
@@ -71,6 +81,9 @@
             SVG
         </button>
         <button onclick='chart.expandAll()' class="simptip-position-bottom" data-tooltip='chart.expandAll()'>Expand All
+        </button>
+        <button onclick='chart.expandAll()' class="simptip-position-bottom"
+            data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'>Multi Node Connections
         </button>
 
     </div>
@@ -122,13 +135,20 @@
                     //         console.log(d.nodeId + ' node clicked')
                     //     })
                     // })
+                    .connections(
+                        [{ id: 1, from: "O-6067", to: "O-6066", label:"Reports To" }]
+                    )
+                    .connectionsUpdate(d=>{
+
+                    })
                     .nodeContent(function (d, i, arr) {
                         console.log(d)
                         return `
                            <div style="padding:0px">
-                             <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
                              
-                             Children Direct:${d.data._directSubordinates}
+                             <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
+                             ID: ${d.data.id} <br>
+                             Children Direct:${d.data._directSubordinates}<br>
                              Children Total:${d.data._totalSubordinates}
                             </div>
                         `;
