@@ -136,13 +136,14 @@
                     //     })
                     // })
                     .connections(
-                        [{ id: 1, from: "O-6067", to: "O-6066", label:"Reports To" }]
+                        [
+                            { id: 1, from: "O-6067", to: "O-6068", label: "Directly Reports To" },
+                            { id: 2, from: "O-6070", to: "O-6066", label: "Reports To" },
+                            { id: 3, from: "O-6088", to: "O-6069", label: "They were coworkers once" },
+                            { id: 3, from: "O-6164", to: "O-6070", label: "Possible conflicts of interest" }
+                        ],
                     )
-                    .connectionsUpdate(d=>{
-
-                    })
                     .nodeContent(function (d, i, arr) {
-                        console.log(d)
                         return `
                            <div style="padding:0px">
                              

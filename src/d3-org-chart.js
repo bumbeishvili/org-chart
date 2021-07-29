@@ -3,6 +3,7 @@ import { max, min } from "d3-array";
 import { tree, stratify } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
+import { linkHorizontal } from 'd3-shape';
 
 const d3 = {
     selection,
@@ -12,7 +13,8 @@ const d3 = {
     tree,
     stratify,
     zoom,
-    zoomIdentity
+    zoomIdentity,
+    linkHorizontal
 }
 export default class OrgChart {
     constructor() {
@@ -25,7 +27,7 @@ export default class OrgChart {
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
-            connectionsData: [],
+            ctx: document.createElement('canvas').getContext('2d'),
             data: null,
             duration: 400,
             initialZoom: 1,
@@ -36,6 +38,32 @@ export default class OrgChart {
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
             zoomBehavior: null,
+            defs: function (state, visibleConnections) {
+                return `<defs>
+                    ${visibleConnections.map(conn => {
+                    
+                    const labelWidth = this.getTextWidth(conn.label,{ctx:state.ctx,fontSize:2,defaultFont:state.defaultFont});
+                    return `
+                       <marker id="${conn.from + "_" + conn.to}" refX="${conn._source.x < conn._target.x ? -7 : 7}" refY="5" markerWidth="500"  markerHeight="500"  orient="${conn._source.x < conn._target.x ? "auto" : "auto-start-reverse"}" >
+                       <rect rx=0.5 width=${conn.label?labelWidth+3:0} height=3 y=1  fill="#152785">${conn.label}</rect>
+                       <text font-size="2px" x=1 fill="white" y=3>${conn.label}</text>
+                       </marker>
+
+                       <marker id="arrow-${conn.from + "_" + conn.to}"  markerWidth="500"  markerHeight="500"  refY="2"  refX="1" orient="${conn._source.x < conn._target.x ? "auto" : "auto-start-reverse"}" >
+                       <path transform="translate(0)" d='M0,0 V4 L2,2 Z' fill='#152785' />
+                       </marker>
+                    `}).join("")}
+                    </defs>
+                    }`},
+            connectionsUpdate: function (d, i, arr) {
+                d3.select(this)
+                    .attr("stroke", d => '#152785')
+                    .attr('stroke-linecap', 'round')
+                    .attr("stroke-width", d => '5')
+                    .attr('pointer-events', 'none')
+                    .attr("marker-start", d => `url(#${d.from + "_" + d.to})`)
+                    .attr("marker-end", d => `url(#arrow-${d.from + "_" + d.to})`)
+            },
             linkUpdate: function (d, i, arr) {
                 d3.select(this)
                     .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
@@ -51,13 +79,18 @@ export default class OrgChart {
                     .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
                     .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 1)
             },
-            connectionsUpdate: d => d,
-            nodeWidth: d3Node => 200,
-            nodeHeight: d => 100,
+
+            nodeWidth: d3Node => 300,
+            nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
             neightbourMargin: (n1, n2) => 60,
             onNodeClick: (d) => d,
+            linkGroupArc: d3.linkHorizontal().x(d => d.x).y(d => d.y),
+            // ({ source, target }) => {
+            //     return 
+            //     return `M ${source.x} , ${source.y} Q ${(source.x + target.x) / 2 + 100},${source.y-100}  ${target.x}, ${target.y}`;
+            // },
             nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node(id=${d.id}), override using <br/> <br/> 
             <code>chart<br/>
             &nbsp;.nodeContent({data}=>{ <br/>
@@ -343,6 +376,16 @@ export default class OrgChart {
             selector: "nodes-wrapper"
         })
 
+        attrs.connectionsWrapper = attrs.centerG.patternify({
+            tag: "g",
+            selector: "connections-wrapper"
+        })
+
+        attrs.defsWrapper = svg.patternify({
+            tag: "g",
+            selector: "defs-wrapper"
+        })
+
         if (attrs.firstDraw) {
             attrs.centerG.attr("transform", () => {
                 return attrs.layoutBindings[attrs.layout].centerTransform({
@@ -356,10 +399,6 @@ export default class OrgChart {
                 })
             });
         }
-
-
-        attrs.centerG.patternify({ tag: 'circle', selector: 'center-circle' })
-            .attr('r', 10)
 
         attrs.chart = chart;
 
@@ -459,12 +498,27 @@ export default class OrgChart {
         nodes.forEach(attrs.layoutBindings[attrs.layout].swap)
 
         // Connections
+        const connections = attrs.connections;
+        const allNodesMap = new Map(attrs.allNodes.map(d => [attrs.nodeId(d.data), d]));
+        const visibleNodesMap = new Map(nodes.map(d => [attrs.nodeId(d.data), d]));
+        connections.forEach(connection => {
+            const source = allNodesMap.get(connection.from);
+            const target = allNodesMap.get(connection.to);
+            connection._source = source;
+            connection._target = target;
+        })
+        const visibleConnections = connections.filter(d => visibleNodesMap.has(d.from) && visibleNodesMap.has(d.to));
+        const defsString = attrs.defs.bind(this)(attrs, visibleConnections);
+        const existingString = attrs.defsWrapper.html();
+        if (defsString !== existingString) {
+            attrs.defsWrapper.html(defsString)
+        }
 
         // --------------------------  LINKS ----------------------
         // Get links selection
         const linkSelection = attrs.linksWrapper
             .selectAll("path.link")
-            .data(links, ({ id }) => id);
+            .data(links, (d) => attrs.nodeId(d.data));
 
         // Enter any new links at the parent's previous position.
         const linkEnter = linkSelection
@@ -515,6 +569,55 @@ export default class OrgChart {
                 const o = { x: xo, y: yo };
                 return attrs.layoutBindings[attrs.layout].diagonal(o, o);
             })
+            .remove();
+
+
+        // --------------------------  CONNECTIONS ----------------------
+
+        const connectionsSel = attrs.connectionsWrapper
+            .selectAll("path.connection")
+            .data(visibleConnections)
+
+        // Enter any new connections at the parent's previous position.
+        const connEnter = connectionsSel
+            .enter()
+            .insert("path", "g")
+            .attr("class", "connection")
+            .attr("d", (d) => {
+                const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+                const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+                const o = { x: xo, y: yo };
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o);
+            });
+
+
+        // Get connections update selection
+        const connUpdate = connEnter.merge(connectionsSel);
+
+        // Styling connections
+        connUpdate.attr("fill", "none")
+
+        // Transition back to the parent element position
+        connUpdate
+            .transition()
+            .duration(attrs.duration)
+            .attr('d', (d) => {
+                const xs = attrs.layoutBindings[attrs.layout].linkX({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+                const ys = attrs.layoutBindings[attrs.layout].linkY({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+                const xt = attrs.layoutBindings[attrs.layout].linkJoinX({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+                const yt = attrs.layoutBindings[attrs.layout].linkJoinY({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+                return attrs.linkGroupArc({ source: { x: xs, y: ys }, target: { x: xt, y: yt } })
+            })
+
+        // Allow external modifications
+        connUpdate.each(attrs.connectionsUpdate);
+
+        // Remove any  links which is exiting after animation
+        const connExit = connectionsSel
+            .exit()
+            .transition()
+            .duration(attrs.duration)
+            .attr('opacity', 0)
             .remove();
 
         // --------------------------  NODES ----------------------
@@ -1218,5 +1321,17 @@ export default class OrgChart {
             const string = serializer.serializeToString(svg);
             return string;
         }
+    }
+
+    // Calculate what size text will take
+    getTextWidth(text, {
+        fontSize = 14,
+        fontWeight = 400,
+        defaultFont="Helvetice",
+        ctx
+    } = {}) {
+        ctx.font = `${fontWeight || ''} ${fontSize}px ${defaultFont} `
+        const measurement = ctx.measureText(text);
+        return measurement.width;
     }
 }
