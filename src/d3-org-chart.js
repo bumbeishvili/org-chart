@@ -36,8 +36,8 @@ export default class OrgChart {
             data: null,
             duration: 400,
             initialZoom: 1,
-            setActiveNodeCentered: false,
-            compact: false,
+            setActiveNodeCentered: true,
+            compact: true,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
             connections: [],
@@ -104,7 +104,11 @@ export default class OrgChart {
             <code>chart<br/>
             &nbsp;.nodeContent({data}=>{ <br/>
              &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
-             &nbsp;})</code></div>`,
+             &nbsp;})</code>
+             <br/> <br/>
+             Or check different <a href="" target="_blank">layout examples</a>
+             
+             </div>`,
             layout: "top",// top, left,right, bottom
             buttonContent: ({ children, layout, icons }) => `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${icons[layout](children)}  </div>`,
             icons: {
@@ -612,7 +616,6 @@ export default class OrgChart {
                         }
                     })
 
-                console.log({ rowsMap, cumSum, compactChildren, row: compactChildren.map(d => d.row), x: compactChildren.map(d => d.x) })
             }
         })
     }
@@ -708,7 +711,6 @@ export default class OrgChart {
                     y: attrs.layoutBindings[attrs.layout].linkParentY(d),
                 };
 
-                console.log({ d })
                 const m = attrs.compact && d.flexCompactDim ? {
                     x: attrs.layoutBindings[attrs.layout].linkCompactXStart(d),
                     y: attrs.layoutBindings[attrs.layout].linkCompactYStart(d),
