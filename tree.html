@@ -109,7 +109,7 @@
                     .container('.chart-container')
                     .data(dataFlattened)
                     // .svgHeight(window.innerHeight)
-                    // .initialZoom(1)
+                    //.initialZoom(0.5)
                     .nodeWidth((d3Node) => {
                         //return 200;
                         let i = 0;
@@ -118,20 +118,20 @@
                         return (!i || i == d3Node.parent.children.length - 1) ? 300 : 100
                     })
                     .nodeHeight((d3Node) => {
-                        //return 100;
+                        //eturn 100;
                         let i = 0;
                         if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
                         if (i && i == d3Node.parent.children.length - 1) { return 300; }
                         return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
                     })
-                    .siblingsMargin(d3Node => 10)
-                    .childrenMargin(d3Node => 30)
-                    .neightbourMargin((n1, n2) => 100)
-                    .compactMarginHorizontal(d3Node => 0)
-                    .compactMarginVertical(d3Node => 0)
+                    .siblingsMargin(d3Node => 0)
+                    .childrenMargin(d3Node => 100)
+                    .neightbourMargin((n1, n2) => 0)
+                    .compactMarginPair(d3Node => 50)
+                    .compactMarginBetween(d3Node => 10)
                     .compact(true)
                     .setActiveNodeCentered(true)
-                    .layout(new URLSearchParams(new URL(document.location.href).search).get('layout')||"top")
+                    .layout(new URLSearchParams(new URL(document.location.href).search).get('layout') || "top")
                     // .onNodeClick(d => console.log(d + ' node clicked'))
                     // .linkUpdate(function (d3Node, i, arr) {
                     //     const link = this;
@@ -157,9 +157,11 @@
                         return `
                            <div style="padding:0px">
 
-                            ${state.layout=='top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2+state.compactMarginHorizontal(d)/4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-                            ${state.layout=='bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1]+d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2+state.compactMarginHorizontal(d)/4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-
+                            ${state.layout == 'top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                            ${state.layout == 'bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1] + d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                            ${state.layout == 'left' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${0}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                            ${state.layout == 'right' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5; margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${d.width-d.flexCompactDim[1]}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                        
                              <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
                              ID: ${d.data.id} <br>
                              Children Direct:${d.data._directSubordinates}<br>

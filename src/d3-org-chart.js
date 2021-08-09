@@ -92,8 +92,8 @@ export default class OrgChart {
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
             neightbourMargin: (n1, n2) => 60,
-            compactMarginHorizontal: d => 100,
-            compactMarginVertical: (d3Node => 20),
+            compactMarginPair: d => 100,
+            compactMarginBetween: (d3Node => 20),
             onNodeClick: (d) => d,
             linkGroupArc: d3.linkHorizontal().x(d => d.x).y(d => d.y),
             // ({ source, target }) => {
@@ -125,12 +125,27 @@ export default class OrgChart {
                     "linkJoinY": node => node.y,
                     "linkX": node => node.x,
                     "linkY": node => node.y,
+                    "linkCompactXStart": node => node.x + node.width / 2,//node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
+                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height/2 : -node.height/2),
+                    "compactLinkMidX": (node, state) => node.firstCompactNode.x,// node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
+                    "compactLinkMidY": (node, state) => node.firstCompactNode.y + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "linkParentX": node => node.parent.x + node.parent.width,
                     "linkParentY": node => node.parent.y,
                     "buttonX": node => node.width,
                     "buttonY": node => node.height / 2,
                     "centerTransform": ({ root, rootMargin, centerY, scale, centerX }) => `translate(${rootMargin},${centerY}) scale(${scale})`,
-                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => [height + siblingsMargin, width + childrenMargin],
+                    "compactDimension": {
+                        sizeColumn: node => node.height,
+                        sizeRow: node => node.width,
+                        reverse: arr => arr.slice().reverse()
+                    },
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => {
+                        if (state.compact && node.flexCompactDim) {
+                            const result = [node.flexCompactDim[0], node.flexCompactDim[1]]
+                            return result;
+                        };
+                        return [height + siblingsMargin, width + childrenMargin]
+                    },
                     "zoomTransform": ({ centerY, scale }) => `translate(${0},${centerY}) scale(${scale})`,
                     "diagonal": this.hdiagonal.bind(this),
                     "swap": d => { const x = d.x; d.x = d.y; d.y = x; },
@@ -145,10 +160,15 @@ export default class OrgChart {
                     "nodeJoinY": node => node.y + node.height,
                     "linkJoinX": node => node.x,
                     "linkJoinY": node => node.y + node.height,
-                    "linkCompactXStart": node => node.x + (node.compactLeft ? node.width / 2 : -node.width / 2),
+                    "linkCompactXStart": node => node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
                     "linkCompactYStart": node => node.y + node.height / 2,
-                    "compactLinkMidX": (node, state) => node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginHorizontal(node) / 4,
+                    "compactLinkMidX": (node, state) => node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "compactLinkMidY": node => node.firstCompactNode.y,
+                    "compactDimension": {
+                        sizeColumn: node => node.width,
+                        sizeRow: node => node.height,
+                        reverse: arr => arr,
+                    },
                     "linkX": node => node.x,
                     "linkY": node => node.y,
                     "linkParentX": node => node.parent.x,
@@ -178,18 +198,29 @@ export default class OrgChart {
                     "nodeJoinY": node => node.y - node.height - node.height,
                     "linkJoinX": node => node.x,
                     "linkJoinY": node => node.y - node.height,
-                    "linkCompactXStart": node => node.x + (node.compactLeft ? node.width / 2 : -node.width / 2),
-                    "linkCompactYStart": node => node.y + node.height / 2,
-                    "compactLinkMidX": (node, state) => node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginHorizontal(node) / 4,
+                    "linkCompactXStart": node => node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
+                    "linkCompactYStart": node => node.y - node.height / 2,
+                    "compactLinkMidX": (node, state) => node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "compactLinkMidY": node => node.firstCompactNode.y,
                     "linkX": node => node.x,
                     "linkY": node => node.y,
+                    "compactDimension": {
+                        sizeColumn: node => node.width,
+                        sizeRow: node => node.height,
+                        reverse: arr => arr,
+                    },
                     "linkParentX": node => node.parent.x,
                     "linkParentY": node => node.parent.y - node.parent.height,
                     "buttonX": node => node.width / 2,
                     "buttonY": node => 0,
                     "centerTransform": ({ root, rootMargin, centerY, scale, centerX, chartHeight }) => `translate(${centerX},${chartHeight - rootMargin}) scale(${scale})`,
-                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => [width + siblingsMargin, height + childrenMargin],
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => {
+                        if (state.compact && node.flexCompactDim) {
+                            const result = [node.flexCompactDim[0], node.flexCompactDim[1]]
+                            return result;
+                        };
+                        return [width + siblingsMargin, height + childrenMargin]
+                    },
                     "zoomTransform": ({ centerX, scale }) => `translate(${centerX},0}) scale(${scale})`,
                     "diagonal": this.diagonal.bind(this),
                     "swap": d => { d.y = -d.y; },
@@ -210,8 +241,23 @@ export default class OrgChart {
                     "linkParentY": node => node.parent.y,
                     "buttonX": node => 0,
                     "buttonY": node => node.height / 2,
+                    "linkCompactXStart": node => node.x - node.width / 2,//node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
+                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height/2 : -node.height/2),
+                    "compactLinkMidX": (node, state) => node.firstCompactNode.x,// node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
+                    "compactLinkMidY": (node, state) => node.firstCompactNode.y + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "centerTransform": ({ root, rootMargin, centerY, scale, centerX, chartWidth }) => `translate(${chartWidth - rootMargin},${centerY}) scale(${scale})`,
-                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => [height + siblingsMargin, width + childrenMargin],
+                    "nodeFlexSize": ({ height, width, siblingsMargin, childrenMargin, state, node }) => {
+                        if (state.compact && node.flexCompactDim) {
+                            const result = [node.flexCompactDim[0], node.flexCompactDim[1]]
+                            return result;
+                        };
+                        return [height + siblingsMargin, width + childrenMargin]
+                    },
+                    "compactDimension": {
+                        sizeColumn: node => node.height,
+                        sizeRow: node => node.width,
+                        reverse: arr => arr.slice().reverse()
+                    },
                     "zoomTransform": ({ centerY, scale }) => `translate(${0},${centerY}) scale(${scale})`,
                     "diagonal": this.hdiagonal.bind(this),
                     "swap": d => { const x = d.x; d.x = -d.y; d.y = x; },
@@ -498,7 +544,7 @@ export default class OrgChart {
         const attrs = this.getChartState();
         root.eachBefore(node => {
             node.firstCompact = null;
-            node.compactLeft = null;
+            node.compactEven = null;
             node.flexCompactDim = null;
             node.firstCompactNode = null;
         })
@@ -508,22 +554,25 @@ export default class OrgChart {
                 if (compactChildren.length < 2) return;
                 compactChildren.forEach((child, i) => {
                     if (!i) child.firstCompact = true;
-                    if (i % 2) child.compactLeft = false;
-                    else child.compactLeft = true;
+                    if (i % 2) child.compactEven = false;
+                    else child.compactEven = true;
                     child.row = Math.floor(i / 2);
                 })
 
-                const leftMaxWidth = d3.max(compactChildren.filter(d => d.compactLeft), d => d.width);
-                const rightMaxWidth = d3.max(compactChildren.filter(d => !d.compactLeft), d => d.width);
-                const width = Math.max(leftMaxWidth, rightMaxWidth) * 2;
-                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => d.height + attrs.compactMarginVertical(d)), d => d.row);
-                const height = d3.sum([...rowsMap].map(v => v[1]))
+                const evenMaxColumnDimension = d3.max(compactChildren.filter(d => d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
+                const oddMaxColumnDimension = d3.max(compactChildren.filter(d => !d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
+                const columnSize = Math.max(evenMaxColumnDimension, oddMaxColumnDimension) * 2;
+                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d) + attrs.compactMarginBetween(d)), d => d.row);
+                const rowSize = d3.sum([...rowsMap].map(v => v[1]))
                 compactChildren.forEach(node => {
                     node.firstCompactNode = compactChildren[0];
                     if (node.firstCompact) {
-                        node.flexCompactDim = [width + attrs.compactMarginHorizontal(node), height-attrs.compactMarginVertical(node)];
+                        node.flexCompactDim = [
+                            columnSize + attrs.compactMarginPair(node),
+                            rowSize - attrs.compactMarginBetween(node)
+                        ];
                     } else {
-                        node.flexCompactDim = [1, 1];
+                        node.flexCompactDim = [0, 0];
                     }
                 })
                 node.flexCompactDim = null;
@@ -540,23 +589,30 @@ export default class OrgChart {
                 if (!fch) return;
                 compactChildren.forEach((child, i, arr) => {
                     if (i == 0) fch.x -= fch.flexCompactDim[0] / 2;
-                    if (i & i % 2 - 1) child.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginHorizontal(child) / 4;
-                    else if (i) child.x = fch.x + fch.flexCompactDim[0] * 0.75 + attrs.compactMarginHorizontal(child) / 4;
+                    if (i & i % 2 - 1) child.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(child) / 4;
+                    else if (i) child.x = fch.x + fch.flexCompactDim[0] * 0.75 + attrs.compactMarginPair(child) / 4;
                 })
                 const centerX = fch.x + fch.flexCompactDim[0] * 0.5;
-                fch.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginHorizontal(fch) / 4;
+                fch.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(fch) / 4;
                 const offsetX = node.x - centerX;
                 if (Math.abs(offsetX) < 10) {
                     compactChildren.forEach(d => d.x += offsetX);
                 }
 
-                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => d.height), d => d.row);
-                const cumSum = d3.cumsum([...rowsMap].map(d => d[1] + attrs.compactMarginVertical(d)));
-                compactChildren.forEach((node, i) => {
-                    if (node.row) {
-                        node.y = fch.y + cumSum[node.row - 1]
-                    }
-                })
+                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)), d => d.row);
+                const cumSum = d3.cumsum([...rowsMap].map(d => d[1] + attrs.compactMarginBetween(d)));
+                console.log({ x: compactChildren.map(d => d.x) })
+                compactChildren
+                    .forEach((node, i) => {
+                        if (node.row) {
+                            console.log('settiing down x', fch.x + cumSum[node.row - 1])
+                            node.y = fch.y + cumSum[node.row - 1]
+                        } else {
+                            node.y = fch.y;
+                        }
+                    })
+
+                console.log({ rowsMap, cumSum, compactChildren, row: compactChildren.map(d => d.row), x: compactChildren.map(d => d.x) })
             }
         })
     }
@@ -640,7 +696,7 @@ export default class OrgChart {
                 const n = attrs.compact && d.flexCompactDim ?
                     {
                         x: attrs.layoutBindings[attrs.layout].compactLinkMidX(d, attrs),
-                        y: attrs.layoutBindings[attrs.layout].compactLinkMidY(d)
+                        y: attrs.layoutBindings[attrs.layout].compactLinkMidY(d, attrs)
                     } :
                     {
                         x: attrs.layoutBindings[attrs.layout].linkX(d),
@@ -913,12 +969,15 @@ export default class OrgChart {
     }
 
     // Generate horizontal diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges-horizontal-d3-v3-v4-v5-v6
-    hdiagonal(s, t) {
+    hdiagonal(s, t, m) {
         // Define source and target x,y coordinates
         const x = s.x;
         const y = s.y;
         const ex = t.x;
         const ey = t.y;
+
+        let mx = m && m.x || x;
+        let my = m && m.y || y;
 
         // Values in case of top reversed and left reversed diagonals
         let xrvs = ex - x < 0 ? -1 : 1;
@@ -939,17 +998,19 @@ export default class OrgChart {
 
         // Build and return custom arc command
         return `
-              M ${x} ${y}
-              L ${x + w * xrvs} ${y}
-              C ${x + w * xrvs + r * xrvs} ${y} 
-                ${x + w * xrvs + r * xrvs} ${y} 
-                ${x + w * xrvs + r * xrvs} ${y + r * yrvs}
-              L ${x + w * xrvs + r * xrvs} ${ey - r * yrvs} 
-              C ${x + w * xrvs + r * xrvs}  ${ey} 
-                ${x + w * xrvs + r * xrvs}  ${ey} 
-                ${ex - w * xrvs}  ${ey}
-              L ${ex} ${ey}
-   `;
+                  M ${mx} ${my}
+                  L ${mx} ${y}
+                  L ${x} ${y}
+                  L ${x + w * xrvs} ${y}
+                  C ${x + w * xrvs + r * xrvs} ${y} 
+                    ${x + w * xrvs + r * xrvs} ${y} 
+                    ${x + w * xrvs + r * xrvs} ${y + r * yrvs}
+                  L ${x + w * xrvs + r * xrvs} ${ey - r * yrvs} 
+                  C ${x + w * xrvs + r * xrvs}  ${ey} 
+                    ${x + w * xrvs + r * xrvs}  ${ey} 
+                    ${ex - w * xrvs}  ${ey}
+                  L ${ex} ${ey}
+       `;
     }
 
     // Generate custom diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges
