@@ -83,15 +83,15 @@ export default class OrgChart {
             nodeUpdate: function (d, i, arr) {
                 d3.select(this)
                     .select('.node-rect')
-                    .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
-                    .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 5 : 1)
+                    .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'none')
+                    .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1)
             },
 
             nodeWidth: d3Node => 300,
             nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
-            neightbourMargin: (n1, n2) => 60,
+            neightbourMargin: (n1, n2) => 80,
             compactMarginPair: d => 100,
             compactMarginBetween: (d3Node => 20),
             onNodeClick: (d) => d,
@@ -130,7 +130,7 @@ export default class OrgChart {
                     "linkX": node => node.x,
                     "linkY": node => node.y,
                     "linkCompactXStart": node => node.x + node.width / 2,//node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
-                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height/2 : -node.height/2),
+                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height / 2 : -node.height / 2),
                     "compactLinkMidX": (node, state) => node.firstCompactNode.x,// node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "compactLinkMidY": (node, state) => node.firstCompactNode.y + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "linkParentX": node => node.parent.x + node.parent.width,
@@ -246,7 +246,7 @@ export default class OrgChart {
                     "buttonX": node => 0,
                     "buttonY": node => node.height / 2,
                     "linkCompactXStart": node => node.x - node.width / 2,//node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
-                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height/2 : -node.height/2),
+                    "linkCompactYStart": node => node.y + (node.compactEven ? node.height / 2 : -node.height / 2),
                     "compactLinkMidX": (node, state) => node.firstCompactNode.x,// node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "compactLinkMidY": (node, state) => node.firstCompactNode.y + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
                     "centerTransform": ({ root, rootMargin, centerY, scale, centerX, chartWidth }) => `translate(${chartWidth - rootMargin},${centerY}) scale(${scale})`,
@@ -953,7 +953,7 @@ export default class OrgChart {
         // CHECK FOR CENTERING
         const centeredNode = attrs.allNodes.filter(d => d.data._centered)[0]
         if (centeredNode) {
-            const centeredNodes = centeredNode.data._centeredWithDescendants ? centeredNode.descendants() : [centeredNode]
+            const centeredNodes = centeredNode.data._centeredWithDescendants ? centeredNode.descendants().filter((d, i) => i < 7) : [centeredNode]
             centeredNode.data._centeredWithDescendants = null;
             centeredNode.data._centered = null;
             this.fit({
@@ -1391,7 +1391,7 @@ export default class OrgChart {
         xhr.send();
     }
 
-    exportImg({ full = false, scale = 3 } = {}) {
+    exportImg({ full = false, scale = 3, onLoad = d => d, save = true } = {}) {
         const that = this;
         const attrs = this.getChartState();
         const { svg, root, allNodes } = attrs
@@ -1403,8 +1403,13 @@ export default class OrgChart {
                 that.toDataURL(this.src, (dataUrl) => {
                     this.src = dataUrl;
                     if (++count == total) {
-                        that.downloadImage(svg.node(), scale, false, d => {
-                            that.update(root)
+                        that.downloadImage({
+                            node: svg.node(), scale, isSvg: false,
+                            onAlreadySerialized: d => {
+                                that.update(root)
+                            },
+                            onLoad: onLoad,
+                            save
                         })
                     }
                 })
@@ -1413,7 +1418,7 @@ export default class OrgChart {
 
     exportSvg() {
         const { svg } = this.getChartState();
-        this.downloadImage(svg.node(), true)
+        this.downloadImage({ node: svg.node(), scale: 3, isSvg: true })
         return this;
     }
 
@@ -1424,9 +1429,10 @@ export default class OrgChart {
         return this;
     }
 
-    downloadImage(foreignObjectSVG, scale = 2, isSvg = false, onAlreadySerialized = d => { }) {
+    downloadImage({ node, scale = 2, isSvg = false, save = true, onAlreadySerialized = d => { }, onLoad = d => { } }) {
+        console.log('downloading image')
         // Retrieve svg node
-        const svgNode = foreignObjectSVG;
+        const svgNode = node;
 
         if (isSvg) {
             let source = serializeString(svgNode);
@@ -1441,8 +1447,8 @@ export default class OrgChart {
         // Get image quality index (basically,  index you can zoom in)
         const quality = scale
         // Create image
-        const image = new Image();
-        image.onload = () => {
+        const image = document.createElement('img');
+        image.onload = function () {
             // Create image canvas
             const canvas = document.createElement('canvas');
             // Set width and height based on SVG node
@@ -1456,8 +1462,14 @@ export default class OrgChart {
             context.drawImage(image, 0, 0, rect.width * quality, rect.height * quality);
             // Set some image metadata
             let dt = canvas.toDataURL('image/png');
-            // Invoke saving function
-            saveAs(dt, 'graph.png');
+            if (onLoad) {
+                onLoad(dt)
+            }
+            if (save) {
+                // Invoke saving function
+                saveAs(dt, 'graph.png');
+            }
+
         };
 
         var url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(serializeString(svgNode));

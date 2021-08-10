@@ -14,6 +14,7 @@
     <!----------------   ORG CHART NON ESSENTIAL CONTENT ------------>
 
     <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
     <style>
         [data-tooltip]:focus:after {
@@ -86,6 +87,27 @@
             data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'>Multi Node Connections
         </button>
 
+        <button onclick='downloadPdf()' class="simptip-position-bottom" data-tooltip='downloadPdf()'>Download PDF
+        </button>
+
+        <script>
+            function downloadPdf() {
+                chart.exportImg({
+                    save: false,
+                    onLoad: (base64 => {
+                        var pdf = new jspdf.jsPDF();
+                        var img = new Image()
+                        img.src = base64;
+                        img.onload = function () {
+                            pdf.addImage(img, 'JPEG', 5, 5, 595/3, img.height / img.width * 595/3);
+                            pdf.save('chart.pdf');
+                        }
+
+                    })
+                })
+
+            }
+        </script>
     </div>
 
     <a href="https://github.com/bumbeishvili/d3-organization-chart">
@@ -129,7 +151,7 @@
                     // .neightbourMargin((n1, n2) => 50)
                     // .compactMarginPair(d3Node => 70)
                     // .compactMarginBetween(d3Node => 30)
-                     .compact(true)
+                    .compact(true)
                     // .setActiveNodeCentered(true)
                     // .layout(new URLSearchParams(new URL(document.location.href).search).get('layout') || "top")
                     // .onNodeClick(d => console.log(d + ' node clicked'))
@@ -152,23 +174,47 @@
                     //         { id: 3, from: "O-6164", to: "O-6070", label: "Possible conflicts of interest" }
                     //     ],
                     // )
-//                     .nodeContent(function (d, i, arr, state) {
+                    //                     .nodeContent(function (d, i, arr, state) {
 
-//                         return `
-//                            <div style="padding:0px">
-// <!--
-//                             ${state.layout == 'top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-//                             ${state.layout == 'bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1] + d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-//                             ${state.layout == 'left' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${0}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-//                             ${state.layout == 'right' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5; margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${d.width-d.flexCompactDim[1]}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-//                         -->
-//                              <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
-//                              ID: ${d.data.id} <br>
-//                              Children Direct:${d.data._directSubordinates}<br>
-//                              Children Total:${d.data._totalSubordinates}
-//                             </div>
-//                         `;
-//                     })
+                    //                         return `
+                    //                            <div style="padding:0px">
+                    // <!--
+                    //                             ${state.layout == 'top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                    //                             ${state.layout == 'bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1] + d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                    //                             ${state.layout == 'left' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${0}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                    //                             ${state.layout == 'right' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5; margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${d.width-d.flexCompactDim[1]}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+                    //                         -->
+                    //                              <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
+                    //                              ID: ${d.data.id} <br>
+                    //                              Children Direct:${d.data._directSubordinates}<br>
+                    //                              Children Total:${d.data._totalSubordinates}
+                    //                             </div>
+                    //                         `;
+                    //                     })
+
+
+                    .nodeWidth(d => 250)
+                    .nodeHeight(d => 135)
+                    .childrenMargin(d => 80)
+                    .compactMarginBetween(d => 45)
+                    .compactMarginPair(d => 80)
+                    .nodeContent(function (d, i, arr, state) {
+                        return `
+                      <div style="background-color:white; position:absolute;margin-top:-1px; margin-left:-1px;height:${d.height}px;border:1px solid lightgray;border-radius:2px">
+                         <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-30px;margin-left:${d.width / 2 - 30}px;border-radius:100px;width:60px;height:60px;" />
+                         <div style="position:absolute;top:15px;right:20px;">${d.data.id}</div>
+                         <div style="background-color:#3AB6E3;height:10px;width:${d.width}px;border-radius:1px"></div>
+                         <div style="padding:20px; padding-top:35px;text-align:center">
+                             <div style="color:#111672;font-size:16px;font-weight:bold"> ${d.data.name} </div>
+                             <div style="color:#404040;font-size:16px;margin-top:4px"> ${d.data.positionName} </div>
+                         </div> 
+                         <div style="display:flex;justify-content:space-between;padding-left:15px;padding-right:15px;">
+                           <div > Manages:  ${d.data._directSubordinates} 👤</div>  
+                           <div > Oversees: ${d.data._totalSubordinates} 👤</div>    
+                         </div>
+                     </div>
+  `;
+                    })
                     .render()
             })
     </script>
