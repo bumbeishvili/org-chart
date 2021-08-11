@@ -87,7 +87,7 @@ export default class OrgChart {
                     .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1)
             },
 
-            nodeWidth: d3Node => 300,
+            nodeWidth: d3Node => 250,
             nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
             childrenMargin: d => 60,
@@ -106,7 +106,7 @@ export default class OrgChart {
              &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
              &nbsp;})</code>
              <br/> <br/>
-             Or check different <a href="" target="_blank">layout examples</a>
+             Or check different <a href="https://github.com/bumbeishvili/d3-organization-chart/blob/development/docs.md" target="_blank">layout examples</a>
              
              </div>`,
             layout: "top",// top, left,right, bottom
@@ -381,7 +381,7 @@ export default class OrgChart {
             };
 
             // Get zooming function
-            behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d));
+            behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d)).scaleExtent([0.001, 20])
             attrs.zoomBehavior = behaviors.zoom;
         }
 
@@ -1266,10 +1266,10 @@ export default class OrgChart {
 
         this.zoomTreeBounds({
             params: { animate: animate, scale },
-            x0: minX - 0,
-            x1: maxX + 0,
-            y0: minY - 0,
-            y1: maxY + 0,
+            x0: minX - 50,
+            x1: maxX + 50,
+            y0: minY - 50,
+            y1: maxY + 50,
         });
         return this;
     }

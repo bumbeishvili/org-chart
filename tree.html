@@ -99,7 +99,7 @@
                         var img = new Image()
                         img.src = base64;
                         img.onload = function () {
-                            pdf.addImage(img, 'JPEG', 5, 5, 595/3, img.height / img.width * 595/3);
+                            pdf.addImage(img, 'JPEG', 5, 5, 595 / 3, img.height / img.width * 595 / 3);
                             pdf.save('chart.pdf');
                         }
 
@@ -151,7 +151,6 @@
                     // .neightbourMargin((n1, n2) => 50)
                     // .compactMarginPair(d3Node => 70)
                     // .compactMarginBetween(d3Node => 30)
-                    .compact(true)
                     // .setActiveNodeCentered(true)
                     // .layout(new URLSearchParams(new URL(document.location.href).search).get('layout') || "top")
                     // .onNodeClick(d => console.log(d + ' node clicked'))
@@ -191,30 +190,7 @@
                     //                             </div>
                     //                         `;
                     //                     })
-
-
-                    .nodeWidth(d => 250)
-                    .nodeHeight(d => 135)
-                    .childrenMargin(d => 80)
-                    .compactMarginBetween(d => 45)
-                    .compactMarginPair(d => 80)
-                    .nodeContent(function (d, i, arr, state) {
-                        return `
-                      <div style="background-color:white; position:absolute;margin-top:-1px; margin-left:-1px;height:${d.height}px;border:1px solid lightgray;border-radius:2px">
-                         <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-30px;margin-left:${d.width / 2 - 30}px;border-radius:100px;width:60px;height:60px;" />
-                         <div style="position:absolute;top:15px;right:20px;">${d.data.id}</div>
-                         <div style="background-color:#3AB6E3;height:10px;width:${d.width}px;border-radius:1px"></div>
-                         <div style="padding:20px; padding-top:35px;text-align:center">
-                             <div style="color:#111672;font-size:16px;font-weight:bold"> ${d.data.name} </div>
-                             <div style="color:#404040;font-size:16px;margin-top:4px"> ${d.data.positionName} </div>
-                         </div> 
-                         <div style="display:flex;justify-content:space-between;padding-left:15px;padding-right:15px;">
-                           <div > Manages:  ${d.data._directSubordinates} 👤</div>  
-                           <div > Oversees: ${d.data._totalSubordinates} 👤</div>    
-                         </div>
-                     </div>
-  `;
-                    })
+            
                     .render()
             })
     </script>
