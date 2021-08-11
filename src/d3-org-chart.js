@@ -48,7 +48,6 @@ export default class OrgChart {
             defs: function (state, visibleConnections) {
                 return `<defs>
                     ${visibleConnections.map(conn => {
-
                     const labelWidth = this.getTextWidth(conn.label, { ctx: state.ctx, fontSize: 2, defaultFont: state.defaultFont });
                     return `
                        <marker id="${conn.from + "_" + conn.to}" refX="${conn._source.x < conn._target.x ? -7 : 7}" refY="5" markerWidth="500"  markerHeight="500"  orient="${conn._source.x < conn._target.x ? "auto" : "auto-start-reverse"}" >
@@ -110,12 +109,14 @@ export default class OrgChart {
              
              </div>`,
             layout: "top",// top, left,right, bottom
-            buttonContent: ({ children, layout, icons }) => `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${icons[layout](children)}  </div>`,
-            icons: {
-                "left": d => d ? `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>` : `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>`,
-                "bottom": d => d ? `<div style="margin-top:-20px;font-size:25px">ˬ</div>` : `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
-                "right": d => d ? `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>` : `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>`,
-                "top": d => d ? `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>` : `<div style="margin-top:-20px;font-size:25px">ˬ</div>`,
+            buttonContent: ({ node, state }) => {
+                const icons = {
+                    "left": d => d ? `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>` : `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>`,
+                    "bottom": d => d ? `<div style="margin-top:-20px;font-size:25px">ˬ</div>` : `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
+                    "right": d => d ? `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>` : `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>`,
+                    "top": d => d ? `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>` : `<div style="margin-top:-20px;font-size:25px">ˬ</div>`,
+                }
+                return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${icons[state.layout](node.children)}  </div>`
             },
             layoutBindings: {
                 "left": {
@@ -851,10 +852,11 @@ export default class OrgChart {
                 selector: "node-button-foreign-object",
                 data: (d) => [d]
             })
-            .attr('width', 20)
-            .attr('height', 20)
-            .attr('x', -10)
-            .attr('y', -10)
+            .attr('width', 40)
+            .attr('height', 40)
+            .attr('x', -20)
+            .attr('y', -20)
+            .style('overflow','visible')
             .patternify({
                 tag: "xhtml:div",
                 selector: "node-button-div",
@@ -906,8 +908,8 @@ export default class OrgChart {
         // Restyle node button circle
         nodeUpdate
             .select(".node-button-foreign-object .node-button-div")
-            .html(({ children }) => {
-                return attrs.buttonContent({ children, layout: attrs.layout, icons: attrs.icons })
+            .html((node) => {
+                return attrs.buttonContent({ node, state: attrs })
             })
 
         // Restyle button texts
