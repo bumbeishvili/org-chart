@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+ 
 
 
     <style>
@@ -194,48 +194,53 @@
                     //                         `;
                     //                     })
 
-                    .nodeHeight(d => 70)
+                    .nodeHeight(d => 85)
                     .nodeWidth(d => {
-                        if (d.depth == 0) return 250
-                        if (d.depth == 1) return 220
-                        return 140;
+                        return 220
                     })
                     .childrenMargin(d => 50)
                     .compactMarginBetween(d => 35)
                     .compactMarginPair(d => 30)
-                    .neightbourMargin((a,b)=>20)
+                    .neightbourMargin((a, b) => 20)
                     .buttonContent(({ node, state }) => {
-                        return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> <span style="font-size:9px">${node.children ? `<i class="fas fa-chevron-up"></i>` : `<i class="fas fa-chevron-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
+                        return `<div style="color:#716E7B;border-radius:5px;padding:3px;font-size:10px;margin:auto auto;background-color:white;border: 1px solid #E4E2E9"> <span style="font-size:9px">${node.children ? `<i class="fas fa-angle-up"></i>` : `<i class="fas fa-angle-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
+                    })
+                    .linkUpdate(function (d, i, arr) {
+                        d3.select(this)
+                            .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : '#E4E2E9')
+                            .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 1)
+
+                        if (d.data._upToTheRootHighlighted) {
+                            d3.select(this).raise()
+                        }
                     })
                     .nodeContent(function (d, i, arr, state) {
                         const colors = ['#278B8D', '#404040', '#0C5C73', '#33C6CB'];
-                        const color = colors[d.depth % colors.length];
+                        const color = "#FFFFFF"
                         return `
-                      <div style="background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:50px">
-                         <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:5px;margin-left:${5}px;border-radius:100px;width:60px;height:60px;" />
-                         <div style="position:absolute;top:-15px;width:${d.width}px;text-align:center;color:#fafafa;">
-                               <div style="margin:0 auto;background-color:${color};display:inline-block;padding:8px;padding-bottom:0px;border-radius:5px"> ${d.data.id}</div>
-                        </div>
+                      <div style="font-family: 'Inter', sans-serif;background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:10px;border: 1px solid #E4E2E9">
+                         <div style="background-color:${color};position:absolute;margin-top:-25px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+                         <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-20px;margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                         
+                        <div style="color:#08011E;position:absolute;right:20px;top:17px;font-size:10px;"><i class="fas fa-ellipsis-h"></i></div>
 
-                        <div style="color:#fafafa;font-size:${d.depth<2?16:12}px;font-weight:bold;margin-left:70px;margin-top:15px"> ${d.depth<2?d.data.name:(d.data.name||"").trim().split(/\s+/g)[0]} </div>
-                        <div style="color:#fafafa;margin-left:70px;margin-top:5px"> ${d.depth<2?d.data.positionName:d.data.area} </div>
-                        
-                         <!--
-                         <div style="padding:20px; padding-top:35px;text-align:center">
-                            
-                             
-                         </div> 
-                        
-                         <div style="display:flex;justify-content:space-between;padding-left:15px;padding-right:15px;">
-                           <div > Manages:  ${d.data._directSubordinates} 👤</div>  
-                           <div > Oversees: ${d.data._totalSubordinates} 👤</div>    
-                         </div>
-                         -->
+                        <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:32px"> ${d.data.name} </div>
+                        <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.positionName} </div>
+
+
                      </div>
   `;
                     })
-                    .render()
+                        .render()
             })
     </script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    
+</style>
 
 </body>

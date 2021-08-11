@@ -563,7 +563,6 @@ export default class OrgChart {
                     else child.compactEven = true;
                     child.row = Math.floor(i / 2);
                 })
-
                 const evenMaxColumnDimension = d3.max(compactChildren.filter(d => d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const oddMaxColumnDimension = d3.max(compactChildren.filter(d => !d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const columnSize = Math.max(evenMaxColumnDimension, oddMaxColumnDimension) * 2;
