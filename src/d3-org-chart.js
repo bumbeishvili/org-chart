@@ -44,6 +44,7 @@ export default class OrgChart {
             lastTransform: { x: 0, y: 0, k: 1 },
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
+            backgroundColor:'none',
             zoomBehavior: null,
             defs: function (state, visibleConnections) {
                 return `<defs>
@@ -415,6 +416,7 @@ export default class OrgChart {
                 tag: "svg",
                 selector: "svg-chart-container"
             })
+            .style('background-color',attrs.backgroundColor)
             .attr("width", attrs.svgWidth)
             .attr("height", attrs.svgHeight)
             .attr("font-family", attrs.defaultFont)
@@ -831,7 +833,7 @@ export default class OrgChart {
             tag: "xhtml:div",
             selector: "node-foreign-object-div",
             data: (d) => [d]
-        });
+        })
 
         this.restyleForeignObjectElements();
 
