@@ -106,7 +106,7 @@ export default class OrgChart {
              &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
              &nbsp;})</code>
              <br/> <br/>
-             Or check different <a href="https://github.com/bumbeishvili/d3-organization-chart/blob/development/docs.md" target="_blank">layout examples</a>
+             Or check different <a href="https://github.com/bumbeishvili/org-chart#jump-to-examples" target="_blank">layout examples</a>
              
              </div>`,
             layout: "top",// top, left,right, bottom

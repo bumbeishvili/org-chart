@@ -12,7 +12,7 @@
 
 
 
-Highly customizable org chart built with d3 v5.
+Highly customizable org chart built with d3 v7.
 
 Have you impressivelly  customized  an organizational chart and want to be featured on this page? Just email me at me@davidb.dev and include screenshot  of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
 
@@ -23,9 +23,9 @@ Have you impressivelly  customized  an organizational chart and want to be featu
 
 | | | 
 |:-------------------------:|:-------------------------:|
-|<a href="https://stackblitz.com/edit/web-platform-sgsxzp"><img height="450px"  src="https://user-images.githubusercontent.com/6873202/128979415-1b7fb969-6fc6-4a25-9ae2-87da7a9b031c.png"></a> <div style="100%">Default</div>  |  <a href="https://stackblitz.com/edit/web-platform-jyncb9"><img  height="450px"   src="https://user-images.githubusercontent.com/6873202/128979000-e5111571-8021-4c56-93d3-8d40dfe57536.png"></a> <div style="100%">Sky </div>
- |  <a href="https://stackblitz.com/edit/web-platform-lwyild"><img  height="450px"   src="https://user-images.githubusercontent.com/6873202/128978399-32f890c6-86f7-46e2-b41e-58202e61f03b.png"></a> <div style="100%">Circles</div>|  <a href="https://stackblitz.com/edit/web-platform-uhd3q7"><img  height="450px"   src="https://user-images.githubusercontent.com/6873202/129042576-0a8b27da-7a9d-4dee-b5b6-68080772cc9f.png"></a> <div style="100%">Oval</div>| 
-  |  <a href="https://stackblitz.com/edit/web-platform-3gwnsg"><img  height="450px"   src="https://user-images.githubusercontent.com/6873202/129054271-21ba5182-38c5-4856-bb21-727bba49243a.png"></a> <div style="100%">Clean (Design by [Anton](https://dribbble.com/shots/15480691-Org-chart))</div>|  <a href="https://stackblitz.com/edit/web-platform-o5t1ha"><img  height="450px"   src="https://user-images.githubusercontent.com/6873202/129182014-610b6761-6dd4-4847-92cb-66407a900d03.png"></a> <div style="100%">Futuristic - Full Functionality</div>|
+|<a href="https://stackblitz.com/edit/web-platform-sgsxzp"><img height="400px"  src="https://user-images.githubusercontent.com/6873202/128979415-1b7fb969-6fc6-4a25-9ae2-87da7a9b031c.png"></a> <div style="100%">Default</div>  |  <a href="https://stackblitz.com/edit/web-platform-jyncb9"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/128979000-e5111571-8021-4c56-93d3-8d40dfe57536.png"></a> <div style="100%">Sky </div>
+ |  <a href="https://stackblitz.com/edit/web-platform-lwyild"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/128978399-32f890c6-86f7-46e2-b41e-58202e61f03b.png"></a> <div style="100%">Circles</div>|  <a href="https://stackblitz.com/edit/web-platform-uhd3q7"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129042576-0a8b27da-7a9d-4dee-b5b6-68080772cc9f.png"></a> <div style="100%">Oval</div>| 
+  |  <a href="https://stackblitz.com/edit/web-platform-3gwnsg"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129054271-21ba5182-38c5-4856-bb21-727bba49243a.png"></a> <div style="100%">Clean (Design by [Anton](https://dribbble.com/shots/15480691-Org-chart))</div>|  <a href="https://stackblitz.com/edit/web-platform-o5t1ha"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129182014-610b6761-6dd4-4847-92cb-66407a900d03.png"></a> <div style="100%">Futuristic - Full Functionality</div>|
 
 
 #### Featured customizations:
