@@ -607,11 +607,9 @@ export default class OrgChart {
 
                 const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)), d => d.row);
                 const cumSum = d3.cumsum([...rowsMap].map(d => d[1] + attrs.compactMarginBetween(d)));
-                console.log({ x: compactChildren.map(d => d.x) })
                 compactChildren
                     .forEach((node, i) => {
                         if (node.row) {
-                            console.log('settiing down x', fch.x + cumSum[node.row - 1])
                             node.y = fch.y + cumSum[node.row - 1]
                         } else {
                             node.y = fch.y;
@@ -1174,12 +1172,9 @@ export default class OrgChart {
             Object.assign(node, { width, height })
         })
 
-
         // Store positions, where children appear during their enter animation
         attrs.root.x0 = 0;
         attrs.root.y0 = 0;
-
-
         attrs.allNodes = attrs.root.descendants();
 
         // Store direct and total descendants count
@@ -1195,17 +1190,12 @@ export default class OrgChart {
                 // Expand all nodes first
                 attrs.root.children.forEach(this.expand);
             }
-
-
-
             // Then collapse them all
             attrs.root.children.forEach((d) => this.collapse(d));
 
             // Then only expand nodes, which have expanded proprty set to true
             attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
         }
-
-
     }
 
     // Function which collapses passed node and it's descendants
@@ -1347,10 +1337,8 @@ export default class OrgChart {
 
         d3.select(document).on('fullscreenchange.' + attrs.id, function (d) {
             const fsElement = document.fullscreenElement || document.mozFullscreenElement || document.webkitFullscreenElement;
-            console.log({ fsElement })
             if (fsElement == el) {
                 setTimeout(d => {
-                    console.log('setting svg height')
                     attrs.svg.attr('height', window.innerHeight - 40);
                 }, 500)
             } else {
@@ -1434,7 +1422,6 @@ export default class OrgChart {
     }
 
     downloadImage({ node, scale = 2, isSvg = false, save = true, onAlreadySerialized = d => { }, onLoad = d => { } }) {
-        console.log('downloading image')
         // Retrieve svg node
         const svgNode = node;
 
