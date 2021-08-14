@@ -1,10 +1,10 @@
-# D3 v5 organization chart
+# Highly customizable d3 based organization chart
 [![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.1.1&x2=0)](https://npmjs.org/package/d3-org-chart) 
 [![](https://img.shields.io/npm/dm/d3-org-chart)](https://npmjs.org/package/d3-org-chart)
 
 <p align="center">
    <!-- Thanks Vasturiano for this trick -  https://github.com/vasturiano -->
-     <a href="https://observablehq.com/@bumbeishvili/d3-v5-organization-chart"><img width="80%" src="https://user-images.githubusercontent.com/6873202/74429052-a7b3b780-4e73-11ea-82c2-b65b5bd0c27d.gif"></a>
+     <a href="#"><img width="100%" src="https://user-images.githubusercontent.com/6873202/129306455-09f47e5e-0dc8-41b5-8fe2-da3fa4e0f7ed.gif"></a>
 </p>
 
 
@@ -12,40 +12,41 @@
 
 
 
-Highly customizable org chart built with d3 v5.
+Highly customizable org chart built with d3 v7.
 
 Have you impressivelly  customized  an organizational chart and want to be featured on this page? Just email me at me@davidb.dev and include screenshot  of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
 
 
-Featured customizations:
+## Jump To Examples
+
+
+
+| | | 
+|:-------------------------:|:-------------------------:|
+|<a href="https://stackblitz.com/edit/web-platform-sgsxzp"><img height="400px"  src="https://user-images.githubusercontent.com/6873202/128979415-1b7fb969-6fc6-4a25-9ae2-87da7a9b031c.png"></a> <div style="100%">Default</div>  |  <a href="https://stackblitz.com/edit/web-platform-jyncb9"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/128979000-e5111571-8021-4c56-93d3-8d40dfe57536.png"></a> <div style="100%">Sky </div>
+ |  <a href="https://stackblitz.com/edit/web-platform-lwyild"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/128978399-32f890c6-86f7-46e2-b41e-58202e61f03b.png"></a> <div style="100%">Circles</div>|  <a href="https://stackblitz.com/edit/web-platform-uhd3q7"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129042576-0a8b27da-7a9d-4dee-b5b6-68080772cc9f.png"></a> <div style="100%">Oval</div>| 
+  |  <a href="https://stackblitz.com/edit/web-platform-3gwnsg"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129054271-21ba5182-38c5-4856-bb21-727bba49243a.png"></a> <div style="100%">Clean (Design by [Anton](https://dribbble.com/shots/15480691-Org-chart))</div>|  <a href="https://stackblitz.com/edit/web-platform-o5t1ha"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129182014-610b6761-6dd4-4847-92cb-66407a900d03.png"></a> <div style="100%">Futuristic - Full Functionality</div>|
+ |  <a href="https://stackblitz.com/edit/web-platform-thplyq"><img  height="400px"   src="https://user-images.githubusercontent.com/6873202/129419379-a9d055c8-723c-468f-bd87-4762ba721d87.png"></a> <div style="100%">Prev version design</div>|
+
+
+#### Featured customizations:
 
 | | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
-|<img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://user-images.githubusercontent.com/6873202/120426599-753c0f80-c381-11eb-9695-c63808c98951.png"> <div style="100%">Light gradient version with horizontal layout</div>  |  <img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://user-images.githubusercontent.com/6873202/120426591-6f462e80-c381-11eb-9f77-2cf85b216a41.png"> <div style="100%">Compact layout</div> |
-
-
-
-
-
-Check out examples
-
-* [Observable example](https://observablehq.com/@bumbeishvili/d3-v5-organization-chart)  (latest stable)   
-* [Jsfiddle example](https://jsfiddle.net/k2ucqayn/)   
-* [Codepen example](https://codepen.io/bumbeishvili/full/arpJrv)  
-* [Observable Dev version](https://observablehq.com/d/e106c59dbd9f6151) (Unstable - latest)
-
-
+|<img  alt="screen shot 2017-08-07 at 12 18 15 pm" height="300px" src="https://user-images.githubusercontent.com/6873202/120426599-753c0f80-c381-11eb-9695-c63808c98951.png"> <div style="100%">Light gradient version with horizontal layout</div>  |  <img  alt="screen shot 2017-08-07 at 12 18 15 pm" height="300px" src="https://user-images.githubusercontent.com/6873202/120426591-6f462e80-c381-11eb-9f77-2cf85b216a41.png"> <div style="100%">Compact layout</div> |
 
 
 Check out several libraries and frameworks integrations
 
-* [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration)  
+* [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration-su3d6r)  
 * [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration-hooks)  
-* [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration)  
+* [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration-halhxr)  
 
 Custom components & algorithms I used
 
-* [Curved edges](https://observablehq.com/@bumbeishvili/curved-edges?collection=@bumbeishvili/work-components) - observablehq playground
+* [Curved edges - vertical](https://observablehq.com/@bumbeishvili/curved-edges-compacty-vertical) 
+* [Curved edges - horizontal](https://observablehq.com/@bumbeishvili/curved-edges-compact-horizontal)
+* [Flextree Algorithm](https://github.com/Klortho/d3-flextree)
 
 
 ### Installing
@@ -54,23 +55,33 @@ Custom components & algorithms I used
 npm i d3-org-chart
 ```
 
-### Docs
-[Weak Wiki](https://github.com/bumbeishvili/d3-organization-chart/wiki)
 
 ### Usage
-```
+```javascript
 const TreeChart = require ('https://bundle.run/d3-org-chart@1.0.4');
 
 
 new TreeChart()
-   .container(<myDOMElement>)
-   .data(<myData>)
-   .svgWidth(700)
-   .initialZoom(0.4)
-   .onNodeClick(d=> console.log(d+' node clicked'))
+   .container(<myDOMElement>)  // Dom element or css selector
+
+   // Sample Data - https://github.com/bumbeishvili/sample-data/blob/main/org.csv
+   .data(<myData>)    // Tabular data, where hierarchy is defined using id and parentNodeId columns 
+   .nodeId(d=>d.id)   // By default id and nodeId is looked for
+   .parentNodeid(d=>d.parentId) // By default parentId and parentNodeId is looked for
    .render()
- 
 ```
+
+### Quick Docs
+
+Check the sample data here - https://github.com/bumbeishvili/sample-data/blob/main/org.csv
+
+For the full functionality of exposed methods check [Futuristic Example](https://stackblitz.com/edit/web-platform-o5t1ha) and button bound functions
+
+For the high level overview of margins and content setting check the image bellow
+
+![](https://user-images.githubusercontent.com/6873202/129315269-a2ef1c25-1078-486f-bf0a-0a05d273f354.png)
+
+
 
 
 ## Notes & appreciations 
@@ -80,7 +91,7 @@ Although this Org chart was specifically created for [teamapps java web applicat
 
 Big thanks to  [Matthias](https://github.com/Matthias-Bernstein) and [Yann](https://github.com/yamass), who assembled requirements for org-chart and had valuable pieces of advice afterwads.
 
-Also, thanks for all people who made generous [donations](https://ko-fi.com/bumbeishvili), it gives me motivation to further improve this org chart component.
+Also, thanks all people who made generous [donations](https://ko-fi.com/bumbeishvili), it gives me motivation to further improve this org chart component.
 
 Thanks [contractzen](https://www.contractzen.com/)  for the significant contribution, which made implementation of some of the most important features (optimal layout, exporting ) possible.
 
