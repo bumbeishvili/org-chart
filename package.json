@@ -1,6 +1,7 @@
 {
   "name": "d3-org-chart",
   "version": "2.0.1-rc.2",
+  "module": "index.js",
   "description": "Highly customizable org chart, created with d3",
   "keywords": [
     "d3",
@@ -11,7 +12,7 @@
     "employee"
   ],
   "license": "BSD-3-Clause",
-  "main": "build/d3-org-chart.js",
+  "main": "index.js",
   "jsnext:main": "index",
   "bugs": {
     "url": "https://github.com/bumbeishvili/d3-organization-chart/issues"
