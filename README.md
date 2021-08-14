@@ -38,9 +38,9 @@ Have you impressivelly  customized  an organizational chart and want to be featu
 
 Check out several libraries and frameworks integrations
 
-* [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration)  
+* [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration-su3d6r)  
 * [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration-hooks)  
-* [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration)  
+* [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration-halhxr)  
 
 Custom components & algorithms I used
 
