@@ -1,5 +1,6 @@
 # Highly customizable d3 based organization chart
-[![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.1.1&x2=0)](https://npmjs.org/package/d3-org-chart) 
+
+<span class="badge-npmversion"><a href="https://npmjs.org/package/d3-org-chart" title="View this project on NPM"><img src="https://img.shields.io/npm/v/d3-org-chart.svg" alt="NPM version" /></a></span>
 [![](https://img.shields.io/npm/dm/d3-org-chart)](https://npmjs.org/package/d3-org-chart)
 
 <p align="center">
@@ -8,6 +9,8 @@
 </p>
 
 
+
+[Medium article about this project](https://bumbeishvili.medium.com/introducing-a-new-org-chart-130368314f04)
 
 
 
@@ -63,7 +66,6 @@ const TreeChart = require ('https://bundle.run/d3-org-chart@1.0.4');
 
 new TreeChart()
    .container(<myDOMElement>)  // Dom element or css selector
-
    // Sample Data - https://github.com/bumbeishvili/sample-data/blob/main/org.csv
    .data(<myData>)    // Tabular data, where hierarchy is defined using id and parentNodeId columns 
    .nodeId(d=>d.id)   // By default id and nodeId is looked for
