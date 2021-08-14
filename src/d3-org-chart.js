@@ -21,7 +21,7 @@ const d3 = {
     group,
     rollup
 }
-export default class OrgChart {
+export class OrgChart {
     constructor() {
         // Exposed variables 
         const attrs = {
