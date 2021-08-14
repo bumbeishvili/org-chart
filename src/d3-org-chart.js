@@ -799,7 +799,7 @@ export class OrgChart {
             })
             .attr("cursor", "pointer")
             .on("click", (event, { data }) => {
-                if ([...event.srcElement.classList].includes("node-button-circle")) {
+                if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
                     return;
                 }
                 attrs.onNodeClick(attrs.nodeId(data));
@@ -861,6 +861,7 @@ export class OrgChart {
                 selector: "node-button-div",
                 data: (d) => [d]
             })
+            .style('pointer-events','none')
             .style('display', 'flex')
             .style('width', '100%')
             .style('height', '100%')
