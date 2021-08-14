@@ -1,7 +1,7 @@
 {
   "name": "d3-org-chart",
   "version": "2.0.1-rc.6",
-  "module": "src/d3-org-chart.js",
+  "module": "index",
   "description": "Highly customizable org chart, created with d3",
   "keywords": [
     "d3",
@@ -12,7 +12,7 @@
     "employee"
   ],
   "license": "BSD-3-Clause",
-  "main": "src/d3-org-chart.js",
+  "main": "build/d3-org-chart.min.js",
   "jsdelivr": "build/d3-org-chart.min.js",
   "unpkg": "build/d3-org-chart.min.js",
   "exports": {
@@ -30,12 +30,20 @@
   },
   "scripts": {
     "start": "nodemon ",
+    "_pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\"",
+    "_test": "tape 'test/**/*-test.js'",
+    "_prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
+    "_postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-selection:d3,d3-array:d3,d3-hierarchy:d3,d3-zoom:d3,d3-flextree:d3,d3-shape:d3,d3-group:d3  -f umd -n d3 -o build/d3-org-chart.js -- index.js",
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel": "^6.23.0",
+    "package-preamble": "0.1",
     "rollup": "0.27",
     "tape": "4",
     "uglify-js": "3"
