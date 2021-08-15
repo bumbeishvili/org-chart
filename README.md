@@ -54,27 +54,24 @@ Custom components & algorithms I used
 
 ### Usage
 ```html
-  <body>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
     <div
       class="chart-container"
-      style=" height:1200px ;background-color:white"
     ></div>
 
     <script>
       var chart;
       d3.csv(
         'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/org.csv'
-      ).then(dataFlattened => {
+      ).then(data => {
         chart = new d3.OrgChart()
           .container('.chart-container')
-          .data(dataFlattened) // https://gist.github.com/bumbeishvili/40fc87bdcdc4d7a1919e4cce2fed10f9
+          .data(data) 
           .render();
       });
     </script>
-  </body>
 ```
 
 ### Installing
@@ -85,10 +82,11 @@ npm i d3-org-chart
 
 ```javascript
 import { OrgChart } from 'd3-org-chart';
-  new OrgChart() 
-      .container(<DomElementOrCssSelector>)
-      .data(<Data>) //  https://raw.githubusercontent.com/bumbeishvili/sample-data/main/org.csv
-      .render();
+
+ new OrgChart() 
+     .container(<DomElementOrCssSelector>)
+     .data(<Data>) //  https://raw.githubusercontent.com/bumbeishvili/sample-data/main/org.csv
+     .render();
 ```
 
 ### Quick Docs
