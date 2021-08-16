@@ -35,7 +35,6 @@ export class OrgChart {
             ctx: document.createElement('canvas').getContext('2d'),
             data: null,
             duration: 400,
-            initialZoom: 1,
             setActiveNodeCentered: true,
             compact: true,
             rootMargin: 40,
@@ -44,7 +43,7 @@ export class OrgChart {
             lastTransform: { x: 0, y: 0, k: 1 },
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
-            backgroundColor:'none',
+            backgroundColor: 'none',
             zoomBehavior: null,
             defs: function (state, visibleConnections) {
                 return `<defs>
@@ -53,7 +52,7 @@ export class OrgChart {
                     return `
                        <marker id="${conn.from + "_" + conn.to}" refX="${conn._source.x < conn._target.x ? -7 : 7}" refY="5" markerWidth="500"  markerHeight="500"  orient="${conn._source.x < conn._target.x ? "auto" : "auto-start-reverse"}" >
                        <rect rx=0.5 width=${conn.label ? labelWidth + 3 : 0} height=3 y=1  fill="#152785"></rect>
-                       <text font-size="2px" x=1 fill="white" y=3>${conn.label||''}</text>
+                       <text font-size="2px" x=1 fill="white" y=3>${conn.label || ''}</text>
                        </marker>
 
                        <marker id="arrow-${conn.from + "_" + conn.to}"  markerWidth="500"  markerHeight="500"  refY="2"  refX="1" orient="${conn._source.x < conn._target.x ? "auto" : "auto-start-reverse"}" >
@@ -335,23 +334,13 @@ export class OrgChart {
     }
 
     // This method can be invoked via chart.setZoomFactor API, it zooms to particulat scale
-    setZoomFactor(zoomLevel) {
+    initialZoom(zoomLevel) {
         const attrs = this.getChartState();
-        const calc = attrs.calc;
-
-        // Store passed zoom level
-        attrs.initialZoom = zoomLevel;
-
-        return attrs.layoutBindings[attrs.layout].zoomTransform({
-            centerX: calc.centerX,
-            centerY: calc.centerY,
-            scale: attrs.initialZoom,
-        });
-
+        attrs.lastTransform.k = zoomLevel;
+        return this;
     }
 
     render() {
-
         //InnerFunctions which will update visuals
         const attrs = this.getChartState();
         if (!attrs.data || attrs.data.length == 0) {
@@ -416,7 +405,7 @@ export class OrgChart {
                 tag: "svg",
                 selector: "svg-chart-container"
             })
-            .style('background-color',attrs.backgroundColor)
+            .style('background-color', attrs.backgroundColor)
             .attr("width", attrs.svgWidth)
             .attr("height", attrs.svgHeight)
             .attr("font-family", attrs.defaultFont)
@@ -468,7 +457,7 @@ export class OrgChart {
                 return attrs.layoutBindings[attrs.layout].centerTransform({
                     centerX: calc.centerX,
                     centerY: calc.centerY,
-                    scale: attrs.initialZoom,
+                    scale: attrs.lastTransform.k,
                     rootMargin: attrs.rootMargin,
                     root: attrs.root,
                     chartHeight: calc.chartHeight,
@@ -855,13 +844,13 @@ export class OrgChart {
             .attr('height', 40)
             .attr('x', -20)
             .attr('y', -20)
-            .style('overflow','visible')
+            .style('overflow', 'visible')
             .patternify({
                 tag: "xhtml:div",
                 selector: "node-button-div",
                 data: (d) => [d]
             })
-            .style('pointer-events','none')
+            .style('pointer-events', 'none')
             .style('display', 'flex')
             .style('width', '100%')
             .style('height', '100%')
