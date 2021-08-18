@@ -36,6 +36,7 @@ export class OrgChart {
             data: null,
             duration: 400,
             setActiveNodeCentered: true,
+            expandLevel: 1,
             compact: true,
             rootMargin: 40,
             nodeDefaultBackground: 'none',
@@ -610,7 +611,7 @@ export class OrgChart {
     }
 
     // This function basically redraws visible graph, based on nodes state
-    update({ x0, y0, x, y, width, height }) {
+    update({ x0, y0, x=0, y=0, width, height }) {
         const attrs = this.getChartState();
         const calc = attrs.calc;
 
@@ -1183,8 +1184,14 @@ export class OrgChart {
             // Then collapse them all
             attrs.root.children.forEach((d) => this.collapse(d));
 
+            // Collapse root if level is 0
+            if(attrs.expandLevel==0){
+                attrs.root._children = attrs.root.children;
+                attrs.root.children = null;
+            }
+
             // Then only expand nodes, which have expanded proprty set to true
-            attrs.root.children.forEach((ch) => this.expandSomeNodes(ch));
+            [attrs.root].forEach((ch) => this.expandSomeNodes(ch));
         }
     }
 
@@ -1408,6 +1415,14 @@ export class OrgChart {
         const { allNodes, root } = this.getChartState();
         allNodes.forEach(d => d.data._expanded = true);
         this.render()
+        return this;
+    }
+
+    collapseAll() {
+        const { allNodes, root } = this.getChartState();
+        allNodes.forEach(d => d.data._expanded = false);
+        this.expandLevel(0)
+        this.render();
         return this;
     }
 
