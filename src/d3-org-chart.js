@@ -611,7 +611,7 @@ export class OrgChart {
     }
 
     // This function basically redraws visible graph, based on nodes state
-    update({ x0, y0, x=0, y=0, width, height }) {
+    update({ x0, y0, x = 0, y = 0, width, height }) {
         const attrs = this.getChartState();
         const calc = attrs.calc;
 
@@ -1185,7 +1185,7 @@ export class OrgChart {
             attrs.root.children.forEach((d) => this.collapse(d));
 
             // Collapse root if level is 0
-            if(attrs.expandLevel==0){
+            if (attrs.expandLevel == 0) {
                 attrs.root._children = attrs.root.children;
                 attrs.root.children = null;
             }
@@ -1383,23 +1383,33 @@ export class OrgChart {
     exportImg({ full = false, scale = 3, onLoad = d => d, save = true } = {}) {
         const that = this;
         const attrs = this.getChartState();
-        const { svg, root, allNodes } = attrs
+        const { svg: svgImg, root } = attrs
         let count = 0;
-        const selection = svg.selectAll('img')
+        const selection = svgImg.selectAll('img')
         let total = selection.size()
         selection
             .each(function () {
                 that.toDataURL(this.src, (dataUrl) => {
                     this.src = dataUrl;
                     if (++count == total) {
-                        that.downloadImage({
-                            node: svg.node(), scale, isSvg: false,
-                            onAlreadySerialized: d => {
-                                that.update(root)
-                            },
-                            onLoad: onLoad,
-                            save
-                        })
+
+                        const transform = JSON.parse(JSON.stringify(that.lastTransform()));
+                        const duration = that.duration();
+                        if (full) {
+                            that.fit();
+                        }
+                        const { svg } = that.getChartState()
+
+                        setTimeout(d => {
+                            that.downloadImage({
+                                node: svg.node(), scale, isSvg: false,
+                                onAlreadySerialized: d => {
+                                    that.update(root)
+                                },
+                                onLoad: onLoad,
+                                save
+                            })
+                        }, full ? duration+10 : 0)
                     }
                 })
             })
