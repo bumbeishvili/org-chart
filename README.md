@@ -43,7 +43,7 @@ Check out several libraries and frameworks integrations
 
 * [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration-su3d6r)  
 * [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration-hooks)  
-* [Angular integration](https://stackblitz.com/edit/d3-org-chart-angular-integration-halhxr)  
+* [Angular integration](https://stackblitz.com/edit/angular-ivy-gneris)  
 
 Custom components & algorithms I used
 
