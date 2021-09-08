@@ -4,7 +4,6 @@ import { tree, stratify } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
 import { linkHorizontal } from 'd3-shape';
-import { group, rollup } from 'd3-array'
 
 const d3 = {
     selection,
@@ -18,8 +17,6 @@ const d3 = {
     zoom,
     zoomIdentity,
     linkHorizontal,
-    group,
-    rollup
 }
 export class OrgChart {
     constructor() {
@@ -537,6 +534,21 @@ export class OrgChart {
         return this;
     }
 
+    groupBy(array, accessor, aggegator){
+        const grouped={}
+        array.forEach(item=>{
+            const key=accessor(item)
+            if(!grouped[key]){
+                grouped[key]=[]
+            }
+            grouped[key].push(item)
+        })
+
+        Object.keys(grouped).forEach(key=>{
+            grouped[key]=aggegator(grouped[key])
+        })
+        return Object.entries(grouped);
+    }
     calculateCompactFlexDimensions(root) {
         const attrs = this.getChartState();
         root.eachBefore(node => {
@@ -558,8 +570,8 @@ export class OrgChart {
                 const evenMaxColumnDimension = d3.max(compactChildren.filter(d => d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const oddMaxColumnDimension = d3.max(compactChildren.filter(d => !d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const columnSize = Math.max(evenMaxColumnDimension, oddMaxColumnDimension) * 2;
-                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d) + attrs.compactMarginBetween(d)), d => d.row);
-                const rowSize = d3.sum([...rowsMap].map(v => v[1]))
+                const rowsMapNew = this.groupBy(compactChildren,d=>d.row, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d) + attrs.compactMarginBetween(d)));
+                const rowSize = d3.sum(rowsMapNew.map(v => v[1]))
                 compactChildren.forEach(node => {
                     node.firstCompactNode = compactChildren[0];
                     if (node.firstCompact) {
@@ -595,8 +607,8 @@ export class OrgChart {
                     compactChildren.forEach(d => d.x += offsetX);
                 }
 
-                const rowsMap = d3.rollup(compactChildren, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)), d => d.row);
-                const cumSum = d3.cumsum([...rowsMap].map(d => d[1] + attrs.compactMarginBetween(d)));
+                const rowsMapNew = this.groupBy(compactChildren, d=>d.row, reducedGroup => d3.max(reducedGroup,d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)));
+                const cumSum = d3.cumsum(rowsMapNew.map(d => d[1] + attrs.compactMarginBetween(d)));
                 compactChildren
                     .forEach((node, i) => {
                         if (node.row) {
@@ -638,15 +650,19 @@ export class OrgChart {
 
         // Connections
         const connections = attrs.connections;
-        const allNodesMap = new Map(attrs.allNodes.map(d => [attrs.nodeId(d.data), d]));
-        const visibleNodesMap = new Map(nodes.map(d => [attrs.nodeId(d.data), d]));
+        const allNodesMap = {};
+        attrs.allNodes.forEach(d => allNodesMap[attrs.nodeId(d.data)] = d);
+        
+        const visibleNodesMap = {}
+        nodes.forEach(d => visibleNodesMap[attrs.nodeId(d.data)] = d);
+        
         connections.forEach(connection => {
-            const source = allNodesMap.get(connection.from);
-            const target = allNodesMap.get(connection.to);
+            const source = allNodesMap[connection.from];
+            const target = allNodesMap[connection.to];
             connection._source = source;
             connection._target = target;
         })
-        const visibleConnections = connections.filter(d => visibleNodesMap.has(d.from) && visibleNodesMap.has(d.to));
+        const visibleConnections = connections.filter(d => visibleNodesMap[d.from] && visibleNodesMap[d.to]);
         const defsString = attrs.defs.bind(this)(attrs, visibleConnections);
         const existingString = attrs.defsWrapper.html();
         if (defsString !== existingString) {

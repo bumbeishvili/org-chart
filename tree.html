@@ -15,7 +15,7 @@
     <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
- 
+
 
 
     <style>
@@ -80,7 +80,8 @@
         <button onclick='chart.exportImg()' class="simptip-position-bottom" data-tooltip='chart.exportImg()'>Export
             Current Image
         </button>
-        <button onclick='chart.exportImg({full:true})' class="simptip-position-bottom" data-tooltip='chart.exportImg({full:true})'>Export
+        <button onclick='chart.exportImg({full:true})' class="simptip-position-bottom"
+            data-tooltip='chart.exportImg({full:true})'>Export
             Export Full Image
         </button>
         <button onclick='chart.exportSvg()' class="simptip-position-bottom" data-tooltip='chart.exportSvg()'>Export
@@ -88,10 +89,12 @@
         </button>
         <button onclick='chart.expandAll()' class="simptip-position-bottom" data-tooltip='chart.expandAll()'>Expand All
         </button>
-        <button onclick='chart.collapseAll()' class="simptip-position-bottom" data-tooltip='chart.collapseAll()'>Collapse All
+        <button onclick='chart.collapseAll()' class="simptip-position-bottom"
+            data-tooltip='chart.collapseAll()'>Collapse All
         </button>
-        <button onclick='chart.connections([{from:"O-6067",to:"O-6070",label:"Conflicts of interest"}]).render()' class="simptip-position-bottom"
-            data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'>Multi Node Connections
+        <button onclick='chart.connections([{from:"O-6067",to:"O-6070",label:"Conflicts of interest"}]).render()'
+            class="simptip-position-bottom" data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'>Multi Node
+            Connections
         </button>
 
         <button onclick='downloadPdf()' class="simptip-position-bottom" data-tooltip='downloadPdf()'>Download PDF
@@ -202,7 +205,7 @@
                         return 220
                     })
                     .childrenMargin(d => 50)
-                    .onNodeClick(d=>alert('ok'))
+                    .onNodeClick(d => alert('ok'))
                     .compactMarginBetween(d => 35)
                     .compactMarginPair(d => 30)
                     .neightbourMargin((a, b) => 20)
@@ -218,33 +221,44 @@
                             d3.select(this).raise()
                         }
                     })
+
+
+
+
+
                     .nodeContent(function (d, i, arr, state) {
-                        const colors = ['#278B8D', '#404040', '#0C5C73', '#33C6CB'];
                         const color = "#FFFFFF"
+                        console.log({data:d})
                         return `
-                      <div style="font-family: 'Inter', sans-serif;background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:10px;border: 1px solid #E4E2E9">
-                         <div style="background-color:${color};position:absolute;margin-top:-25px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                         <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-20px;margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
-                         
-                        <div style="color:#08011E;position:absolute;right:20px;top:17px;font-size:10px;"><i class="fas fa-ellipsis-h"></i></div>
-
-                        <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:32px"> ${d.data.name} </div>
-                        <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.positionName} </div>
-
- 
-                     </div>
-  `;
+                         <div style="font-family: 'Inter', sans-serif;background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:10px;border: 1px solid #E4E2E9">
+                            <div style="background-color:${color};position:absolute;margin-top:-25px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+                            <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-20px;margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                            
+                           <div style="color:#08011E;position:absolute;right:20px;top:17px;font-size:10px;"><i class="fas fa-ellipsis-h"></i></div>
+   
+                           <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:32px">  ${d.data.name} </div>
+                           <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.positionName} </div>
+   
+    
+                        </div>
+                        `;
                     })
-                        .render()
+
+
+
+
+
+
+                    .render()
             })
     </script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<style>
-    
-</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+
+    </style>
 
 </body>
