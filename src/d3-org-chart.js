@@ -534,18 +534,18 @@ export class OrgChart {
         return this;
     }
 
-    groupBy(array, accessor, aggegator){
-        const grouped={}
-        array.forEach(item=>{
-            const key=accessor(item)
-            if(!grouped[key]){
-                grouped[key]=[]
+    groupBy(array, accessor, aggegator) {
+        const grouped = {}
+        array.forEach(item => {
+            const key = accessor(item)
+            if (!grouped[key]) {
+                grouped[key] = []
             }
             grouped[key].push(item)
         })
 
-        Object.keys(grouped).forEach(key=>{
-            grouped[key]=aggegator(grouped[key])
+        Object.keys(grouped).forEach(key => {
+            grouped[key] = aggegator(grouped[key])
         })
         return Object.entries(grouped);
     }
@@ -570,7 +570,7 @@ export class OrgChart {
                 const evenMaxColumnDimension = d3.max(compactChildren.filter(d => d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const oddMaxColumnDimension = d3.max(compactChildren.filter(d => !d.compactEven), attrs.layoutBindings[attrs.layout].compactDimension.sizeColumn);
                 const columnSize = Math.max(evenMaxColumnDimension, oddMaxColumnDimension) * 2;
-                const rowsMapNew = this.groupBy(compactChildren,d=>d.row, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d) + attrs.compactMarginBetween(d)));
+                const rowsMapNew = this.groupBy(compactChildren, d => d.row, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d) + attrs.compactMarginBetween(d)));
                 const rowSize = d3.sum(rowsMapNew.map(v => v[1]))
                 compactChildren.forEach(node => {
                     node.firstCompactNode = compactChildren[0];
@@ -607,7 +607,7 @@ export class OrgChart {
                     compactChildren.forEach(d => d.x += offsetX);
                 }
 
-                const rowsMapNew = this.groupBy(compactChildren, d=>d.row, reducedGroup => d3.max(reducedGroup,d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)));
+                const rowsMapNew = this.groupBy(compactChildren, d => d.row, reducedGroup => d3.max(reducedGroup, d => attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)));
                 const cumSum = d3.cumsum(rowsMapNew.map(d => d[1] + attrs.compactMarginBetween(d)));
                 compactChildren
                     .forEach((node, i) => {
@@ -652,10 +652,10 @@ export class OrgChart {
         const connections = attrs.connections;
         const allNodesMap = {};
         attrs.allNodes.forEach(d => allNodesMap[attrs.nodeId(d.data)] = d);
-        
+
         const visibleNodesMap = {}
         nodes.forEach(d => visibleNodesMap[attrs.nodeId(d.data)] = d);
-        
+
         connections.forEach(connection => {
             const source = allNodesMap[connection.from];
             const target = allNodesMap[connection.to];
@@ -1403,33 +1403,45 @@ export class OrgChart {
         let count = 0;
         const selection = svgImg.selectAll('img')
         let total = selection.size()
-        selection
-            .each(function () {
-                that.toDataURL(this.src, (dataUrl) => {
-                    this.src = dataUrl;
-                    if (++count == total) {
 
-                        const transform = JSON.parse(JSON.stringify(that.lastTransform()));
-                        const duration = that.duration();
-                        if (full) {
-                            that.fit();
-                        }
-                        const { svg } = that.getChartState()
+        const exportImage = () => {
+            const transform = JSON.parse(JSON.stringify(that.lastTransform()));
+            const duration = that.duration();
+            if (full) {
+                that.fit();
+            }
+            const { svg } = that.getChartState()
 
-                        setTimeout(d => {
-                            that.downloadImage({
-                                node: svg.node(), scale, isSvg: false,
-                                onAlreadySerialized: d => {
-                                    that.update(root)
-                                },
-                                onLoad: onLoad,
-                                save
-                            })
-                        }, full ? duration+10 : 0)
-                    }
+            setTimeout(d => {
+                that.downloadImage({
+                    node: svg.node(), scale, isSvg: false,
+                    onAlreadySerialized: d => {
+                        that.update(root)
+                    },
+                    onLoad: onLoad,
+                    save
                 })
-            })
+            }, full ? duration + 10 : 0)
+        }
+
+        if (total > 0) {
+            selection
+                .each(function () {
+                    that.toDataURL(this.src, (dataUrl) => {
+                        this.src = dataUrl;
+                        if (++count == total) {
+                            exportImage();
+                        }
+                    })
+                })
+        } else {
+            exportImage();
+        }
+
+
     }
+
+
 
     exportSvg() {
         const { svg } = this.getChartState();
