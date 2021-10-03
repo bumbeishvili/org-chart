@@ -22,5 +22,3 @@ Add any other context or screenshots about the feature request here.
 
 ---
 
-
-Also, there is a **new** dev version in progress - check the roadmap here - https://github.com/bumbeishvili/d3-organization-chart/issues/14
