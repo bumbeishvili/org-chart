@@ -37,8 +37,3 @@ If applicable, add screenshots to help explain your problem.
 **Additional context**
 Add any other context about the problem here.
 
-
----
-
-
-Also, there is a **new** dev version in progress - check the roadmap here - https://github.com/bumbeishvili/d3-organization-chart/issues/14
