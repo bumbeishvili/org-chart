@@ -904,6 +904,9 @@ export class OrgChart {
                 const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
                 return `translate(${x},${y})`
             })
+            .attr("display", ({ data }) => {
+                return data._directSubordinates > 0 ? null : 'none';
+            })
             .attr("opacity", ({ children, _children }) => {
                 if (children || _children) {
                     return 1;
@@ -1097,7 +1100,9 @@ export class OrgChart {
             d._children = null;
 
             // Set each children as expanded
-            d.children.forEach(({ data }) => (data._expanded = true));
+            if (d.children) {
+                d.children.forEach(({ data }) => (data._expanded = true));
+            }
         }
 
         // Redraw Graph
