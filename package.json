@@ -54,6 +54,6 @@
     "d3-hierarchy": "3",
     "d3-zoom": "3",
     "d3-shape": "3",
-    "d3-flextree": "2.1.1"
+    "d3-flextree": "2.1.2"
   }
 }
