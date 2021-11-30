@@ -58,7 +58,7 @@ export class OrgChart {
                        </marker>
                     `}).join("")}
                     </defs>
-                    }`},
+                    `},
             connectionsUpdate: function (d, i, arr) {
                 d3.select(this)
                     .attr("stroke", d => '#152785')
