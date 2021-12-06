@@ -850,6 +850,18 @@ export class OrgChart {
             })
             .on("click", (event, d) => this.onButtonClick(event, d));
 
+        nodeButtonGroups.patternify({
+            tag: 'rect',
+            selector: 'node-button-rect',
+            data: (d) => [d]
+        })
+            .attr('opacity', 0)
+            .attr('pointer-events', 'all')
+            .attr('width', 40)
+            .attr('height', 40)
+            .attr('x', -20)
+            .attr('y', -20)
+
         // Add expand collapse button content
         const nodeFo = nodeButtonGroups
             .patternify({
