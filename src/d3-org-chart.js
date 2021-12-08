@@ -26,6 +26,7 @@ export class OrgChart {
             firstDraw: true,
             svgWidth: 800,
             svgHeight: window.innerHeight - 100,
+            scaleExtent:[0.001, 20],
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
@@ -370,7 +371,7 @@ export class OrgChart {
             };
 
             // Get zooming function
-            behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d)).scaleExtent([0.001, 20])
+            behaviors.zoom = d3.zoom().on("zoom", (event, d) => this.zoomed(event, d)).scaleExtent(attrs.scaleExtent)
             attrs.zoomBehavior = behaviors.zoom;
         }
 
