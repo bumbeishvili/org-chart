@@ -53,6 +53,9 @@ Custom components & algorithms I used
 
 
 ### Usage
+
+Tip: Just copy this code and paste at - https://realtimehtml.com/
+
 ```html
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@2"></script>
