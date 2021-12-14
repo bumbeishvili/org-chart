@@ -1414,7 +1414,7 @@ export class OrgChart {
         xhr.send();
     }
 
-    exportImg({ full = false, scale = 3, onLoad = d => d, save = true } = {}) {
+    exportImg({ full = false, scale = 3, onLoad = d => d, save = true, filename = 'chart' } = {}) {
         const that = this;
         const attrs = this.getChartState();
         const { svg: svgImg, root } = attrs
@@ -1437,7 +1437,8 @@ export class OrgChart {
                         that.update(root)
                     },
                     onLoad: onLoad,
-                    save
+                    save,
+                    filename
                 })
             }, full ? duration + 10 : 0)
         }
@@ -1461,9 +1462,9 @@ export class OrgChart {
 
 
 
-    exportSvg() {
+    exportSvg(filename = 'chart') {
         const { svg } = this.getChartState();
-        this.downloadImage({ node: svg.node(), scale: 3, isSvg: true })
+        this.downloadImage({ node: svg.node(), scale: 3, isSvg: true, filename })
         return this;
     }
 
@@ -1482,7 +1483,7 @@ export class OrgChart {
         return this;
     }
 
-    downloadImage({ node, scale = 2, isSvg = false, save = true, onAlreadySerialized = d => { }, onLoad = d => { } }) {
+    downloadImage({ node, scale = 2, isSvg = false, save = true, filename = 'chart', onAlreadySerialized = d => { }, onLoad = d => { } }) {
         // Retrieve svg node
         const svgNode = node;
 
@@ -1492,7 +1493,7 @@ export class OrgChart {
             source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
             //convert svg source to URI data scheme.
             var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
-            saveAs(url, "graph.svg");
+            saveAs(url, `${filename}.svg`);
             onAlreadySerialized()
             return;
         }
@@ -1519,7 +1520,7 @@ export class OrgChart {
             }
             if (save) {
                 // Invoke saving function
-                saveAs(dt, 'graph.png');
+                saveAs(dt, `${filename}.png`);
             }
 
         };
