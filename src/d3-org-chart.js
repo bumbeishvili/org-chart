@@ -1,6 +1,6 @@
 import { selection, select } from "d3-selection";
 import { max, min, sum, cumsum } from "d3-array";
-import { tree, stratify } from "d3-hierarchy";
+import { tree, stratify, hierarchy } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
 import { linkHorizontal } from 'd3-shape';
@@ -14,6 +14,7 @@ const d3 = {
     cumsum,
     tree,
     stratify,
+    hierarchy,
     zoom,
     zoomIdentity,
     linkHorizontal,
@@ -42,6 +43,7 @@ export class OrgChart {
             lastTransform: { x: 0, y: 0, k: 1 },
             nodeId: d => d.nodeId || d.id,
             parentNodeId: d => d.parentNodeId || d.parentId,
+            nodeChildren: d => d.children,
             backgroundColor: 'none',
             zoomBehavior: null,
             defs: function (state, visibleConnections) {
@@ -1185,9 +1187,11 @@ export class OrgChart {
 
     setLayouts({ expandNodesFirst = true }) {
         const attrs = this.getChartState();
+
         // Store new root by converting flat data to hierarchy
-        attrs.root = d3
-            .stratify()
+        attrs.root = (attrs.data.data_type === "flare" && attrs.nodeChildren) ? 
+            d3.hierarchy(attrs.data, attrs.nodeChildren) : 
+            d3.stratify()
             .id((d) => attrs.nodeId(d))
             .parentId(d => attrs.parentNodeId(d))(attrs.data);
 

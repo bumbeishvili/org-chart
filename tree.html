@@ -139,7 +139,11 @@
             .then(dataFlattened => {
                 chart = new d3.OrgChart()
                     .container('.chart-container')
-                    .data(dataFlattened)
+                    .data({
+                        ...dataFlattened[0],
+                        data_type: "flare",
+                        children: dataFlattened.slice(1, 10)
+                    })
                     .scaleExtent([1,1])
                     // .svgHeight(window.innerHeight)
                     // .nodeWidth((d3Node) => {
