@@ -1065,11 +1065,9 @@ export class OrgChart {
                   L ${x} ${my}
                   L ${x} ${y}
                   L ${x} ${y + h * yrvs}
-                  C  ${x} ${y + h * yrvs + r * yrvs} ${x} ${y + h * yrvs + r * yrvs
-            } ${x + r * xrvs} ${y + h * yrvs + r * yrvs}
+                  C  ${x} ${y + h * yrvs + r * yrvs} ${x} ${y + h * yrvs + r * yrvs} ${x + r * xrvs} ${y + h * yrvs + r * yrvs}
                   L ${x + w * xrvs + r * xrvs} ${y + h * yrvs + r * yrvs}
-                  C  ${ex}  ${y + h * yrvs + r * yrvs} ${ex}  ${y + h * yrvs + r * yrvs
-            } ${ex} ${ey - h * yrvs}
+                  C  ${ex}  ${y + h * yrvs + r * yrvs} ${ex}  ${y + h * yrvs + r * yrvs} ${ex} ${ey - h * yrvs}
                   L ${ex} ${ey}
        `;
         return path;
@@ -1142,9 +1140,45 @@ export class OrgChart {
         }
     }
 
+    // This function changes `expanded` property to descendants
+    setExpansionFlagToParents(d, flag) {
+        // Set flag to the current property
+        d.data._expanded = flag;
+
+        // Retrieve node's parent
+        let parent = d.parent;
+
+        // While we can go up
+        while (parent) {
+            // Expand all current parent's children
+            parent.data._expanded = flag;
+
+            // Replace current parent holding object
+            parent = parent.parent;
+        }
+    }
 
     // Method which only expands nodes, which have property set "expanded=true"
-    expandSomeNodes(d) {
+    expandChildren(d) {
+        if(d.data._expanded) {
+            if(d._children) {
+                d.children = d._children;
+                d._children = null;
+            }
+        }
+
+        // Recursivelly do the same for collapsed nodes
+        // if (d._children) {
+        //     d._children.forEach((ch) => this.expandChildren(ch));
+        // }
+
+        // Recursivelly do the same for expanded nodes
+        if (d.children) {
+            d.children.forEach((ch) => this.expandChildren(ch));
+        }
+    }
+
+    expandParents(d) {
         // If node has expanded property set
         if (d.data._expanded) {
             // Retrieve node's parent
@@ -1155,21 +1189,12 @@ export class OrgChart {
                 // Expand all current parent's children
                 if (parent._children) {
                     parent.children = parent._children;
+                    parent._children = null;
                 }
 
                 // Replace current parent holding object
                 parent = parent.parent;
             }
-        }
-
-        // Recursivelly do the same for collapsed nodes
-        if (d._children) {
-            d._children.forEach((ch) => this.expandSomeNodes(ch));
-        }
-
-        // Recursivelly do the same for expanded nodes
-        if (d.children) {
-            d.children.forEach((ch) => this.expandSomeNodes(ch));
         }
     }
 
@@ -1225,7 +1250,10 @@ export class OrgChart {
             }
 
             // Then only expand nodes, which have expanded proprty set to true
-            [attrs.root].forEach((ch) => this.expandSomeNodes(ch));
+            [attrs.root].forEach((ch) => {
+                this.expandChildren(ch);
+                this.expandParents(ch);
+            });
         }
     }
 
@@ -1309,7 +1337,8 @@ export class OrgChart {
             console.log(`ORG CHART - ${expandedFlag ? "EXPAND" : "COLLAPSE"} - Node with id (${id})  not found in the tree`)
             return this;
         }
-        node.data._expanded = expandedFlag;
+
+        this.setExpansionFlagToParents(node, expandedFlag);
         return this;
     }
 
