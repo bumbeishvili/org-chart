@@ -98,6 +98,7 @@ export class OrgChart {
             //     return 
             //     return `M ${source.x} , ${source.y} Q ${(source.x + target.x) / 2 + 100},${source.y-100}  ${target.x}, ${target.y}`;
             // },
+            linkRadius: 35,
             nodeContent: d => `<div style="padding:5px;font-size:10px;">Sample Node(id=${d.id}), override using <br/> <br/> 
             <code>chart<br/>
             &nbsp;.nodeContent({data}=>{ <br/>
@@ -685,7 +686,8 @@ export class OrgChart {
                 const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
                 const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
                 const o = { x: xo, y: yo };
-                return attrs.layoutBindings[attrs.layout].diagonal(o, o, o);
+                const r = attrs.linkRadius;
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o, o, r);
             });
 
         // Get links update selection
@@ -722,7 +724,10 @@ export class OrgChart {
                     x: attrs.layoutBindings[attrs.layout].linkCompactXStart(d),
                     y: attrs.layoutBindings[attrs.layout].linkCompactYStart(d),
                 } : n;
-                return attrs.layoutBindings[attrs.layout].diagonal(n, p, m);
+
+                const r = attrs.linkRadius;
+
+                return attrs.layoutBindings[attrs.layout].diagonal(n, p, m, r);
             });
 
         // Remove any  links which is exiting after animation
@@ -734,7 +739,8 @@ export class OrgChart {
                 const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
                 const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
                 const o = { x: xo, y: yo };
-                return attrs.layoutBindings[attrs.layout].diagonal(o, o);
+                const r = attrs.linkRadius;
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, r);
             })
             .remove();
 
@@ -754,7 +760,8 @@ export class OrgChart {
                 const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
                 const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
                 const o = { x: xo, y: yo };
-                return attrs.layoutBindings[attrs.layout].diagonal(o, o);
+                const r = attrs.linkRadius;
+                return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, r);
             });
 
 
@@ -995,7 +1002,7 @@ export class OrgChart {
     }
 
     // Generate horizontal diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges-horizontal-d3-v3-v4-v5-v6
-    hdiagonal(s, t, m) {
+    hdiagonal(s, t, m, radius) {
         // Define source and target x,y coordinates
         const x = s.x;
         const y = s.y;
@@ -1009,11 +1016,8 @@ export class OrgChart {
         let xrvs = ex - x < 0 ? -1 : 1;
         let yrvs = ey - y < 0 ? -1 : 1;
 
-        // Define preferred curve radius
-        let rdef = 35;
-
         // Reduce curve radius, if source-target x space is smaller
-        let r = Math.abs(ex - x) / 2 < rdef ? Math.abs(ex - x) / 2 : rdef;
+        let r = Math.abs(ex - x) / 2 < radius ? Math.abs(ex - x) / 2 : radius;
 
         // Further reduce curve radius, is y space is more small
         r = Math.abs(ey - y) / 2 < r ? Math.abs(ey - y) / 2 : r;
@@ -1040,7 +1044,7 @@ export class OrgChart {
     }
 
     // Generate custom diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges
-    diagonal(s, t, m) {
+    diagonal(s, t, m, radius) {
         const x = s.x;
         const y = s.y;
         const ex = t.x;
@@ -1052,8 +1056,7 @@ export class OrgChart {
         let xrvs = ex - x < 0 ? -1 : 1;
         let yrvs = ey - y < 0 ? -1 : 1;
 
-        let rdef = 35;
-        let r = Math.abs(ex - x) / 2 < rdef ? Math.abs(ex - x) / 2 : rdef;
+        let r = Math.abs(ex - x) / 2 < radius ? Math.abs(ex - x) / 2 : radius;
 
         r = Math.abs(ey - y) / 2 < r ? Math.abs(ey - y) / 2 : r;
 
