@@ -1,6 +1,6 @@
 {
   "name": "d3-org-chart",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "module": "index",
   "description": "Highly customizable org chart, created with d3",
   "keywords": [
@@ -11,7 +11,7 @@
     "hierarchy",
     "employee"
   ],
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "main": "build/d3-org-chart.min.js",
   "jsdelivr": "build/d3-org-chart.min.js",
   "unpkg": "build/d3-org-chart.min.js",
