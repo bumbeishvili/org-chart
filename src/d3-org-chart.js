@@ -88,7 +88,7 @@ export class OrgChart {
             nodeWidth: d3Node => 250,
             nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
-            childrenMargin: d => 60,
+            childrenMargin: d => 90,
             neightbourMargin: (n1, n2) => 80,
             compactMarginPair: d => 100,
             compactMarginBetween: (d3Node => 20),
@@ -1028,11 +1028,11 @@ export class OrgChart {
                   L ${mx} ${y}
                   L ${x} ${y}
                   L ${x + w * xrvs} ${y}
-                  C ${x + w * xrvs + r * xrvs} ${y} 
+                  L ${x + w * xrvs + r * xrvs} ${y} 
                     ${x + w * xrvs + r * xrvs} ${y} 
                     ${x + w * xrvs + r * xrvs} ${y + r * yrvs}
                   L ${x + w * xrvs + r * xrvs} ${ey - r * yrvs} 
-                  C ${x + w * xrvs + r * xrvs}  ${ey} 
+                  L ${x + w * xrvs + r * xrvs}  ${ey} 
                     ${x + w * xrvs + r * xrvs}  ${ey} 
                     ${ex - w * xrvs}  ${ey}
                   L ${ex} ${ey}
@@ -1044,7 +1044,7 @@ export class OrgChart {
         const x = s.x;
         const y = s.y;
         const ex = t.x;
-        const ey = t.y;
+        const ey = t.y - 30; // changes how far the target y is
 
         let mx = m && m.x || x;
         let my = m && m.y || y;
@@ -1065,10 +1065,10 @@ export class OrgChart {
                   L ${x} ${my}
                   L ${x} ${y}
                   L ${x} ${y + h * yrvs}
-                  C  ${x} ${y + h * yrvs + r * yrvs} ${x} ${y + h * yrvs + r * yrvs
+                  L  ${x} ${y + h * yrvs + r * yrvs} ${x} ${y + h * yrvs + r * yrvs
             } ${x + r * xrvs} ${y + h * yrvs + r * yrvs}
                   L ${x + w * xrvs + r * xrvs} ${y + h * yrvs + r * yrvs}
-                  C  ${ex}  ${y + h * yrvs + r * yrvs} ${ex}  ${y + h * yrvs + r * yrvs
+                  L  ${ex}  ${y + h * yrvs + r * yrvs} ${ex}  ${y + h * yrvs + r * yrvs
             } ${ex} ${ey - h * yrvs}
                   L ${ex} ${ey}
        `;
