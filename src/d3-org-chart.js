@@ -1044,7 +1044,7 @@ export class OrgChart {
         const x = s.x;
         const y = s.y;
         const ex = t.x;
-        const ey = t.y;
+        const ey = t.y - 30; // changes how far the target y is
 
         let mx = m && m.x || x;
         let my = m && m.y || y;
