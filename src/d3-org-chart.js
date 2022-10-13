@@ -88,7 +88,7 @@ export class OrgChart {
             nodeWidth: d3Node => 250,
             nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
-            childrenMargin: d => 60,
+            childrenMargin: d => 90,
             neightbourMargin: (n1, n2) => 80,
             compactMarginPair: d => 100,
             compactMarginBetween: (d3Node => 20),
