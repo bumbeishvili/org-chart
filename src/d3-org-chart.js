@@ -26,7 +26,9 @@ export class OrgChart {
             firstDraw: true,
             svgWidth: 800,
             svgHeight: window.innerHeight - 100,
-            scaleExtent:[0.001, 20],
+            highlightedLinkColor: "#343ced",
+            linkColor: "#EAEBED",
+            scaleExtent: [0.001, 20],
             container: "body",
             defaultTextFill: "#2C3E50",
             defaultFont: "Helvetica",
@@ -71,9 +73,8 @@ export class OrgChart {
             },
             linkUpdate: function (d, i, arr) {
                 d3.select(this)
-                    .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : 'lightgray')
-                    .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 2)
-
+                    .attr('stroke', d => d.data._upToTheRootHighlighted ? attrs.highlightedLinkColor : attrs.linkColor)
+                    .attr('stroke-width', d => d.data._upToTheRootHighlighted ? '2' : '1')
                 if (d.data._upToTheRootHighlighted) {
                     d3.select(this).raise()
                 }
