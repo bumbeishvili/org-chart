@@ -288,6 +288,37 @@ export class OrgChart {
         this.initializeEnterExitUpdatePattern();
     }
 
+    actions(actions) {
+        /* 
+            interface action {
+                selector: string; // css selector for the element within nodeContent
+                onClick?: (event, node, state) => void // on Click Callback
+                onHover?: (event, node, state) => void // on Hover Callback
+            }
+         */
+        const attrs = this.getChartState();
+        const actionsMap = {};
+        attrs.actions = [];
+
+        actions.forEach((action, i) => {
+            if (!action.onClick && !action.onHover) {
+                throw new Error('Action requiers an event handler. Either [onClick] or [onHover]');
+            }
+            
+            if (!action.selector) {
+                throw new Error('Action requiers a selector');
+            }
+            
+            if (actionsMap[action.selector]) {
+                throw new Error(`Action with selector [${action.selector}] already exists`);
+            }
+
+            attrs.actions.push(action);
+        });
+
+        return this;
+    }
+
     initializeEnterExitUpdatePattern() {
         d3.selection.prototype.patternify = function (params) {
             var container = this;
@@ -850,6 +881,24 @@ export class OrgChart {
                 data: (d) => [d]
             })
             .on("click", (event, d) => this.onButtonClick(event, d));
+
+        if (attrs.actions) {
+            attrs.actions.forEach(action => {
+                const selected = nodeEnter.select(action.selector);
+                if (action.onClick) {
+                    selected.on('click', (event, d) => {
+                        event.stopPropagation();
+                        action.onClick(event, d, attrs);
+                    });
+                }
+                if (action.onHover) {
+                    selected.on('mouseenter', (event, d) => {
+                        event.stopPropagation();
+                        action.onHover(event, d, attrs);
+                    });
+                }
+            })
+        }
 
         nodeButtonGroups.patternify({
             tag: 'rect',
