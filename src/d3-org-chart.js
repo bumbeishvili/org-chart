@@ -78,6 +78,7 @@ export class OrgChart {
                     d3.select(this).raise()
                 }
             },
+            nodeEnter: function (d, i, arr) { return d },
             nodeUpdate: function (d, i, arr) {
                 d3.select(this)
                     .select('.node-rect')
@@ -819,6 +820,8 @@ export class OrgChart {
                 selector: "node-rect",
                 data: (d) => [d]
             })
+        
+        nodeEnter.each(attrs.nodeEnter);
 
         // Node update styles
         const nodeUpdate = nodeEnter
