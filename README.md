@@ -111,8 +111,18 @@ You can also [book data viz related consultation session](https://www.fiverr.com
 
 <table>
 <tr>
-<td>Expand node <br/>test</td>
-<td>Collapse Node</td>
+   <td>
+     <a href="https://stackblitz.com/edit/js-mfzkbs?file=index.html">
+      Simple Data <br/>
+      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+     </a>
+   </td>
+   <td>
+     <a href="https://stackblitz.com/edit/js-yw1urt?file=index.html">
+          Custom Content  <br/>
+          <img height=100 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
+           </a>
+   </td>
 </tr>
 
 </table>
