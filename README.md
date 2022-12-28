@@ -14,7 +14,7 @@
 
 Highly customizable org chart built with d3 v7.
 
-Have you impressivelly customized an organizational chart and want to be featured on this page? Just email me at me@davidb.dev and include screenshot of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
+Have you impressively customized an organizational chart and want to be featured on this page? Just email me at me@davidb.dev and include screenshot of your org chart and it will be featured on this page (dimensions of image should be 500 X 500).
 
 ## Jump To Examples
 
@@ -107,7 +107,7 @@ I am available for freelance data visualization work. Please [contact me](https:
 
 You can also [book data viz related consultation session](https://www.fiverr.com/share/4XxG21) with me
 
-## Features
+## Feature Examples
 
 <table>
 <tr>
@@ -139,12 +139,12 @@ You can also [book data viz related consultation session](https://www.fiverr.com
       <img  height=100  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
-   <!-- <td>
-     <a href="https://stackblitz.com/edit/js-yw1urt?file=index.html">
-          Custom Content  <br/>
-          <img height=100 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
+   <td>
+     <a href="https://stackblitz.com/edit/js-dppjis?file=index.html">
+          CSV Data  <br/>
+          <img height=100 src="https://user-images.githubusercontent.com/6873202/209864352-d0cbb5d7-0541-4239-86cc-428778a3bb35.png"/>
            </a>
-   </td> -->
+   </td>
     <!-- <td>
      <a href="https://stackblitz.com/edit/js-pwlmhf?file=index.html">
       Nested Data <br/>
