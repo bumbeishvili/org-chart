@@ -269,8 +269,8 @@ Export<img width=150 src="https://user-images.githubusercontent.com/6873202/2099
            </a>
    </td>
     <td>
-     <a href="https://stackblitz.com/edit/js-rkjhzz?file=index.html">
-Highlight Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209951335-e77f996c-fe4f-4274-8b91-fe28a65b4231.gif"/>   
+     <a href="https://stackblitz.com/edit/js-nqzjts?file=index.html">
+Expand & Collapse All<img width=150   src="https://user-images.githubusercontent.com/6873202/209975052-c79464fe-664e-4b61-9b3f-79776c883113.gif"/>   
      </a>
    </td>
    <td>
