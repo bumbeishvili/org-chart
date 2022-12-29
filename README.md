@@ -260,4 +260,30 @@ Zoom in and out<img width=150  src="https://user-images.githubusercontent.com/68
 </tr>
 
 
+
+<tr>
+   
+   <td>
+     <a href="https://stackblitz.com/edit/js-ue1cpj?file=index.html">
+Export<img width=150 src="https://user-images.githubusercontent.com/6873202/209969502-6450648a-6a5c-460b-a23a-8c2ed0a81d2f.gif"/>
+           </a>
+   </td>
+    <td>
+     <a href="https://stackblitz.com/edit/js-rkjhzz?file=index.html">
+Highlight Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209951335-e77f996c-fe4f-4274-8b91-fe28a65b4231.gif"/>   
+     </a>
+   </td>
+   <td>
+     <a href="https://stackblitz.com/edit/js-wrvy45?file=index.html">
+Fullscreen<img width=150  src="https://user-images.githubusercontent.com/6873202/209955345-13040bed-f75e-4799-911e-f11bfa5f2164.gif"/>
+     </a>
+   </td>
+      <td>
+     <a href="https://stackblitz.com/edit/js-zd21e3?file=index.html">
+Zoom in and out<img width=150  src="https://user-images.githubusercontent.com/6873202/209957228-6b6ce3fa-a336-4098-b8c3-91d53c93f4eb.gif"/>
+     </a>
+   </td>
+</tr>
+
+
 </table>
