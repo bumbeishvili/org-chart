@@ -112,7 +112,7 @@ You can also [book data viz related consultation session](https://www.fiverr.com
 ## General approach
 In general, it is encouraged to look into the source code as well. The chart code is basically a single class. At the top of the class, we have a state object called `attrs` which stores the state of the org chart and each single property is overridable by  the user.
 
-For example one of the property name inside `attrs` object is `duration` which controls animation duration for chart when expanding or collapsing nodes.
+For example, a one of the property name inside `attrs` object is `duration`, which controls animation duration for char,t when expanding or collapsing nodes.
 
 If we want to get the value, we can either do
 
@@ -195,6 +195,12 @@ chart.data(updatedData).render()
      <a href="https://stackblitz.com/edit/js-rvwpza?file=index.html">
        Styled tree <br/>
       <img  height=100  src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
+     </a>
+   </td>
+       <td>
+     <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
+       Add node <br/>
+      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>   
      </a>
    </td>
 </tr>
