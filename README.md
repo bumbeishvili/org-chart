@@ -193,18 +193,18 @@ chart.data(updatedData).render()
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-rvwpza?file=index.html">
-       Styled tree <br/>
+       Styled Tree <br/>
       <img width=150   src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
-Expand node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
+Expand Node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
      </a>
    </td>
       <td>
      <a href="https://stackblitz.com/edit/js-zkmxvd?file=index.html">
-Collapse node<img width=150  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
+Collapse Node<img width=150  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
      </a>
    </td>
 </tr>
@@ -223,8 +223,8 @@ Remove Node<img width=150   src="https://user-images.githubusercontent.com/68732
      </a>
    </td>
    <td>
-     <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
-Expand node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
+     <a href="https://stackblitz.com/edit/js-q8n1mh?file=index.html">
+Fit Screen<img width=150  src="https://user-images.githubusercontent.com/6873202/209947575-c75098b8-10f5-406d-afa8-de2fdd16bf76.gif"/>
      </a>
    </td>
       <td>
