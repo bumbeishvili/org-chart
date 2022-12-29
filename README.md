@@ -236,7 +236,7 @@ Change Layout<img width=150  src="https://user-images.githubusercontent.com/6873
 
 
 <tr>
-  
+   
    <td>
      <a href="https://stackblitz.com/edit/js-rywzga?file=index.html">
 Center Node<img width=150 src="https://user-images.githubusercontent.com/6873202/209949412-2e2b0084-5bb5-4eb5-9570-e5b83193b047.gif"/>
@@ -248,8 +248,8 @@ Highlight Node<img width=150   src="https://user-images.githubusercontent.com/68
      </a>
    </td>
    <td>
-     <a href="https://stackblitz.com/edit/js-q8n1mh?file=index.html">
-Fit Screen<img width=150  src="https://user-images.githubusercontent.com/6873202/209947575-c75098b8-10f5-406d-afa8-de2fdd16bf76.gif"/>
+     <a href="https://stackblitz.com/edit/js-wrvy45?file=index.html">
+Fullscreen<img width=150  src="https://user-images.githubusercontent.com/6873202/209955345-13040bed-f75e-4799-911e-f11bfa5f2164.gif"/>
      </a>
    </td>
       <td>
