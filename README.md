@@ -243,8 +243,8 @@ Center Node<img width=150 src="https://user-images.githubusercontent.com/6873202
            </a>
    </td>
     <td>
-     <a href="https://stackblitz.com/edit/js-qhrowa?file=index.html">
-Remove Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209946956-673679ba-8f59-4f59-b243-d78611e6650f.gif"/>   
+     <a href="https://stackblitz.com/edit/js-rkjhzz?file=index.html">
+Highlight Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209951335-e77f996c-fe4f-4274-8b91-fe28a65b4231.gif"/>   
      </a>
    </td>
    <td>
