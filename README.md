@@ -159,25 +159,25 @@ chart.data(updatedData).render()
    <td>
      <a href="https://stackblitz.com/edit/js-mfzkbs?file=index.html">
       Simple Data <br/>
-      <img  width=150  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=180  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-yw1urt?file=index.html">
           Custom Content  <br/>
-          <img width=150 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
+          <img width=180 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-pwlmhf?file=index.html">
       Nested Data <br/>
-      <img  width=150 src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=180 src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-36myfl?file=index.html">
       Online Data <br/>
-      <img  width=150  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=180  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
 </tr>
@@ -188,23 +188,23 @@ chart.data(updatedData).render()
    <td>
      <a href="https://stackblitz.com/edit/js-dppjis?file=index.html">
           CSV Data  <br/>
-          <img width=150 src="https://user-images.githubusercontent.com/6873202/209864352-d0cbb5d7-0541-4239-86cc-428778a3bb35.png"/>
+          <img width=180 src="https://user-images.githubusercontent.com/6873202/209864352-d0cbb5d7-0541-4239-86cc-428778a3bb35.png"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-rvwpza?file=index.html">
        Styled Tree <br/>
-      <img width=150   src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
+      <img width=180   src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
-Expand Node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
+Expand Node<img width=180  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
      </a>
    </td>
       <td>
      <a href="https://stackblitz.com/edit/js-zkmxvd?file=index.html">
-Collapse Node<img width=150  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
+Collapse Node<img width=180  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
      </a>
    </td>
 </tr>
@@ -214,22 +214,22 @@ Collapse Node<img width=150  src="https://user-images.githubusercontent.com/6873
   
    <td>
      <a href="https://stackblitz.com/edit/js-bb4p4k?file=index.html">
-Add Node<img width=150 src="https://user-images.githubusercontent.com/6873202/209946403-61cc6808-7e2c-46a2-bf78-3206bbaac2fa.gif"/>
+Add Node<img width=180 src="https://user-images.githubusercontent.com/6873202/209946403-61cc6808-7e2c-46a2-bf78-3206bbaac2fa.gif"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-qhrowa?file=index.html">
-Remove Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209946956-673679ba-8f59-4f59-b243-d78611e6650f.gif"/>   
+Remove Node<img width=180   src="https://user-images.githubusercontent.com/6873202/209946956-673679ba-8f59-4f59-b243-d78611e6650f.gif"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-q8n1mh?file=index.html">
-Fit Screen<img width=150  src="https://user-images.githubusercontent.com/6873202/209947575-c75098b8-10f5-406d-afa8-de2fdd16bf76.gif"/>
+Fit Screen<img width=180  src="https://user-images.githubusercontent.com/6873202/209947575-c75098b8-10f5-406d-afa8-de2fdd16bf76.gif"/>
      </a>
    </td>
       <td>
      <a href="https://stackblitz.com/edit/js-2ct1nt?file=index.html">
-Change Layout<img width=150  src="https://user-images.githubusercontent.com/6873202/209948708-367b2802-c238-400c-a1ca-9908a6df549c.gif"/>
+Change Layout<img width=180  src="https://user-images.githubusercontent.com/6873202/209948708-367b2802-c238-400c-a1ca-9908a6df549c.gif"/>
      </a>
    </td>
 </tr>
@@ -239,22 +239,22 @@ Change Layout<img width=150  src="https://user-images.githubusercontent.com/6873
    
    <td>
      <a href="https://stackblitz.com/edit/js-rywzga?file=index.html">
-Center Node<img width=150 src="https://user-images.githubusercontent.com/6873202/209949412-2e2b0084-5bb5-4eb5-9570-e5b83193b047.gif"/>
+Center Node<img width=180 src="https://user-images.githubusercontent.com/6873202/209949412-2e2b0084-5bb5-4eb5-9570-e5b83193b047.gif"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-rkjhzz?file=index.html">
-Highlight Node<img width=150   src="https://user-images.githubusercontent.com/6873202/209951335-e77f996c-fe4f-4274-8b91-fe28a65b4231.gif"/>   
+Highlight Node<img width=180   src="https://user-images.githubusercontent.com/6873202/209951335-e77f996c-fe4f-4274-8b91-fe28a65b4231.gif"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-wrvy45?file=index.html">
-Fullscreen<img width=150  src="https://user-images.githubusercontent.com/6873202/209955345-13040bed-f75e-4799-911e-f11bfa5f2164.gif"/>
+Fullscreen<img width=180  src="https://user-images.githubusercontent.com/6873202/209955345-13040bed-f75e-4799-911e-f11bfa5f2164.gif"/>
      </a>
    </td>
       <td>
      <a href="https://stackblitz.com/edit/js-zd21e3?file=index.html">
-Zoom in and out<img width=150  src="https://user-images.githubusercontent.com/6873202/209957228-6b6ce3fa-a336-4098-b8c3-91d53c93f4eb.gif"/>
+Zoom in and out<img width=180  src="https://user-images.githubusercontent.com/6873202/209957228-6b6ce3fa-a336-4098-b8c3-91d53c93f4eb.gif"/>
      </a>
    </td>
 </tr>
@@ -265,22 +265,22 @@ Zoom in and out<img width=150  src="https://user-images.githubusercontent.com/68
    
    <td>
      <a href="https://stackblitz.com/edit/js-ue1cpj?file=index.html">
-Export<img width=150 src="https://user-images.githubusercontent.com/6873202/209969502-6450648a-6a5c-460b-a23a-8c2ed0a81d2f.gif"/>
+Export<img width=180 src="https://user-images.githubusercontent.com/6873202/209969502-6450648a-6a5c-460b-a23a-8c2ed0a81d2f.gif"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-nqzjts?file=index.html">
-Expand & Collapse All<img width=150   src="https://user-images.githubusercontent.com/6873202/209975052-c79464fe-664e-4b61-9b3f-79776c883113.gif"/>   
+Expand & Collapse All<img width=180   src="https://user-images.githubusercontent.com/6873202/209975052-c79464fe-664e-4b61-9b3f-79776c883113.gif"/>   
      </a>
    </td>
    <td>
-     <a href="https://stackblitz.com/edit/js-wrvy45?file=index.html">
-Fullscreen<img width=150  src="https://user-images.githubusercontent.com/6873202/209955345-13040bed-f75e-4799-911e-f11bfa5f2164.gif"/>
+     <a href="https://stackblitz.com/edit/js-tpbt7r?file=index.html">
+Multi Node Connections<img width=180  src="https://user-images.githubusercontent.com/6873202/209976678-40db509e-98d7-40a4-8032-c30c60b724f3.gif"/>
      </a>
    </td>
       <td>
      <a href="https://stackblitz.com/edit/js-zd21e3?file=index.html">
-Zoom in and out<img width=150  src="https://user-images.githubusercontent.com/6873202/209957228-6b6ce3fa-a336-4098-b8c3-91d53c93f4eb.gif"/>
+Paging <img width=180  src="https://user-images.githubusercontent.com/6873202/209957228-6b6ce3fa-a336-4098-b8c3-91d53c93f4eb.gif"/>
      </a>
    </td>
 </tr>
