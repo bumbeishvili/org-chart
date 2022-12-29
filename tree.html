@@ -235,8 +235,11 @@
    var index = 0;
    var chart;
    d3.csv("misc/data.csv").then((dataFlattened) => {
+
     chart = new d3.OrgChart()
      .container(".chart-container")
+     .pagingStep((d) => 5)
+      .minPagingVisibleNodes((d) => 3)
      .data(dataFlattened)
      // .scaleExtent([1,1])
      // .svgHeight(window.innerHeight)
@@ -308,20 +311,20 @@
      //  .layout('right')
      .compactMarginBetween((d) => 35)
      .compactMarginPair((d) => 30)
-     .neighbourMargin((a, b) => 20)
+     .neighbourMargin((a, b) => 20);
 
-     // .buttonContent(({ node, state }) => {
-     //     return `<div style="color:#716E7B;border-radius:5px;padding:3px;font-size:10px;margin:auto auto;background-color:white;border: 1px solid #E4E2E9"> <span style="font-size:9px">${node.children ? `<i class="fas fa-angle-up"></i>` : `<i class="fas fa-angle-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
-     // })
-     // .linkUpdate(function (d, i, arr) {
-     //     d3.select(this)
-     //         .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : '#E4E2E9')
-     //         .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 1)
+    // .buttonContent(({ node, state }) => {
+    //     return `<div style="color:#716E7B;border-radius:5px;padding:3px;font-size:10px;margin:auto auto;background-color:white;border: 1px solid #E4E2E9"> <span style="font-size:9px">${node.children ? `<i class="fas fa-angle-up"></i>` : `<i class="fas fa-angle-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
+    // })
+    // .linkUpdate(function (d, i, arr) {
+    //     d3.select(this)
+    //         .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : '#E4E2E9')
+    //         .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 1)
 
-     //     if (d.data._upToTheRootHighlighted) {
-     //         d3.select(this).raise()
-     //     }
-     // })
+    //     if (d.data._upToTheRootHighlighted) {
+    //         d3.select(this).raise()
+    //     }
+    // })
     //  .nodeContent(function (d, i, arr, state) {
     //   const color = "#FFFFFF";
     //   const imageDiffVert = 25 + 2;
@@ -353,7 +356,7 @@
      (() => {
       const layouts = chart.layoutBindings();
       layouts.top.linkY = (node) => node.y + 0;
-      layouts.top.linkCompactYStart = (node) => node.y + node.height / 2 +15;
+      layouts.top.linkCompactYStart = (node) => node.y + node.height / 2 + 15;
       return layouts;
      })()
     );

@@ -61,7 +61,7 @@ export class OrgChart {
             nodeButtonY: d => -20,  // Configure expand & collapse button y position
             linkYOffset: 30, // When correcting links which is not working for safari
             pagingStep: d => 5, // Configure how many nodes to show when making new nodes appear
-            minPagingVisibleNodes: d => 20, // Configure minimum number of visible nodes , after which paging button appears
+            minPagingVisibleNodes: d => 2000, // Configure minimum number of visible nodes , after which paging button appears
             scaleExtent: [0.001, 20],  // Configure zoom scale extent , if you don't want any kind of zooming, set it to [1,1]
             duration: 400, // Configure duration of transitions
             imageName: 'Chart', // Configure exported PNG and SVG image name
