@@ -228,8 +228,8 @@ Fit Screen<img width=150  src="https://user-images.githubusercontent.com/6873202
      </a>
    </td>
       <td>
-     <a href="https://stackblitz.com/edit/js-zkmxvd?file=index.html">
-Collapse node<img width=150  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
+     <a href="https://stackblitz.com/edit/js-2ct1nt?file=index.html">
+Change Layout<img width=150  src="https://user-images.githubusercontent.com/6873202/209948708-367b2802-c238-400c-a1ca-9908a6df549c.gif"/>
      </a>
    </td>
 </tr>
