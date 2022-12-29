@@ -159,25 +159,25 @@ chart.data(updatedData).render()
    <td>
      <a href="https://stackblitz.com/edit/js-mfzkbs?file=index.html">
       Simple Data <br/>
-      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=150  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
    <td>
      <a href="https://stackblitz.com/edit/js-yw1urt?file=index.html">
           Custom Content  <br/>
-          <img height=100 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
+          <img width=150 src="https://user-images.githubusercontent.com/6873202/209859788-0404aef9-793d-4f32-9209-bf1baec57a92.png"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-pwlmhf?file=index.html">
       Nested Data <br/>
-      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=150 src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-36myfl?file=index.html">
       Online Data <br/>
-      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
+      <img  width=150  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
 </tr>
@@ -197,9 +197,14 @@ chart.data(updatedData).render()
       <img width=150   src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
      </a>
    </td>
-       <td>
+   <td>
      <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
-Add node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
+Expand node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
+     </a>
+   </td>
+      <td>
+     <a href="https://stackblitz.com/edit/js-zkmxvd?file=index.html">
+Collapse node<img width=150  src="https://user-images.githubusercontent.com/6873202/209940922-f115f7f3-f5b3-4b79-b96a-9b8b7d2c1d34.gif"/>
      </a>
    </td>
 </tr>
