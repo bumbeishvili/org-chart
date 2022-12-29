@@ -107,7 +107,52 @@ I am available for freelance data visualization work. Please [contact me](https:
 
 You can also [book data viz related consultation session](https://www.fiverr.com/share/4XxG21) with me
 
-## Feature Examples
+
+
+## General approach
+In general, it is encouraged to look into the source code as well. The chart code is basically a single class. At the top of the class, we have a state object called `attrs` which stores the state of the org chart and each single property is overridable by  the user.
+
+For example one of the property name inside `attrs` object is `duration` which controls animation duration for chart when expanding or collapsing nodes.
+
+If we want to get the value, we can either do
+
+```javascript
+chart.getChartState().duration
+```
+
+or directly
+```javascript
+chart.duration()
+```
+
+`chart` in the above case is an instance of `OrgChart` class. We can get it using `new OrgChart()`
+
+If we want to set property, we can pass argument to the same function and it will automatically set the value
+
+```javascript
+chart.duration(3000)  // This will become very slow moving chart
+```
+You can see list of all properties , their description of what each property does in the actual source code.
+
+https://github.com/bumbeishvili/org-chart/blob/b7e23474716a72b93e6ecd7b7fafccbcd1e621fa/src/d3-org-chart.js#L40
+
+Be aware that they are chainable, so if we wanted to set multiple properties, we would do this
+
+```javascript
+const chart = new OrgChart()
+                    .data(ourData)
+                    .container(ourDomElementOrCssSelector)
+                    .duration(ourDuration)
+                    .render()
+
+
+// We can keep chaining values in runtime
+chart.data(updatedData).render()
+
+```
+
+
+## Features
 
 <table>
 <tr>

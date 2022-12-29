@@ -1015,7 +1015,7 @@ export class OrgChart {
                     return;
                 }
                 if (!data._pagingButton) {
-                    attrs.onNodeClick(attrs.nodeId(data));
+                    attrs.onNodeClick(data);
                     console.log('node clicked');
                     return;
                 }
