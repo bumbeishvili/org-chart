@@ -301,8 +301,8 @@ Active node centering<img width=180 src="https://user-images.githubusercontent.c
            </a>
    </td>
      <td>
-     <a href="https://stackblitz.com/edit/js-ipentg?file=index.html">
-Add interactive content<img width=180 src="https://user-images.githubusercontent.com/6873202/209984126-c70565a5-f343-44fd-9006-7f74cd1dd3cd.gif"/>
+     <a href="https://stackblitz.com/edit/js-fc2rrs?file=index.html">
+Add interactive content<img width=180 src="https://user-images.githubusercontent.com/6873202/209988894-b294efbe-b021-4d5c-a7a5-7db4c8b22cd6.gif"/>
            </a>
    </td>
 </tr>
