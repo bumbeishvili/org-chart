@@ -188,19 +188,18 @@ chart.data(updatedData).render()
    <td>
      <a href="https://stackblitz.com/edit/js-dppjis?file=index.html">
           CSV Data  <br/>
-          <img height=100 src="https://user-images.githubusercontent.com/6873202/209864352-d0cbb5d7-0541-4239-86cc-428778a3bb35.png"/>
+          <img width=150 src="https://user-images.githubusercontent.com/6873202/209864352-d0cbb5d7-0541-4239-86cc-428778a3bb35.png"/>
            </a>
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-rvwpza?file=index.html">
        Styled tree <br/>
-      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
+      <img width=150   src="https://user-images.githubusercontent.com/6873202/209865473-f9c3c846-5602-47a7-8cea-6a3eed3852c0.png"/>   
      </a>
    </td>
        <td>
      <a href="https://stackblitz.com/edit/js-bexsmx?file=index.html">
-       Add node <br/>
-      <img  height=100  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>   
+Add node<img width=150  src="https://user-images.githubusercontent.com/6873202/209938311-74dcd25f-9fb2-4b30-a7cd-bd076f5762cc.gif"/>
      </a>
    </td>
 </tr>
