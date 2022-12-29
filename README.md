@@ -291,7 +291,18 @@ Paging <img width=180  src="https://user-images.githubusercontent.com/6873202/20
    
    <td>
      <a href="https://stackblitz.com/edit/js-ipentg?file=index.html">
-  Horizontal View<img width=180 src="https://user-images.githubusercontent.com/6873202/209984126-c70565a5-f343-44fd-9006-7f74cd1dd3cd.gif"/>
+Horizontal View<img width=180 src="https://user-images.githubusercontent.com/6873202/209984126-c70565a5-f343-44fd-9006-7f74cd1dd3cd.gif"/>
+           </a>
+   </td>
+
+  <td>
+     <a href="https://stackblitz.com/edit/js-mc1rt4?file=index.html">
+Active node centering<img width=180 src="https://user-images.githubusercontent.com/6873202/209985365-987fa6fb-523c-40be-8e6f-ddba856b7435.gif"/>
+           </a>
+   </td>
+     <td>
+     <a href="https://stackblitz.com/edit/js-ipentg?file=index.html">
+Add interactive content<img width=180 src="https://user-images.githubusercontent.com/6873202/209984126-c70565a5-f343-44fd-9006-7f74cd1dd3cd.gif"/>
            </a>
    </td>
 </tr>
