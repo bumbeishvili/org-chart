@@ -155,7 +155,7 @@ Paging <img width=180  src="https://user-images.githubusercontent.com/6873202/20
 <tr>
    
    <td>
-     <a href="https://stackblitz.com/edit/js-ipentg?file=index.html">
+     <a href="https://stackblitz.com/edit/js-sbp88f?file=index.html">
 Horizontal View<img width=180 src="https://user-images.githubusercontent.com/6873202/209984126-c70565a5-f343-44fd-9006-7f74cd1dd3cd.gif"/>
            </a>
    </td>
