@@ -72,6 +72,7 @@ export class OrgChart {
             onZoom: d => { }, // Callback for zoom & panning 
             onZoomEnd: d => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
+            onButtonClick: (d) => d, // Callback for button click
 
             /*
             * Node HTML content generation , remember that you can access some helper methods:
@@ -1059,7 +1060,7 @@ export class OrgChart {
                 selector: "node-button-g",
                 data: (d) => [d]
             })
-            .on("click", (event, d) => this.onButtonClick(event, d));
+            .on("click", (event, d) => this.clickButton(event, d));
 
         nodeButtonGroups.patternify({
             tag: 'rect',
@@ -1254,7 +1255,7 @@ export class OrgChart {
     }
 
     // Toggle children on click.
-    onButtonClick(event, d) {
+    clickButton(event, d) {
         const attrs = this.getChartState();
         if (d.data._pagingButton) {
             return;
@@ -1285,6 +1286,9 @@ export class OrgChart {
 
         // Redraw Graph
         this.update(d);
+
+        // Trigger callback
+        attrs.onButtonClick(d);
     }
 
     // This function changes `expanded` property to descendants
