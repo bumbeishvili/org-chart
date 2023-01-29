@@ -72,7 +72,7 @@ export class OrgChart {
             onZoom: d => { }, // Callback for zoom & panning 
             onZoomEnd: d => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
-            onButtonClick: (d) => d, // Callback for button click
+            onExpandOrCollapse: (d) => d, // Callback for expand/collapse action
 
             /*
             * Node HTML content generation , remember that you can access some helper methods:
@@ -1288,7 +1288,7 @@ export class OrgChart {
         this.update(d);
 
         // Trigger callback
-        attrs.onButtonClick(d);
+        attrs.onExpandOrCollapse(d);
     }
 
     // This function changes `expanded` property to descendants
