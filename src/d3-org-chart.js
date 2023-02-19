@@ -1582,4 +1582,10 @@ export class OrgChart {
         const measurement = ctx.measureText(text);
         return measurement.width;
     }
+
+    clear() {
+        const attrs = this.getChartState();
+        d3.select(window).on(`resize.${attrs.id}`, null);
+        attrs.svg?.selectAll("*").remove();
+    }
 }
