@@ -1437,7 +1437,7 @@ export class OrgChart {
 
             setTimeout(d => {
                 that.downloadImage({
-                    node: svg.node(), scale, isSvg: false, bg,
+                    node: svg.node(), scale, isSvg: false, backgroundColor,
                     onAlreadySerialized: d => {
                         that.update(root)
                     },
