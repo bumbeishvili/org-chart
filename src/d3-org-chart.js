@@ -1,13 +1,17 @@
-import { selection, select } from 'd3-selection';
+import { selection, select, selectAll } from 'd3-selection';
 import { max, min, sum, cumsum } from 'd3-array';
 import { tree, stratify } from 'd3-hierarchy';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { flextree } from 'd3-flextree';
 import { linkHorizontal } from 'd3-shape';
+import { drag } from 'd3-drag';
+
+const createRandomString = () => Math.random().toString(36).substring(2, 15);
 
 const d3 = {
   selection,
   select,
+  selectAll,
   max,
   min,
   sum,
@@ -17,13 +21,17 @@ const d3 = {
   zoom,
   zoomIdentity,
   linkHorizontal,
+  drag,
 };
 
 export class OrgChart {
+  _attrs = null;
+  _dragData = {};
+
   constructor() {
     // Exposed variables
     const attrs = {
-      id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
+      id: createRandomString(), // Id for event handlings
       firstDraw: true,
       svgWidth: 800,
       svgHeight: window.innerHeight - 100,
@@ -77,16 +85,16 @@ export class OrgChart {
                     </defs>
                     `;
       },
-      connectionsUpdate: function (d, i, arr) {
+      connectionsUpdate: function () {
         d3.select(this)
-          .attr('stroke', (d) => '#152785')
+          .attr('stroke', () => '#152785')
           .attr('stroke-linecap', 'round')
-          .attr('stroke-width', (d) => '5')
+          .attr('stroke-width', () => '5')
           .attr('pointer-events', 'none')
           .attr('marker-start', (d) => `url(#${d.from + '_' + d.to})`)
           .attr('marker-end', (d) => `url(#arrow-${d.from + '_' + d.to})`);
       },
-      linkUpdate: function (d, i, arr) {
+      linkUpdate: function (d) {
         d3.select(this)
           .attr('stroke', (d) => (d.data._upToTheRootHighlighted ? '#152785' : 'lightgray'))
           .attr('stroke-width', (d) => (d.data._upToTheRootHighlighted ? 5 : 2));
@@ -95,29 +103,27 @@ export class OrgChart {
           d3.select(this).raise();
         }
       },
-      nodeUpdate: function (d, i, arr) {
+      nodeUpdate: function (d) {
         d3.select(this)
           .select('.node-rect')
           .attr('stroke', (d) => (d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'none'))
           .attr('stroke-width', d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1);
       },
 
-      nodeWidth: (d3Node) => 250,
-      nodeHeight: (d) => 150,
-      siblingsMargin: (d3Node) => 20,
-      childrenMargin: (d) => 60,
-      neightbourMargin: (n1, n2) => 80,
-      compactMarginPair: (d) => 100,
-      compactMarginBetween: (d3Node) => 20,
+      onNodeDrop: (source, target) => {},
+
+      nodeWidth: () => 250,
+      nodeHeight: () => 150,
+      siblingsMargin: () => 20,
+      childrenMargin: () => 60,
+      neightbourMargin: () => 80,
+      compactMarginPair: () => 100,
+      compactMarginBetween: () => 20,
       onNodeClick: (d) => d,
       linkGroupArc: d3
         .linkHorizontal()
         .x((d) => d.x)
         .y((d) => d.y),
-      // ({ source, target }) => {
-      //     return
-      //     return `M ${source.x} , ${source.y} Q ${(source.x + target.x) / 2 + 100},${source.y-100}  ${target.x}, ${target.y}`;
-      // },
       nodeContent: (d) => `<div style="padding:5px;font-size:10px;">Sample Node(id=${d.id}), override using <br/> <br/> 
             <code>chart<br/>
             &nbsp;.nodeContent({data}=>{ <br/>
@@ -137,14 +143,14 @@ export class OrgChart {
           bottom: (d) =>
             d
               ? `<div style="margin-top:-20px;font-size:25px">ˬ</div>`
-              : `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
+              : `<div style="margin-top:0;line-height:1.2;height:11px;font-size:25px">ˆ</div>`,
           right: (d) =>
             d
               ? `<div style="margin-top:-10px;font-size:25px;height:23px">›</div>`
               : `<div style="margin-top:-10px;line-height:1.2;font-size:25px;height:22px">‹</div>`,
           top: (d) =>
             d
-              ? `<div style="margin-top:0px;line-height:1.2;height:11px;font-size:25px">ˆ</div>`
+              ? `<div style="margin-top:0;line-height:1.2;height:11px;font-size:25px">ˆ</div>`
               : `<div style="margin-top:-20px;font-size:25px">ˬ</div>`,
         };
         return `<div style="border-radius:3px;padding:3px;font-size:10px;margin:auto auto;background-color:lightgray"> ${icons[
@@ -153,7 +159,7 @@ export class OrgChart {
       },
       layoutBindings: {
         left: {
-          nodeLeftX: (node) => 0,
+          nodeLeftX: () => 0,
           nodeRightX: (node) => node.width,
           nodeTopY: (node) => -node.height / 2,
           nodeBottomY: (node) => node.height / 2,
@@ -163,17 +169,16 @@ export class OrgChart {
           linkJoinY: (node) => node.y,
           linkX: (node) => node.x,
           linkY: (node) => node.y,
-          linkCompactXStart: (node) => node.x + node.width / 2, //node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
+          linkCompactXStart: (node) => node.x + node.width / 2,
           linkCompactYStart: (node) => node.y + (node.compactEven ? node.height / 2 : -node.height / 2),
-          compactLinkMidX: (node, state) => node.firstCompactNode.x, // node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
+          compactLinkMidX: (node) => node.firstCompactNode.x,
           compactLinkMidY: (node, state) =>
             node.firstCompactNode.y + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4,
           linkParentX: (node) => node.parent.x + node.parent.width,
           linkParentY: (node) => node.parent.y,
           buttonX: (node) => node.width,
           buttonY: (node) => node.height / 2,
-          centerTransform: ({ root, rootMargin, centerY, scale, centerX }) =>
-            `translate(${rootMargin},${centerY}) scale(${scale})`,
+          centerTransform: ({ rootMargin, centerY, scale }) => `translate(${rootMargin},${centerY}) scale(${scale})`,
           compactDimension: {
             sizeColumn: (node) => node.height,
             sizeRow: (node) => node.width,
@@ -181,8 +186,7 @@ export class OrgChart {
           },
           nodeFlexSize: ({ height, width, siblingsMargin, childrenMargin, state, node }) => {
             if (state.compact && node.flexCompactDim) {
-              const result = [node.flexCompactDim[0], node.flexCompactDim[1]];
-              return result;
+              return [node.flexCompactDim[0], node.flexCompactDim[1]];
             }
             return [height + siblingsMargin, width + childrenMargin];
           },
@@ -193,12 +197,12 @@ export class OrgChart {
             d.x = d.y;
             d.y = x;
           },
-          nodeUpdateTransform: ({ x, y, width, height }) => `translate(${x},${y - height / 2})`,
+          nodeUpdateTransform: ({ x, y, height }) => `translate(${x},${y - height / 2})`,
         },
         top: {
           nodeLeftX: (node) => -node.width / 2,
           nodeRightX: (node) => node.width / 2,
-          nodeTopY: (node) => 0,
+          nodeTopY: () => 0,
           nodeBottomY: (node) => node.height,
           nodeJoinX: (node) => node.x - node.width / 2,
           nodeJoinY: (node) => node.y + node.height,
@@ -220,19 +224,17 @@ export class OrgChart {
           linkParentY: (node) => node.parent.y + node.parent.height,
           buttonX: (node) => node.width / 2,
           buttonY: (node) => node.height,
-          centerTransform: ({ root, rootMargin, centerY, scale, centerX }) =>
-            `translate(${centerX},${rootMargin}) scale(${scale})`,
-          nodeFlexSize: ({ height, width, siblingsMargin, childrenMargin, state, node, compactViewIndex }) => {
+          centerTransform: ({ rootMargin, scale, centerX }) => `translate(${centerX},${rootMargin}) scale(${scale})`,
+          nodeFlexSize: ({ height, width, siblingsMargin, childrenMargin, state, node }) => {
             if (state.compact && node.flexCompactDim) {
-              const result = [node.flexCompactDim[0], node.flexCompactDim[1]];
-              return result;
+              return [node.flexCompactDim[0], node.flexCompactDim[1]];
             }
             return [width + siblingsMargin, height + childrenMargin];
           },
           zoomTransform: ({ centerX, scale }) => `translate(${centerX},0}) scale(${scale})`,
           diagonal: this.diagonal.bind(this),
           swap: (d) => {},
-          nodeUpdateTransform: ({ x, y, width, height }) => `translate(${x - width / 2},${y})`,
+          nodeUpdateTransform: ({ x, y, width }) => `translate(${x - width / 2},${y})`,
         },
         bottom: {
           nodeLeftX: (node) => -node.width / 2,
@@ -288,7 +290,7 @@ export class OrgChart {
           linkY: (node) => node.y,
           linkParentX: (node) => node.parent.x - node.parent.width,
           linkParentY: (node) => node.parent.y,
-          buttonX: (node) => 0,
+          buttonX: () => 0,
           buttonY: (node) => node.height / 2,
           linkCompactXStart: (node) => node.x - node.width / 2, //node.x + (node.compactEven ? node.width / 2 : -node.width / 2),
           linkCompactYStart: (node) => node.y + (node.compactEven ? node.height / 2 : -node.height / 2),
@@ -321,7 +323,7 @@ export class OrgChart {
       },
     };
 
-    this.getChartState = () => attrs;
+    this._attrs = attrs;
 
     // Dynamically set getter and setter functions for Chart class
     Object.keys(attrs).forEach((key) => {
@@ -337,6 +339,10 @@ export class OrgChart {
     });
 
     this.initializeEnterExitUpdatePattern();
+  }
+
+  getChartState() {
+    return this._attrs;
   }
 
   initializeEnterExitUpdatePattern() {
@@ -395,7 +401,7 @@ export class OrgChart {
   render() {
     //InnerFunctions which will update visuals
     const attrs = this.getChartState();
-    if (!attrs.data || attrs.data.length == 0) {
+    if (!attrs.data || attrs.data.length === 0) {
       console.log('ORG CHART - Data is empty');
       return this;
     }
@@ -407,7 +413,7 @@ export class OrgChart {
 
     //Calculated properties
     const calc = {
-      id: `ID${Math.floor(Math.random() * 1000000)}`, // id for event handlings,
+      id: createRandomString(), // id for event handlings,
       chartWidth: attrs.svgWidth,
       chartHeight: attrs.svgHeight,
     };
@@ -453,8 +459,8 @@ export class OrgChart {
     this.setLayouts({ expandNodesFirst: false });
 
     // *************************  DRAWING **************************
-    //Add svg
-    const svg = container
+    //Add containerSvg
+    const containerSvg = container
       .patternify({
         tag: 'svg',
         selector: 'svg-chart-container',
@@ -465,13 +471,13 @@ export class OrgChart {
       .attr('font-family', attrs.defaultFont);
 
     if (attrs.firstDraw) {
-      svg.call(attrs.zoomBehavior).on('dblclick.zoom', null).attr('cursor', 'move');
+      containerSvg.call(attrs.zoomBehavior).on('dblclick.zoom', null).attr('cursor', 'move');
     }
 
-    attrs.svg = svg;
+    attrs.containerSvg = containerSvg;
 
     //Add container g element
-    const chart = svg.patternify({
+    const chart = containerSvg.patternify({
       tag: 'g',
       selector: 'chart',
     });
@@ -497,7 +503,7 @@ export class OrgChart {
       selector: 'connections-wrapper',
     });
 
-    attrs.defsWrapper = svg.patternify({
+    attrs.defsWrapper = containerSvg.patternify({
       tag: 'g',
       selector: 'defs-wrapper',
     });
@@ -526,7 +532,7 @@ export class OrgChart {
 
     d3.select(window).on(`resize.${attrs.id}`, () => {
       const containerRect = d3.select(attrs.container).node().getBoundingClientRect();
-      attrs.svg.attr('width', containerRect.width);
+      attrs.containerSvg.attr('width', containerRect.width);
     });
 
     if (attrs.firstDraw) {
@@ -534,6 +540,110 @@ export class OrgChart {
     }
 
     return this;
+  }
+
+  dragAttachHandler() {
+    console.log('dragAttachHandler');
+    const attrs = this.getChartState();
+    const self = this;
+    attrs.containerSvg.selectAll('.node').call(
+      d3
+        .drag()
+        .on('start', function (d, e) {
+          self.dragStarted(this, d, e);
+        })
+        .on('drag', function (d, e) {
+          self.dragged(this, d, e);
+        })
+        .on('end', function (d, e) {
+          self.dragEnded(this, d, e);
+        }),
+    );
+  }
+
+  dragStarted(draggingEl, d) {
+    const orgChartInstance = this;
+
+    d.sourceEvent.stopPropagation();
+    d3.select(draggingEl).classed('dragging', true);
+    orgChartInstance._dragData = {
+      sourceNode: d,
+      targetNode: null,
+    };
+  }
+
+  dragged(draggingEl, d, event) {
+    const orgChartInstance = this;
+
+    const x = d.x - event.width / 2;
+
+    d3.select(draggingEl).raise().attr('transform', `translate(${x},${d.y})`);
+    // set default style
+    d3.selectAll('rect').attr('fill', '#fff').attr('stroke', 'null').attr('stroke-width', '1px');
+    orgChartInstance._dragData.targetNode = null;
+    // check nodes overlapping
+    const cP = { x0: d.x, y0: d.y, x1: d.x + event.width, y1: d.y + event.height };
+
+    d3.selectAll('g.node:not(.dragging)')
+      .filter((d) => {
+        const cPInner = { x0: d.x, y0: d.y, x1: d.x + d.width, y1: d.y + d.height };
+        if (cP.x1 > cPInner.x0 && cP.x0 < cPInner.x1 && cP.y1 > cPInner.y0 && cP.y0 < cPInner.y1) {
+          orgChartInstance._dragData.targetNode = d;
+          return d;
+        }
+      })
+      .select('rect')
+      .attr('fill', '#e4e1e1')
+      .attr('stroke', '#e4e1e1')
+      .attr('stroke-width', '2px');
+  }
+
+  dragEnded(draggingEl, d) {
+    const orgChartInstance = this;
+
+    const attrs = orgChartInstance.getChartState();
+
+    d3.select(draggingEl).classed('dragging', false);
+
+    // set default style
+    d3.selectAll('rect').attr('fill', '#fff').attr('stroke', 'null').attr('stroke-width', '1px');
+
+    const x = d.subject.x - d.subject.width / 2;
+
+    d3.select(draggingEl).attr('transform', `translate(${x},${d.subject.y})`);
+
+    const { sourceNode, targetNode } = orgChartInstance._dragData;
+    if (sourceNode && targetNode) {
+      const sourceNodeData = sourceNode.subject.data;
+      const targetNodeData = targetNode.data;
+
+      const sourceNodeIndex = attrs.data.findIndex((d) => d.id === sourceNodeData.id);
+      const targetNodeIndex = attrs.data.findIndex((d) => d.id === targetNodeData.id);
+
+      if (targetNodeData.parentId === sourceNodeData.id) {
+        attrs.data[targetNodeIndex].parentId = sourceNodeData.parentId;
+      } else {
+        const sourceId = sourceNodeData.id;
+        const sourceParentId = sourceNodeData.parentId;
+        // get all children of source node
+        const sourceChildren = attrs.data.filter((d) => d.parentId === sourceId);
+
+        if (sourceChildren) {
+          // replace parentId of all children with source ParentId
+          sourceChildren.forEach((d) => {
+            d.parentId = sourceParentId;
+          });
+        }
+      }
+
+      attrs.data[sourceNodeIndex].parentId = targetNodeData.id;
+
+      orgChartInstance.updateNodesState();
+
+      attrs.onNodeDrop(attrs.data[sourceNodeIndex], attrs.data[targetNodeIndex]);
+    }
+    // clear current state
+    orgChartInstance._dragData = {};
   }
 
   // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
@@ -691,7 +801,6 @@ export class OrgChart {
   // This function basically redraws visible graph, based on nodes state
   update({ x0, y0, x = 0, y = 0, width, height }) {
     const attrs = this.getChartState();
-    const calc = attrs.calc;
 
     if (attrs.compact) {
       this.calculateCompactFlexDimensions(attrs.root);
@@ -706,8 +815,6 @@ export class OrgChart {
     }
 
     const nodes = treeData.descendants();
-
-    // console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
 
     // Get all links
     const links = treeData.descendants().slice(1);
@@ -791,11 +898,11 @@ export class OrgChart {
       });
 
     // Remove any  links which is exiting after animation
-    const linkExit = linkSelection
+    linkSelection
       .exit()
       .transition()
       .duration(attrs.duration)
-      .attr('d', (d) => {
+      .attr('d', () => {
         const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
         const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
         const o = { x: xo, y: yo };
@@ -812,7 +919,7 @@ export class OrgChart {
       .enter()
       .insert('path', 'g')
       .attr('class', 'connection')
-      .attr('d', (d) => {
+      .attr('d', () => {
         const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
         const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
         const o = { x: xo, y: yo };
@@ -861,7 +968,7 @@ export class OrgChart {
     connUpdate.each(attrs.connectionsUpdate);
 
     // Remove any  links which is exiting after animation
-    const connExit = connectionsSel.exit().transition().duration(attrs.duration).attr('opacity', 0).remove();
+    connectionsSel.exit().transition().duration(attrs.duration).attr('opacity', 0).remove();
 
     // --------------------------  NODES ----------------------
     // Get nodes selection
@@ -880,6 +987,10 @@ export class OrgChart {
       })
       .attr('cursor', 'pointer')
       .on('click', (event, { data }) => {
+        if (event.defaultPrevented) {
+          return;
+        }
+
         if ([...event.srcElement.classList].includes('node-button-foreign-object')) {
           return;
         }
@@ -942,7 +1053,7 @@ export class OrgChart {
       .attr('y', -20);
 
     // Add expand collapse button content
-    const nodeFo = nodeButtonGroups
+    nodeButtonGroups
       .patternify({
         tag: 'foreignObject',
         selector: 'node-button-foreign-object',
@@ -978,8 +1089,8 @@ export class OrgChart {
       .select('.node-rect')
       .attr('width', ({ width }) => width)
       .attr('height', ({ height }) => height)
-      .attr('x', ({ width }) => 0)
-      .attr('y', ({ height }) => 0)
+      .attr('x', () => 0)
+      .attr('y', () => 0)
       .attr('cursor', 'pointer')
       .attr('rx', 3)
       .attr('fill', attrs.nodeDefaultBackground);
@@ -987,7 +1098,7 @@ export class OrgChart {
     // Move node button group to the desired position
     nodeUpdate
       .select('.node-button-g')
-      .attr('transform', ({ data, width, height }) => {
+      .attr('transform', ({ width, height }) => {
         const x = attrs.layoutBindings[attrs.layout].buttonX({ width, height });
         const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
         return `translate(${x},${y})`;
@@ -1026,12 +1137,12 @@ export class OrgChart {
     nodeUpdate.each(attrs.nodeUpdate);
 
     // Remove any exiting nodes after transition
-    const nodeExitTransition = nodesSelection
+    nodesSelection
       .exit()
       .attr('opacity', 1)
       .transition()
       .duration(attrs.duration)
-      .attr('transform', (d) => {
+      .attr('transform', () => {
         const ex = attrs.layoutBindings[attrs.layout].nodeJoinX({ x, y, width, height });
         const ey = attrs.layoutBindings[attrs.layout].nodeJoinY({ x, y, width, height });
         return `translate(${ex},${ey})`;
@@ -1061,6 +1172,8 @@ export class OrgChart {
         nodes: centeredNodes,
       });
     }
+
+    this.dragAttachHandler();
   }
 
   // This function detects whether current browser is edge
@@ -1152,13 +1265,13 @@ export class OrgChart {
   restyleForeignObjectElements() {
     const attrs = this.getChartState();
 
-    attrs.svg
+    attrs.containerSvg
       .selectAll('.node-foreign-object')
       .attr('width', ({ width }) => width)
       .attr('height', ({ height }) => height)
       .attr('x', ({ width }) => 0)
       .attr('y', ({ height }) => 0);
-    attrs.svg
+    attrs.containerSvg
       .selectAll('.node-foreign-object-div')
       .style('width', ({ width }) => `${width}px`)
       .style('height', ({ height }) => `${height}px`)
@@ -1343,14 +1456,22 @@ export class OrgChart {
   }
 
   zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
-    const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration, lastTransform } = this.getChartState();
+    const {
+      centerG,
+      svgWidth: w,
+      svgHeight: h,
+      containerSvg,
+      zoomBehavior,
+      duration,
+      lastTransform,
+    } = this.getChartState();
     let scaleVal = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
     let identity = d3.zoomIdentity.translate(w / 2, h / 2);
     identity = identity.scale(params.scale ? scaleVal : lastTransform.k);
 
     identity = identity.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
     // Transition zoom wrapper component into specified bounds
-    svg
+    containerSvg
       .transition()
       .duration(params.animate ? duration : 0)
       .call(zoomBehavior.transform, identity);
@@ -1450,10 +1571,10 @@ export class OrgChart {
       const fsElement = document.fullscreenElement || document.mozFullscreenElement || document.webkitFullscreenElement;
       if (fsElement == el) {
         setTimeout((d) => {
-          attrs.svg.attr('height', window.innerHeight - 40);
+          attrs.containerSvg.attr('height', window.innerHeight - 40);
         }, 500);
       } else {
-        attrs.svg.attr('height', attrs.svgHeight);
+        attrs.containerSvg.attr('height', attrs.svgHeight);
       }
     });
 
@@ -1470,14 +1591,14 @@ export class OrgChart {
 
   // Zoom in exposed method
   zoomIn() {
-    const { svg, zoomBehavior } = this.getChartState();
-    svg.transition().call(zoomBehavior.scaleBy, 1.3);
+    const { containerSvg, zoomBehavior } = this.getChartState();
+    containerSvg.transition().call(zoomBehavior.scaleBy, 1.3);
   }
 
   // Zoom out exposed method
   zoomOut() {
-    const { svg, zoomBehavior } = this.getChartState();
-    svg.transition().call(zoomBehavior.scaleBy, 0.78);
+    const { containerSvg, zoomBehavior } = this.getChartState();
+    containerSvg.transition().call(zoomBehavior.scaleBy, 0.78);
   }
 
   toDataURL(url, callback) {
@@ -1497,7 +1618,7 @@ export class OrgChart {
   exportImg({ full = false, scale = 3, onLoad = (d) => d, save = true } = {}) {
     const that = this;
     const attrs = this.getChartState();
-    const { svg: svgImg, root } = attrs;
+    const { containerSvg: svgImg, root } = attrs;
     let count = 0;
     const selection = svgImg.selectAll('img');
     let total = selection.size();
@@ -1508,12 +1629,12 @@ export class OrgChart {
       if (full) {
         that.fit();
       }
-      const { svg } = that.getChartState();
+      const { containerSvg } = that.getChartState();
 
       setTimeout(
         (d) => {
           that.downloadImage({
-            node: svg.node(),
+            node: containerSvg.node(),
             scale,
             isSvg: false,
             onAlreadySerialized: (d) => {
@@ -1542,8 +1663,8 @@ export class OrgChart {
   }
 
   exportSvg() {
-    const { svg } = this.getChartState();
-    this.downloadImage({ node: svg.node(), scale: 3, isSvg: true });
+    const { containerSvg } = this.getChartState();
+    this.downloadImage({ node: containerSvg.node(), scale: 3, isSvg: true });
     return this;
   }
 
@@ -1563,14 +1684,14 @@ export class OrgChart {
   }
 
   downloadImage({ node, scale = 2, isSvg = false, save = true, onAlreadySerialized = (d) => {}, onLoad = (d) => {} }) {
-    // Retrieve svg node
+    // Retrieve containerSvg node
     const svgNode = node;
 
     if (isSvg) {
       let source = serializeString(svgNode);
       //add xml declaration
       source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-      //convert svg source to URI data scheme.
+      //convert containerSvg source to URI data scheme.
       const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`;
       saveAs(url, 'graph.svg');
       onAlreadySerialized();
@@ -1623,13 +1744,13 @@ export class OrgChart {
       }
     }
     // This function serializes SVG and sets all necessary attributes
-    function serializeString(svg) {
+    function serializeString(containerSvg) {
       const xmlns = 'http://www.w3.org/2000/xmlns/';
       const xlinkns = 'http://www.w3.org/1999/xlink';
       const svgns = 'http://www.w3.org/2000/svg';
-      svg = svg.cloneNode(true);
+      containerSvg = containerSvg.cloneNode(true);
       const fragment = window.location.href + '#';
-      const walker = document.createTreeWalker(svg, NodeFilter.SHOW_ELEMENT, null, false);
+      const walker = document.createTreeWalker(containerSvg, NodeFilter.SHOW_ELEMENT, null, false);
       while (walker.nextNode()) {
         for (const attr of walker.currentNode.attributes) {
           if (attr.value.includes(fragment)) {
@@ -1637,10 +1758,10 @@ export class OrgChart {
           }
         }
       }
-      svg.setAttributeNS(xmlns, 'xmlns', svgns);
-      svg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
+      containerSvg.setAttributeNS(xmlns, 'xmlns', svgns);
+      containerSvg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
       const serializer = new XMLSerializer();
-      const string = serializer.serializeToString(svg);
+      const string = serializer.serializeToString(containerSvg);
       return string;
     }
   }
