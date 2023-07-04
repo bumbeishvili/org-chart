@@ -341,21 +341,21 @@ export class OrgChart {
 
   initializeEnterExitUpdatePattern() {
     d3.selection.prototype.patternify = function (params) {
-        const container = this;
-        const selector = params.selector;
-        const elementTag = params.tag;
-        const data = params.data || [selector];
+      const container = this;
+      const selector = params.selector;
+      const elementTag = params.tag;
+      const data = params.data || [selector];
 
-        // Pattern in action
-        let selection = container.selectAll("." + selector).data(data, (d, i) => {
-            if (typeof d === "object") {
-                if (d.id) {
-                    return d.id;
-                }
-            }
-            return i;
-        });
-        selection.exit().remove();
+      // Pattern in action
+      let selection = container.selectAll(`.${selector}`).data(data, (d, i) => {
+        if (typeof d === 'object') {
+          if (d.id) {
+            return d.id;
+          }
+        }
+        return i;
+      });
+      selection.exit().remove();
       selection = selection.enter().append(elementTag).merge(selection);
       selection.attr('class', selector);
       return selection;
@@ -1603,7 +1603,7 @@ export class OrgChart {
       }
     };
 
-      const url = `data:image/svg+xml; charset=utf8, ${encodeURIComponent(serializeString(svgNode))}`;
+    const url = `data:image/svg+xml; charset=utf8, ${encodeURIComponent(serializeString(svgNode))}`;
 
     onAlreadySerialized();
 
