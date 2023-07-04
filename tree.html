@@ -307,6 +307,13 @@
           })
           .onNodeDrop(function (sourceNode, targetNode) {
             console.log(sourceNode, targetNode);
+            return true;
+          })
+          .isNodeDraggable(d => {
+            return true;
+          })
+          .isNodeDroppable(d => {
+            return true;
           })
           .onNodeClick(function(d){
             console.log('Node Click:', d);

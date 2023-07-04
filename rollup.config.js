@@ -2,8 +2,10 @@ export default {
   input: 'index.js',
   output: {
     file: 'build/d3-org-chart.js',
+    name: 'd3',
+    extend: true,
+    sourcemap: true,
     format: 'umd',
-    name: 'd3.OrgChart',
     globals: {
       'd3-selection': 'd3',
       'd3-array': 'd3',

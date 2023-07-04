@@ -111,6 +111,8 @@ export class OrgChart {
       },
 
       onNodeDrop: (source, target) => {},
+      isNodeDraggable: (node) => true,
+      isNodeDroppable: (node) => true,
 
       nodeWidth: () => 250,
       nodeHeight: () => 150,
@@ -546,19 +548,22 @@ export class OrgChart {
     console.log('dragAttachHandler');
     const attrs = this.getChartState();
     const self = this;
-    attrs.containerSvg.selectAll('.node').call(
-      d3
-        .drag()
-        .on('start', function (d, e) {
-          self.dragStarted(this, d, e);
-        })
-        .on('drag', function (d, e) {
-          self.dragged(this, d, e);
-        })
-        .on('end', function (d, e) {
-          self.dragEnded(this, d, e);
-        }),
-    );
+    attrs.containerSvg
+      .selectAll('.node')
+      .filter((d) => attrs.isNodeDraggable(d.data))
+      .call(
+        d3
+          .drag()
+          .on('start', function (d, e) {
+            self.dragStarted(this, d, e);
+          })
+          .on('drag', function (d, e) {
+            self.dragged(this, d, e);
+          })
+          .on('end', function (d, e) {
+            self.dragEnded(this, d, e);
+          }),
+      );
   }
 
   dragStarted(draggingEl, d) {
@@ -574,6 +579,7 @@ export class OrgChart {
 
   dragged(draggingEl, d, event) {
     const orgChartInstance = this;
+    const attrs = orgChartInstance.getChartState();
 
     const x = d.x - event.width / 2;
 
@@ -586,6 +592,9 @@ export class OrgChart {
 
     d3.selectAll('g.node:not(.dragging)')
       .filter((d) => {
+        if (!attrs.isNodeDroppable(d.data)) {
+          return false;
+        }
         const cPInner = { x0: d.x, y0: d.y, x1: d.x + d.width, y1: d.y + d.height };
         if (cP.x1 > cPInner.x0 && cP.x0 < cPInner.x1 && cP.y1 > cPInner.y0 && cP.y0 < cPInner.y1) {
           orgChartInstance._dragData.targetNode = d;
@@ -600,7 +609,6 @@ export class OrgChart {
 
   dragEnded(draggingEl, d) {
     const orgChartInstance = this;
-
     const attrs = orgChartInstance.getChartState();
 
     d3.select(draggingEl).classed('dragging', false);
@@ -617,30 +625,32 @@ export class OrgChart {
       const sourceNodeData = sourceNode.subject.data;
       const targetNodeData = targetNode.data;
 
-      const sourceNodeIndex = attrs.data.findIndex((d) => d.id === sourceNodeData.id);
-      const targetNodeIndex = attrs.data.findIndex((d) => d.id === targetNodeData.id);
+      const result = attrs.onNodeDrop(sourceNodeData, targetNodeData);
 
-      if (targetNodeData.parentId === sourceNodeData.id) {
-        attrs.data[targetNodeIndex].parentId = sourceNodeData.parentId;
-      } else {
-        const sourceId = sourceNodeData.id;
-        const sourceParentId = sourceNodeData.parentId;
-        // get all children of source node
-        const sourceChildren = attrs.data.filter((d) => d.parentId === sourceId);
+      if (result) {
+        const sourceNodeIndex = attrs.data.findIndex((d) => d.id === sourceNodeData.id);
+        const targetNodeIndex = attrs.data.findIndex((d) => d.id === targetNodeData.id);
 
-        if (sourceChildren) {
-          // replace parentId of all children with source ParentId
-          sourceChildren.forEach((d) => {
-            d.parentId = sourceParentId;
-          });
+        if (targetNodeData.parentId === sourceNodeData.id) {
+          attrs.data[targetNodeIndex].parentId = sourceNodeData.parentId;
+        } else {
+          const sourceId = sourceNodeData.id;
+          const sourceParentId = sourceNodeData.parentId;
+          // get all children of source node
+          const sourceChildren = attrs.data.filter((d) => d.parentId === sourceId);
+
+          if (sourceChildren) {
+            // replace parentId of all children with source ParentId
+            sourceChildren.forEach((d) => {
+              d.parentId = sourceParentId;
+            });
+          }
         }
+
+        attrs.data[sourceNodeIndex].parentId = targetNodeData.id;
+
+        orgChartInstance.updateNodesState();
       }
-
-      attrs.data[sourceNodeIndex].parentId = targetNodeData.id;
-
-      orgChartInstance.updateNodesState();
-
-      attrs.onNodeDrop(attrs.data[sourceNodeIndex], attrs.data[targetNodeIndex]);
     }
     // clear current state
     orgChartInstance._dragData = {};
