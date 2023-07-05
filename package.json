@@ -35,7 +35,7 @@
     "_test": "tape 'test/**/*-test.js'",
     "_prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "_postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js",
-    "pretest": "rmdir /q /s build && mkdir build && rollup --config rollup.config.js",
+    "pretest": "rm -rf build && mkdir build && rollup --config rollup.config.js",
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js"
