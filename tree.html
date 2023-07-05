@@ -41,8 +41,14 @@
         background-color: white;
       }
 
-      .node.dragging .node-foreign-object-div {
-          box-shadow: 0 0 13px 0 red;
+      .node.dragging .node-rect {
+          stroke: #ff6363;
+          stroke-width: 10;
+      }
+
+      .node:not(.dragging).drop-over .node-rect {
+          stroke: #ccc;
+          stroke-width: 10;
       }
     </style>
   </head>
@@ -305,18 +311,16 @@
             </div>
             `;
           })
-          .onNodeDrop(function (sourceNode, targetNode) {
-            console.log(sourceNode, targetNode);
+          .dragNDrop(true)
+          .onNodeDrop(function (sourceNodeData, targetNodeData) {
+            console.log(sourceNodeData, targetNodeData);
             return true;
           })
-          .isNodeDraggable(d => {
+          .isNodeDraggable((data) => {
             return true;
           })
-          .isNodeDroppable(d => {
+          .isNodeDroppable((sourceNodeData, targetNodeData) => {
             return true;
-          })
-          .onNodeClick(function(d){
-            console.log('Node Click:', d);
           })
           .render();
       });

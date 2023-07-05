@@ -8,6 +8,46 @@ import { drag } from 'd3-drag';
 
 const createRandomString = () => Math.random().toString(36).substring(2, 15);
 
+const getDiagonalMainOptions = (s, t, m) => {
+  // Define source and target x,y coordinates
+  const x = s.x;
+  const y = s.y;
+  const ex = t.x;
+  const ey = t.y;
+
+  let mx = (m && m.x) || x;
+  let my = (m && m.y) || y;
+
+  // Values in case of top reversed and left reversed diagonals
+  let xrvs = ex - x < 0 ? -1 : 1;
+  let yrvs = ey - y < 0 ? -1 : 1;
+
+  // Define preferred curve radius
+  let rdef = 35;
+
+  // Reduce curve radius, if source-target x space is smaller
+  let r = Math.abs(ex - x) / 2 < rdef ? Math.abs(ex - x) / 2 : rdef;
+
+  // Further reduce curve radius, is y space is more small
+  r = Math.abs(ey - y) / 2 < r ? Math.abs(ey - y) / 2 : r;
+
+  // Defin width and height of link, excluding radius
+  let h = Math.abs(ey - y) / 2 - r;
+
+  return {
+    x,
+    y,
+    mx,
+    my,
+    xrvs,
+    yrvs,
+    ex,
+    ey,
+    r,
+    h,
+  };
+};
+
 const d3 = {
   selection,
   select,
@@ -31,7 +71,7 @@ export class OrgChart {
   constructor() {
     // Exposed variables
     const attrs = {
-      id: createRandomString(), // Id for event handlings
+      id: createRandomString(), // Id for event handlers
       firstDraw: true,
       svgWidth: 800,
       svgHeight: window.innerHeight - 100,
@@ -110,9 +150,10 @@ export class OrgChart {
           .attr('stroke-width', d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1);
       },
 
+      dragNDrop: true,
       onNodeDrop: (source, target) => {},
       isNodeDraggable: (node) => true,
-      isNodeDroppable: (node) => true,
+      isNodeDroppable: (source, target) => true,
 
       nodeWidth: () => 250,
       nodeHeight: () => 150,
@@ -393,7 +434,7 @@ export class OrgChart {
     return nodeStore;
   }
 
-  // This method can be invoked via chart.setZoomFactor API, it zooms to particulat scale
+  // This method can be invoked via chart.setZoomFactor API, it zooms to particular scale
   initialZoom(zoomLevel) {
     const attrs = this.getChartState();
     attrs.lastTransform.k = zoomLevel;
@@ -415,7 +456,7 @@ export class OrgChart {
 
     //Calculated properties
     const calc = {
-      id: createRandomString(), // id for event handlings,
+      id: createRandomString(), // id for event handlers,
       chartWidth: attrs.svgWidth,
       chartHeight: attrs.svgHeight,
     };
@@ -545,8 +586,12 @@ export class OrgChart {
   }
 
   dragAttachHandler() {
-    console.log('dragAttachHandler');
     const attrs = this.getChartState();
+
+    if (!attrs.dragNDrop) {
+      return;
+    }
+
     const self = this;
     attrs.containerSvg
       .selectAll('.node')
@@ -584,27 +629,25 @@ export class OrgChart {
     const x = d.x - event.width / 2;
 
     d3.select(draggingEl).raise().attr('transform', `translate(${x},${d.y})`);
-    // set default style
-    d3.selectAll('rect').attr('fill', '#fff').attr('stroke', 'null').attr('stroke-width', '1px');
     orgChartInstance._dragData.targetNode = null;
+
     // check nodes overlapping
     const cP = { x0: d.x, y0: d.y, x1: d.x + event.width, y1: d.y + event.height };
 
     d3.selectAll('g.node:not(.dragging)')
+      .classed('drop-over', false)
       .filter((d) => {
-        if (!attrs.isNodeDroppable(d.data)) {
+        if (!attrs.isNodeDroppable(orgChartInstance._dragData.sourceNode.subject.data, d.data)) {
           return false;
         }
+
         const cPInner = { x0: d.x, y0: d.y, x1: d.x + d.width, y1: d.y + d.height };
         if (cP.x1 > cPInner.x0 && cP.x0 < cPInner.x1 && cP.y1 > cPInner.y0 && cP.y0 < cPInner.y1) {
           orgChartInstance._dragData.targetNode = d;
           return d;
         }
       })
-      .select('rect')
-      .attr('fill', '#e4e1e1')
-      .attr('stroke', '#e4e1e1')
-      .attr('stroke-width', '2px');
+      .classed('drop-over', true);
   }
 
   dragEnded(draggingEl, d) {
@@ -612,9 +655,7 @@ export class OrgChart {
     const attrs = orgChartInstance.getChartState();
 
     d3.select(draggingEl).classed('dragging', false);
-
-    // set default style
-    d3.selectAll('rect').attr('fill', '#fff').attr('stroke', 'null').attr('stroke-width', '1px');
+    d3.selectAll('g.node:not(.dragging)').classed('drop-over', false);
 
     const x = d.subject.x - d.subject.width / 2;
 
@@ -691,7 +732,7 @@ export class OrgChart {
     // Retrieve all children nodes ids (including current node itself)
     node.descendants().forEach((d) => (d.data._filteredOut = true));
 
-    const descendants = this.getNodeChildren(node, [], attrs.nodeId);
+    const descendants = this.getNodeChildren(node, []);
     descendants.forEach((d) => (d._filtered = true));
 
     // Filter out retrieved nodes and reassign data
@@ -1193,31 +1234,8 @@ export class OrgChart {
 
   // Generate horizontal diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges-horizontal-d3-v3-v4-v5-v6
   hdiagonal(s, t, m) {
-    // Define source and target x,y coordinates
-    const x = s.x;
-    const y = s.y;
-    const ex = t.x;
-    const ey = t.y;
-
-    let mx = (m && m.x) || x;
-    let my = (m && m.y) || y;
-
-    // Values in case of top reversed and left reversed diagonals
-    let xrvs = ex - x < 0 ? -1 : 1;
-    let yrvs = ey - y < 0 ? -1 : 1;
-
-    // Define preferred curve radius
-    let rdef = 35;
-
-    // Reduce curve radius, if source-target x space is smaller
-    let r = Math.abs(ex - x) / 2 < rdef ? Math.abs(ex - x) / 2 : rdef;
-
-    // Further reduce curve radius, is y space is more small
-    r = Math.abs(ey - y) / 2 < r ? Math.abs(ey - y) / 2 : r;
-
-    // Defin width and height of link, excluding radius
-    let h = Math.abs(ey - y) / 2 - r;
-    let w = Math.abs(ex - x) / 2 - r;
+    const { x, y, mx, my, xrvs, yrvs, ex, ey, r } = getDiagonalMainOptions(s, t, m);
+    const w = Math.abs(ex - x) / 2 - r;
 
     // Build and return custom arc command
     return `
@@ -1238,23 +1256,8 @@ export class OrgChart {
 
   // Generate custom diagonal - play with it here - https://observablehq.com/@bumbeishvili/curved-edges
   diagonal(s, t, m) {
-    const x = s.x;
-    const y = s.y;
-    const ex = t.x;
-    const ey = t.y;
+    const { x, y, mx, my, xrvs, yrvs, ex, ey, r, h } = getDiagonalMainOptions(s, t, m);
 
-    let mx = (m && m.x) || x;
-    let my = (m && m.y) || y;
-
-    let xrvs = ex - x < 0 ? -1 : 1;
-    let yrvs = ey - y < 0 ? -1 : 1;
-
-    let rdef = 35;
-    let r = Math.abs(ex - x) / 2 < rdef ? Math.abs(ex - x) / 2 : rdef;
-
-    r = Math.abs(ey - y) / 2 < r ? Math.abs(ey - y) / 2 : r;
-
-    let h = Math.abs(ey - y) / 2 - r;
     let w = Math.abs(ex - x) - r * 2;
     //w=0;
     const path = `
@@ -1311,7 +1314,7 @@ export class OrgChart {
       d.children = d._children;
       d._children = null;
 
-      // Set each children as expanded
+      // Set each child as expanded
       if (d.children) {
         d.children.forEach(({ data }) => (data._expanded = true));
       }
@@ -1760,7 +1763,7 @@ export class OrgChart {
       const svgns = 'http://www.w3.org/2000/svg';
       containerSvg = containerSvg.cloneNode(true);
       const fragment = window.location.href + '#';
-      const walker = document.createTreeWalker(containerSvg, NodeFilter.SHOW_ELEMENT, null, false);
+      const walker = document.createTreeWalker(containerSvg, NodeFilter.SHOW_ELEMENT, null);
       while (walker.nextNode()) {
         for (const attr of walker.currentNode.attributes) {
           if (attr.value.includes(fragment)) {
@@ -1777,7 +1780,7 @@ export class OrgChart {
   }
 
   // Calculate what size text will take
-  getTextWidth(text, { fontSize = 14, fontWeight = 400, defaultFont = 'Helvetice', ctx } = {}) {
+  getTextWidth(text, { fontSize = 14, fontWeight = 400, defaultFont = 'Helvetica', ctx } = {}) {
     ctx.font = `${fontWeight || ''} ${fontSize}px ${defaultFont} `;
     const measurement = ctx.measureText(text);
     return measurement.width;
