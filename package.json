@@ -2,6 +2,7 @@
   "name": "d3-org-chart",
   "version": "2.7.0",
   "module": "index",
+  "type": "module",
   "description": "Highly customizable org chart, created with d3",
   "keywords": [
     "d3",
@@ -34,26 +35,28 @@
     "_test": "tape 'test/**/*-test.js'",
     "_prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "_postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-selection:d3,d3-array:d3,d3-hierarchy:d3,d3-zoom:d3,d3-flextree:d3,d3-shape:d3,d3-group:d3  -f umd -n d3 -o build/d3-org-chart.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup --config rollup.config.js",
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
-    "babel": "^6.23.0",
-    "package-preamble": "0.1",
-    "rollup": "0.27",
-    "tape": "4",
-    "uglify-js": "3"
+    "@babel/core": "7.22.6",
+    "@babel/preset-env": "7.22.6",
+    "babel": "6.23.0",
+    "package-preamble": "0.1.0",
+    "prettier": "2.8.4",
+    "rollup": "3.26.0",
+    "tape": "4.16.2",
+    "uglify-js": "3.17.4"
   },
   "dependencies": {
-    "d3-selection": "3",
-    "d3-array": "3",
-    "d3-hierarchy": "3",
-    "d3-zoom": "3",
-    "d3-shape": "3",
-    "d3-flextree": "2.1.2"
+    "d3-array": "3.2.4",
+    "d3-drag": "3.0.0",
+    "d3-flextree": "2.1.2",
+    "d3-hierarchy": "3.1.2",
+    "d3-selection": "3.0.0",
+    "d3-shape": "3.2.0",
+    "d3-zoom": "3.0.0"
   }
 }
