@@ -1925,6 +1925,7 @@ export class OrgChart {
       .filter((d) => {
         if (!attrs.isNodeDroppable(orgChartInstance._dragData.sourceNode.subject.data, d.data)) {
           return false;
+
         }
 
         const cPInner = { x0: d.x, y0: d.y, x1: d.x + d.width, y1: d.y + d.height };
