@@ -1,5 +1,5 @@
 {
-  "name": "d3-org-chart",
+  "name": "@nicolai8/d3-org-chart",
   "version": "3.0.1-next.2",
   "module": "index",
   "type": "module",
@@ -21,21 +21,22 @@
     "default": "./src/d3-org-chart.js"
   },
   "jsnext:main": "index",
+  "typings": "index.d.ts",
   "bugs": {
-    "url": "https://github.com/bumbeishvili/d3-organization-chart/issues"
+    "url": "https://github.com/Nicolai8/org-chart/issues"
   },
-  "homepage": "https://github.com/bumbeishvili/d3-organization-chart#readme",
+  "homepage": "https://github.com/Nicolai8/org-chart#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bumbeishvili/d3-organization-chart.git"
+    "url": "https://github.com/Nicolai8/org-chart.git"
   },
   "scripts": {
     "start": "nodemon ",
-    "_pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\"",
+    "_pretest": "rmdir /q /s build && mkdir build && rollup -c --banner \"$(preamble)\"",
     "_test": "tape 'test/**/*-test.js'",
     "_prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "_postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup --config rollup.config.js",
+    "pretest": "rmdir /q /s build && mkdir build && rollup --config rollup.config.js",
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-org-chart.js -c -m -o build/d3-org-chart.min.js",
     "postpublish": "zip -j build/d3-org-chart.zip -- LICENSE README.md build/d3-org-chart.js build/d3-org-chart.min.js"
