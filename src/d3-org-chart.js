@@ -1285,6 +1285,7 @@ export class OrgChart {
 
         // Redraw Graph
         this.update(d);
+        event.stopPropagation();
     }
 
     // This function changes `expanded` property to descendants
