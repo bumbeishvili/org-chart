@@ -1,13 +1,15 @@
-import { selection, select } from "d3-selection";
+import { selection, select,selectAll } from "d3-selection";
 import { max, min, sum, cumsum } from "d3-array";
 import { tree, stratify } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
 import { linkHorizontal } from 'd3-shape';
+import {drag} from 'd3-drag';
 
 const d3 = {
     selection,
     select,
+    selectAll,
     max,
     min,
     sum,
@@ -17,6 +19,11 @@ const d3 = {
     zoom,
     zoomIdentity,
     linkHorizontal,
+    drag,
+    data: null,
+    sourceNode: null,
+    targetNode: null,
+    attrs: null,
 }
 export class OrgChart {
     constructor() {
@@ -84,7 +91,10 @@ export class OrgChart {
                     .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#152785' : 'none')
                     .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1)
             },
-
+            svg: null,
+            dragHandler: null,
+            refresh: this,
+            descendants: null,
             nodeWidth: d3Node => 250,
             nodeHeight: d => 150,
             siblingsMargin: d3Node => 20,
@@ -93,6 +103,7 @@ export class OrgChart {
             compactMarginPair: d => 100,
             compactMarginBetween: (d3Node => 20),
             onNodeClick: (d) => d,
+            onDrop: (dropData) => dropData,
             linkGroupArc: d3.linkHorizontal().x(d => d.x).y(d => d.y),
             // ({ source, target }) => {
             //     return 
@@ -482,8 +493,101 @@ export class OrgChart {
         if (attrs.firstDraw) {
             attrs.firstDraw = false;
         }
+        attrs.svg = svg;
+
+        // // add drag and drop
+        d3.attrs = attrs;
 
         return this;
+    }
+
+    dragAttachHandler(){
+      const attrs = this.getChartState();
+      attrs.svg.selectAll('.node').call(d3.drag()
+      .on("start", this.dragstarted)
+      .on("drag", this.dragged)
+      .on("end", this.dragended));
+    }
+    dragstarted(d) {
+      d.sourceEvent.stopPropagation();
+      d3.select(this).classed("dragging", true);
+      d3.sourceNode = d;
+    }
+    dragged(d,event) {
+      const x = (d.x) - (event.width/2);
+
+      // const _x = (event.x - d.x);
+      // const _y = (event.y - d.y);
+      // const moveThreshold = 30;
+      // const isMoved = (_x > -(moveThreshold) && _x < (moveThreshold)) || (_y > -(moveThreshold) && _y < (moveThreshold));
+
+      // if(!isMoved) return;
+
+      d3.select(this).raise().attr('transform', `translate(${x},${d.y})`);
+      // set default style
+      d3.selectAll('rect').attr("fill", "#fff").attr("stroke", "null").attr("stroke-width", "1px");
+      d3.targetNode = null;
+      // check nodes overlapping
+      const cP = {x0: d.x, y0: d.y,x1: d.x+event.width,y1: d.y+event.height};
+
+      d3.selectAll('g.node:not(.dragging)').filter((d,i) => {
+       const cPInner = {x0: d.x, y0: d.y,x1: d.x+d.width,y1: d.y+d.height};
+        if((cP.x1 > cPInner.x0  &&  cP.x0 < cPInner.x1) && ( cP.y1 > cPInner.y0 && cP.y0 < cPInner.y1)){
+          d3.targetNode = d;
+          return d;
+        }
+      }).select('rect').attr("fill", "#e4e1e1").attr("stroke", "#e4e1e1").attr("stroke-width", "2px");
+    }
+    dragended(d) {
+      if (!d3.attrs.data || d3.attrs.data.length == 0) {
+        console.log('ORG CHART - Data is empty');
+        return this;
+    }
+      d3.select(this).classed("dragging", false);
+
+      // set default style
+      d3.selectAll('rect').attr("fill", "#fff").attr("stroke", "null").attr("stroke-width", "1px");
+
+      const x = (d.subject.x) - (d.subject.width/2);
+
+      d3.select(this).attr('transform', `translate(${x},${(d.subject.y)})`);
+
+      if(d3.sourceNode && d3.targetNode){
+
+        const sourceNodeData = d3.sourceNode.subject.data;
+        const targetNodeData = d3.targetNode.data;
+
+        const sourceNodeIndex = d3.attrs.data.findIndex(d => d.id == sourceNodeData.id);
+        const targetNodeIndex = d3.attrs.data.findIndex(d => d.id == targetNodeData.id);
+
+
+        if(targetNodeData.parentId == sourceNodeData.id){
+          d3.attrs.data[targetNodeIndex].parentId = sourceNodeData.parentId;
+        } else {
+          const sourceId = sourceNodeData.id;
+          const sourceParentId = sourceNodeData.parentId;
+          // get all children of source node
+          const sourceChildren = d3.attrs.data.filter(d => d.parentId == sourceId);
+
+          if(sourceChildren){
+          // replace parentId of all children with source ParentId
+          sourceChildren.forEach(d => {
+            d.parentId = sourceParentId;
+          });
+          }
+        }
+
+        d3.attrs.data[sourceNodeIndex].parentId = targetNodeData.id;
+
+        d3.attrs.refresh.updateNodesState();
+
+        d3.attrs.onDrop({source: d3.attrs.data[sourceNodeIndex],target: d3.attrs.data[targetNodeIndex]});
+      }
+      // clear current state
+      d3.sourceNode = null;
+      d3.targetNode = null;
+
+        // return this;
     }
 
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
@@ -992,9 +1096,19 @@ export class OrgChart {
             })
         }
 
-    }
 
     // This function detects whether current browser is edge
+    //
+         // attach drag and drop event
+         this.dragAttachHandler();
+
+
+      const _attrs = this.getChartState();
+      const { root } = _attrs;
+      if(root && root.descendants()){
+        this.descendants = root.descendants();
+      }
+    }
     isEdge() {
         return window.navigator.userAgent.includes("Edge");
     }
@@ -1581,5 +1695,14 @@ export class OrgChart {
         ctx.font = `${fontWeight || ''} ${fontSize}px ${defaultFont} `
         const measurement = ctx.measureText(text);
         return measurement.width;
+    }
+
+    exportData(){
+        const attrs = this.getChartState();
+        if(attrs && attrs.data){
+          return  attrs.data;
+        } else{
+          return null;
+        }
     }
 }
