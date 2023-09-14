@@ -1016,10 +1016,25 @@ export class OrgChart {
                 }
                 if (!data._pagingButton) {
                     attrs.onNodeClick(data);
-                    console.log('node clicked');
                     return;
                 }
                 console.log('event fired, no handlers')
+            })
+            //  Event handler to the expand button
+            .on("keydown", (event, node) => {
+                const { data } = node;
+                if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                    if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
+                        return;
+                    }
+                    if ([...event.srcElement.classList].includes("paging-button-wrapper")) {
+                        this.loadPagingNodes(node);
+                        return;
+                    }
+                    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                        this.onButtonClick(event, node)
+                    }
+                }
             });
 
         // Add background rectangle for the nodes
@@ -1379,7 +1394,7 @@ export class OrgChart {
                     if (hiddenNodesMap[child.parent.id]) {
                         hiddenNodesMap[child.id] = true;
                     }
-                    if(child.data._expanded){
+                    if (child.data._expanded) {
                         hiddenNodesMap[child.id] = false;
                         child.data._pagingButton = false;
                     }
@@ -1469,7 +1484,7 @@ export class OrgChart {
         }
     }
 
-    zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true } }) {
+    zoomTreeBounds({ x0, x1, y0, y1, params = { animate: true, scale: true, onCompleted: () => { } } }) {
         const { centerG, svgWidth: w, svgHeight: h, svg, zoomBehavior, duration, lastTransform } = this.getChartState()
         let scaleVal = Math.min(8, 0.9 / Math.max((x1 - x0) / w, (y1 - y0) / h));
         let identity = d3.zoomIdentity.translate(w / 2, h / 2)
@@ -1479,9 +1494,14 @@ export class OrgChart {
         // Transition zoom wrapper component into specified bounds
         svg.transition().duration(params.animate ? duration : 0).call(zoomBehavior.transform, identity);
         centerG.transition().duration(params.animate ? duration : 0).attr('transform', 'translate(0,0)')
+            .on('end', function () {
+                if (params.onCompleted) {
+                    params.onCompleted()
+                }
+            })
     }
 
-    fit({ animate = true, nodes, scale = true } = {}) {
+    fit({ animate = true, nodes, scale = true, onCompleted = () => { } } = {}) {
         const attrs = this.getChartState();
         const { root } = attrs;
         let descendants = nodes ? nodes : root.descendants();
@@ -1491,11 +1511,12 @@ export class OrgChart {
         const maxY = d3.max(descendants, d => d.y + attrs.layoutBindings[attrs.layout].nodeBottomY(d))
 
         this.zoomTreeBounds({
-            params: { animate: animate, scale },
+            params: { animate: animate, scale, onCompleted },
             x0: minX - 50,
             x1: maxX + 50,
             y0: minY - 50,
             y1: maxY + 50,
+
         });
         return this;
     }
@@ -1508,7 +1529,6 @@ export class OrgChart {
         const step = attrs.pagingStep(node.parent)
         const newPagingIndex = current + step;
         node.parent.data._pagingStep = newPagingIndex;
-        console.log('loading paging nodes', node);
         this.updateNodesState();
     }
 
@@ -1684,7 +1704,6 @@ export class OrgChart {
 
     expandAll() {
         const { allNodes, root, data } = this.getChartState();
-        console.log({ allNodes,data })
         data.forEach(d => d._expanded = true)
         // allNodes.forEach(d => d.data._expanded = true);
         this.render()
