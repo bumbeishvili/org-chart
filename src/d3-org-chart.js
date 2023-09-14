@@ -1379,6 +1379,10 @@ export class OrgChart {
                     if (hiddenNodesMap[child.parent.id]) {
                         hiddenNodesMap[child.id] = true;
                     }
+                    if(child.data._expanded){
+                        hiddenNodesMap[child.id] = false;
+                        child.data._pagingButton = false;
+                    }
                 })
             }
         })
@@ -1679,8 +1683,10 @@ export class OrgChart {
     }
 
     expandAll() {
-        const { allNodes, root } = this.getChartState();
-        allNodes.forEach(d => d.data._expanded = true);
+        const { allNodes, root, data } = this.getChartState();
+        console.log({ allNodes,data })
+        data.forEach(d => d._expanded = true)
+        // allNodes.forEach(d => d.data._expanded = true);
         this.render()
         return this;
     }
@@ -1696,6 +1702,41 @@ export class OrgChart {
     downloadImage({ node, scale = 2, imageName = 'graph', isSvg = false, save = true, onAlreadySerialized = d => { }, onLoad = d => { } }) {
         // Retrieve svg node
         const svgNode = node;
+
+        function saveAs(uri, filename) {
+            // create link
+            var link = document.createElement('a');
+            if (typeof link.download === 'string') {
+                document.body.appendChild(link); // Firefox requires the link to be in the body
+                link.download = filename;
+                link.href = uri;
+                link.click();
+                document.body.removeChild(link); // remove the link when done
+            } else {
+                location.replace(uri);
+            }
+        }
+        // This function serializes SVG and sets all necessary attributes
+        function serializeString(svg) {
+            const xmlns = 'http://www.w3.org/2000/xmlns/';
+            const xlinkns = 'http://www.w3.org/1999/xlink';
+            const svgns = 'http://www.w3.org/2000/svg';
+            svg = svg.cloneNode(true);
+            const fragment = window.location.href + '#';
+            const walker = document.createTreeWalker(svg, NodeFilter.SHOW_ELEMENT, null, false);
+            while (walker.nextNode()) {
+                for (const attr of walker.currentNode.attributes) {
+                    if (attr.value.includes(fragment)) {
+                        attr.value = attr.value.replace(fragment, '#');
+                    }
+                }
+            }
+            svg.setAttributeNS(xmlns, 'xmlns', svgns);
+            svg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
+            const serializer = new XMLSerializer();
+            const string = serializer.serializeToString(svg);
+            return string;
+        }
 
         if (isSvg) {
             let source = serializeString(svgNode);
@@ -1741,40 +1782,7 @@ export class OrgChart {
 
         image.src = url// URL.createObjectURL(blob);
         // This function invokes save window
-        function saveAs(uri, filename) {
-            // create link
-            var link = document.createElement('a');
-            if (typeof link.download === 'string') {
-                document.body.appendChild(link); // Firefox requires the link to be in the body
-                link.download = filename;
-                link.href = uri;
-                link.click();
-                document.body.removeChild(link); // remove the link when done
-            } else {
-                location.replace(uri);
-            }
-        }
-        // This function serializes SVG and sets all necessary attributes
-        function serializeString(svg) {
-            const xmlns = 'http://www.w3.org/2000/xmlns/';
-            const xlinkns = 'http://www.w3.org/1999/xlink';
-            const svgns = 'http://www.w3.org/2000/svg';
-            svg = svg.cloneNode(true);
-            const fragment = window.location.href + '#';
-            const walker = document.createTreeWalker(svg, NodeFilter.SHOW_ELEMENT, null, false);
-            while (walker.nextNode()) {
-                for (const attr of walker.currentNode.attributes) {
-                    if (attr.value.includes(fragment)) {
-                        attr.value = attr.value.replace(fragment, '#');
-                    }
-                }
-            }
-            svg.setAttributeNS(xmlns, 'xmlns', svgns);
-            svg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
-            const serializer = new XMLSerializer();
-            const string = serializer.serializeToString(svg);
-            return string;
-        }
+
     }
 
     // Calculate what size text will take
