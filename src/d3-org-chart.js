@@ -549,6 +549,7 @@ export class OrgChart {
 
             // Get zooming function
             behaviors.zoom = d3.zoom()
+                .clickDistance(10)
                 .on('start', (event, d) => attrs.onZoomStart(event, d))
                 .on('end', (event, d) => attrs.onZoomEnd(event, d))
                 .on("zoom", (event, d) => {
