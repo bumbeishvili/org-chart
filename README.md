@@ -170,6 +170,12 @@ Active node centering<img width=180 src="https://user-images.githubusercontent.c
 Interactive Node<img width=180 src="https://user-images.githubusercontent.com/6873202/209988894-b294efbe-b021-4d5c-a7a5-7db4c8b22cd6.gif"/>
            </a>
    </td>
+     <td>
+     <a href="https://stackblitz.com/edit/js-wdexqc?file=index.html">
+Searching org chart <img width=180 src="https://user-images.githubusercontent.com/6873202/268379088-9ddd5545-b2c8-46c5-a98e-377c456db885.gif"/>
+           </a>
+   </td>
+   
 </tr>
 
 
