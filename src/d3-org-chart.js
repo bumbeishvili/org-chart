@@ -31,7 +31,7 @@ export class OrgChart {
             id: `ID${Math.floor(Math.random() * 1000000)}`, // Id for event handlings
             firstDraw: true,    // Whether chart is drawn for the first time
             ctx: document.createElement('canvas').getContext('2d'),
-            expandLevel: 1,
+            initialExpandLevel: 1,
             nodeDefaultBackground: 'none',
             lastTransform: { x: 0, y: 0, k: 1 },  // Panning and zooming values
             allowedNodesCount: {},
@@ -1373,6 +1373,17 @@ export class OrgChart {
             .id((d) => attrs.nodeId(d))
             .parentId(d => attrs.parentNodeId(d))(attrs.data);
 
+        const descendantsBefore = attrs.root.descendants();
+        if (attrs.initialExpandLevel > 1 && descendantsBefore.length > 0) {
+            descendantsBefore.forEach((d) => {
+                if (d.depth <= attrs.initialExpandLevel) {
+                    d.data._expanded = true;
+                }
+            })
+            attrs.initialExpandLevel = 1;
+        }
+        console.log(descendantsBefore.filter(d => d.data._expanded).length, descendantsBefore.length, attrs.initialExpandLevel)
+
         const hiddenNodesMap = {};
         attrs.root.descendants()
             .filter(node => node.children)
@@ -1380,6 +1391,8 @@ export class OrgChart {
             .forEach(node => {
                 node.data._pagingStep = attrs.minPagingVisibleNodes(node);
             })
+
+
 
         attrs.root.eachBefore((node, i) => {
             node.data._directSubordinatesPaging = node.children ? node.children.length : 0;
@@ -1437,12 +1450,12 @@ export class OrgChart {
             attrs.root.children.forEach((d) => this.collapse(d));
 
             // Collapse root if level is 0
-            if (attrs.expandLevel == 0) {
+            if (attrs.initialExpandLevel == 0) {
                 attrs.root._children = attrs.root.children;
                 attrs.root.children = null;
             }
 
-            // Then only expand nodes, which have expanded proprty set to true
+            // Then only expand nodes, which have expanded property set to true
             [attrs.root].forEach((ch) => this.expandSomeNodes(ch));
         }
     }
@@ -1714,7 +1727,7 @@ export class OrgChart {
     collapseAll() {
         const { allNodes, root } = this.getChartState();
         allNodes.forEach(d => d.data._expanded = false);
-        this.expandLevel(0)
+        this.initialExpandLevel(0)
         this.render();
         return this;
     }
