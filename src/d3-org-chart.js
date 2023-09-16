@@ -69,6 +69,7 @@ export class OrgChart {
             setActiveNodeCentered: true, // Configure if active node should be centered when expanded and collapsed
             layout: "top",// Configure layout direction , possible values are "top", "left", "right", "bottom"
             compact: true, // Configure if compact mode is enabled , when enabled, nodes are shown in compact positions, instead of horizontal spread
+            createZoom: d => d3.zoom(),
             onZoomStart: e => { }, // Callback for zoom & panning start
             onZoom: e => { }, // Callback for zoom & panning 
             onZoomEnd: e => { }, // Callback for zoom & panning end
@@ -555,7 +556,7 @@ export class OrgChart {
             };
 
             // Get zooming function
-            behaviors.zoom = d3.zoom()
+            behaviors.zoom = attrs.createZoom()
                 .clickDistance(10)
                 .on('start', (event, d) => attrs.onZoomStart(event))
                 .on('end', (event, d) => attrs.onZoomEnd(event))
