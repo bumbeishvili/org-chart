@@ -179,7 +179,7 @@ export class OrgChart {
                 const y = s.y;
                 const ex = t.x;
                 const ey = t.y;
-                
+
                 let mx = m && m.x != null ? m.x : x;  // This is a changed line
                 let my = m && m.y != null ? m.y : y; // This also is a changed line
 
@@ -1608,7 +1608,8 @@ export class OrgChart {
             d.data._highlighted = false;
             d.data._upToTheRootHighlighted = false;
         })
-        this.update(attrs.root)
+        this.update(attrs.root);
+        return this;
     }
 
     // It can take selector which would go fullscreen
