@@ -82,6 +82,7 @@ export class OrgChart {
             * node=> node.children - to access node's children
             * node=> node.parent - to access node's parent
             * node=> node.depth - to access node's depth
+            * node=> node.hierarchyHeight - to access node's hierarchy height ( Height, which d3 assigns to hierarchy nodes)
             * node=> node.height - to access node's height
             * node=> node.width - to access node's width
             * 
@@ -178,9 +179,9 @@ export class OrgChart {
                 const y = s.y;
                 const ex = t.x;
                 const ey = t.y;
-
-                let mx = m && m.x || x;
-                let my = m && m.y || y;
+                
+                let mx = m && m.x != null ? m.x : x;  // This is a changed line
+                let my = m && m.y != null ? m.y : y; // This also is a changed line
 
                 // Values in case of top reversed and left reversed diagonals
                 let xrvs = ex - x < 0 ? -1 : 1;
@@ -223,8 +224,8 @@ export class OrgChart {
                 const ex = t.x;
                 const ey = t.y;
 
-                let mx = m && m.x || x;
-                let my = m && m.y || y;
+                let mx = m && m.x != null ? m.x : x;  // This is a changed line
+                let my = m && m.y != null ? m.y : y; // This also is a changed line
 
                 let xrvs = ex - x < 0 ? -1 : 1;
                 let yrvs = ey - y < 0 ? -1 : 1;
@@ -1423,9 +1424,10 @@ export class OrgChart {
             .parentId(d => attrs.parentNodeId(d))(attrs.data.filter(d => hiddenNodesMap[d.id] !== true));
 
         attrs.root.each((node, i, arr) => {
+            let _hierarchyHeight = node._hierarchyHeight || node.height
             let width = attrs.nodeWidth(node);
             let height = attrs.nodeHeight(node);
-            Object.assign(node, { width, height })
+            Object.assign(node, { width, height, _hierarchyHeight })
         })
 
         // Store positions, where children appear during their enter animation
