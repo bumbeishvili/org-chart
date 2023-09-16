@@ -36,6 +36,7 @@ export class OrgChart {
             lastTransform: { x: 0, y: 0, k: 1 },  // Panning and zooming values
             allowedNodesCount: {},
             zoomBehavior: null,
+            generateRoot: null,
 
             /*  INTENDED FOR PUBLIC OVERRIDE */
 
@@ -68,9 +69,9 @@ export class OrgChart {
             setActiveNodeCentered: true, // Configure if active node should be centered when expanded and collapsed
             layout: "top",// Configure layout direction , possible values are "top", "left", "right", "bottom"
             compact: true, // Configure if compact mode is enabled , when enabled, nodes are shown in compact positions, instead of horizontal spread
-            onZoomStart: d => { }, // Callback for zoom & panning start
-            onZoom: d => { }, // Callback for zoom & panning 
-            onZoomEnd: d => { }, // Callback for zoom & panning end
+            onZoomStart: e => { }, // Callback for zoom & panning start
+            onZoom: e => { }, // Callback for zoom & panning 
+            onZoomEnd: e => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
 
             /*
@@ -521,7 +522,12 @@ export class OrgChart {
         //InnerFunctions which will update visuals
         const attrs = this.getChartState();
         if (!attrs.data || attrs.data.length == 0) {
-            console.log('ORG CHART - Data is empty')
+            console.log('ORG CHART - Data is empty');
+            if (attrs.container) {
+                select(attrs.container).select('.nodes-wrapper').remove();
+                select(attrs.container).select('.links-wrapper').remove();
+                select(attrs.container).select('.connections-wrapper').remove();
+            }
             return this;
         }
 
@@ -551,10 +557,10 @@ export class OrgChart {
             // Get zooming function
             behaviors.zoom = d3.zoom()
                 .clickDistance(10)
-                .on('start', (event, d) => attrs.onZoomStart(event, d))
-                .on('end', (event, d) => attrs.onZoomEnd(event, d))
+                .on('start', (event, d) => attrs.onZoomStart(event))
+                .on('end', (event, d) => attrs.onZoomEnd(event))
                 .on("zoom", (event, d) => {
-                    attrs.onZoom(event, d);
+                    attrs.onZoom(event);
                     this.zoomed(event, d);
                 })
                 .scaleExtent(attrs.scaleExtent)
@@ -696,24 +702,27 @@ export class OrgChart {
     // This function can be invoked via chart.removeNode API, and it removes node from tree at runtime
     removeNode(nodeId) {
         const attrs = this.getChartState();
-        const node = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) == nodeId)[0];
+        const root = attrs.generateRoot(attrs.data)
+        const descendants = root.descendants();
+        const node = descendants.filter(({ data }) => attrs.nodeId(data) == nodeId)[0];
+
         if (!node) {
             console.log(`ORG CHART - REMOVE - Node with id "${nodeId}" not found in the tree`);
             return this;
         }
 
-        // Remove all node childs
-        // Retrieve all children nodes ids (including current node itself)
-        node.descendants()
+        // Get all node descendants
+        const nodeDescendants = node.descendants()
+
+        // Mark all node children and node itself for removal
+        nodeDescendants
             .forEach(d => d.data._filteredOut = true)
 
-        const descendants = this.getNodeChildren(node, [], attrs.nodeId);
-        descendants.forEach(d => d._filtered = true)
-
         // Filter out retrieved nodes and reassign data
-        attrs.data = attrs.data.filter(d => !d._filtered);
+        attrs.data = attrs.data.filter(d => !d._filteredOut);
 
         const updateNodesState = this.updateNodesState.bind(this);
+
         // Update state of nodes and redraw graph
         updateNodesState();
 
@@ -1182,10 +1191,15 @@ export class OrgChart {
         // Remove any exiting nodes after transition
         const nodeExitTransition = nodesSelection
             .exit()
-            .attr("opacity", 1)
+
+        const maxDepthNode = nodeExitTransition.data().reduce((a, b) => a.depth < b.depth ? a : b, { depth: Infinity });
+
+        nodeExitTransition.attr("opacity", 1)
             .transition()
             .duration(attrs.duration)
             .attr("transform", (d) => {
+
+                let { x, y, width, height } = maxDepthNode.parent || {};
                 const ex = attrs.layoutBindings[attrs.layout].nodeJoinX({ x, y, width, height });
                 const ey = attrs.layoutBindings[attrs.layout].nodeJoinY({ x, y, width, height });
                 return `translate(${ex},${ey})`
@@ -1369,10 +1383,12 @@ export class OrgChart {
     setLayouts({ expandNodesFirst = true }) {
         const attrs = this.getChartState();
         // Store new root by converting flat data to hierarchy
-        attrs.root = d3
+
+        attrs.generateRoot = d3
             .stratify()
             .id((d) => attrs.nodeId(d))
-            .parentId(d => attrs.parentNodeId(d))(attrs.data);
+            .parentId(d => attrs.parentNodeId(d))
+        attrs.root = attrs.generateRoot(attrs.data);
 
         const descendantsBefore = attrs.root.descendants();
         if (attrs.initialExpandLevel > 1 && descendantsBefore.length > 0) {
@@ -1560,6 +1576,13 @@ export class OrgChart {
             return this;
         }
         node.data._expanded = expandedFlag;
+        if (expandedFlag == false) {
+            const parent = node.parent || { descendants: () => [] };
+            const descendants = parent.descendants().filter(d => d != parent);
+            descendants.forEach(d => d.data._expanded = false)
+        }
+
+
         return this;
     }
 
