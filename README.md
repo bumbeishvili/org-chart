@@ -205,7 +205,7 @@ Just copy this code and paste at - https://realtimehtml.com/
 
 ```html
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3-org-chart@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
 <div class="chart-container"></div>
 
@@ -262,7 +262,7 @@ chart.duration(3000)  // This will become very slow moving chart
 ```
 You can see list of all properties , their description of what each property does in the actual source code.
 
-https://github.com/bumbeishvili/org-chart/blob/b7e23474716a72b93e6ecd7b7fafccbcd1e621fa/src/d3-org-chart.js#L40
+https://github.com/bumbeishvili/org-chart/blob/5be7e0962e46013b3a95dd19f41f829c3c853d1f/src/d3-org-chart.js#L41
 
 Be aware that they are chainable, so if we wanted to set multiple properties, we would do this
 
