@@ -74,6 +74,7 @@ export class OrgChart {
             onZoom: e => { }, // Callback for zoom & panning 
             onZoomEnd: e => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
+            onExpandOrCollapse: (d) => d, // Callback for node expand or collapse
 
             /*
             * Node HTML content generation , remember that you can access some helper methods:
@@ -1322,6 +1323,9 @@ export class OrgChart {
         // Redraw Graph
         this.update(d);
         event.stopPropagation();
+
+        // Trigger callback
+        attrs.onExpandOrCollapse(d);
 
     }
 
