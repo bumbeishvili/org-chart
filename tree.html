@@ -1,265 +1,380 @@
 <!DOCTYPE html>
 
 <html>
+ <head>
+  <meta charset="UTF-8" />
+  <title>OrgChart</title>
+  <link rel="shortcut icon" type="image/x-icon" href="misc/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ </head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>OrgChart</title>
-    <link rel="shortcut icon" type="image/x-icon" href="misc/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+ <body>
+  <!----------------   ORG CHART NON ESSENTIAL CONTENT ------------>
+  <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+  <link
+   href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css"
+   rel="stylesheet"
+  />
 
-<body>
+  <style>
+   [data-tooltip]:focus:after {
+    display: none;
+    border-bottom-color: none !important;
+   }
 
-    <!----------------   ORG CHART NON ESSENTIAL CONTENT ------------>
-    <script src="https://unpkg.com/html2canvas@1.1.4/dist/html2canvas.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/simptip@1.0.4/simptip.min.css" rel="stylesheet">
+   [data-tooltip]:focus:before {
+    display: none;
+    border-bottom-color: none !important;
+   }
 
+   [data-tooltip]:after {
+    height: auto !important;
+    padding: 11px 11px 11px 11px !important;
+    content: attr(data-tooltip);
+    white-space: pre;
+    line-height: 16px !important;
+    text-align: left !important;
+   }
+  </style>
 
-
-    <style>
-        [data-tooltip]:focus:after {
-            display: none;
-            border-bottom-color: none !important;
-            ;
-        }
-
-        [data-tooltip]:focus:before {
-            display: none;
-            border-bottom-color: none !important;
-            ;
-        }
-
-        [data-tooltip]:after {
-            height: auto !important;
-            padding: 11px 11px 11px 11px !important;
-            content: attr(data-tooltip);
-            white-space: pre;
-            line-height: 16px !important;
-            text-align: left !important;
-        }
-    </style>
-
-    <div class="action-buttons" style="margin:0 100px">
-
-
-        <button onclick='chart.setExpanded("O-6164").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setExpanded("O-6164") &#xa; .render()'>Expand O-6164</button>
-        <button onclick='chart.setExpanded("O-6164",false).render()' class="simptip-position-bottom"
-            data-tooltip='chart.setExpanded("O-6164",false) &#xa; .render()'>Collapse O-6164</button>
-        <button onclick='chart.addNode({id:"root child",parentId:"O-6066"})' class="simptip-position-bottom"
-            data-tooltip='chart.addNode({id:"root child",parentId:"O-6066"})'>Add node as roots' child</button>
-        <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'
+  <div class="action-buttons" style="margin: 0 100px">
+   <button
+    onclick='chart.setExpanded("103").render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.setExpanded("103") &#xa; .render()'
+   >
+    Expand #103
+   </button>
+   <button
+    onclick='chart.setExpanded("103",false).render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.setExpanded("103",false) &#xa; .render()'
+   >
+    Collapse #103
+   </button>
+   <button
+    onclick='chart.addNode({id:"root child",parentId:"100",name:"test-name",position:"test-position",_centered:true})'
+    class="simptip-position-bottom"
+    data-tooltip='chart.addNode({id:"root child",parentId:"100",name:"test name",position:"test position"})'
+   >
+    Add node as roots' child
+   </button>
+   <!-- <button onclick='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'
             class="simptip-position-bottom"
             data-tooltip='chart.addNode({id:"5-th level node",parentId:"O-6164",_centered:true})'>Insert node at 5-th
-            level</button>
-        <button onclick='chart.removeNode("O-6067")' class="simptip-position-bottom"
-            data-tooltip='chart.removeNode("O-6067")'>Remove O-6067</button>
-        <button onclick='chart.fit()' class="simptip-position-bottom" data-tooltip='chart.fit()'>Fit
-        </button>
-        <button onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
-            class="simptip-position-bottom"
-            data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]) &#xa; .render() &#xa; .fit()'>Swap
-            Layouts
-        </button>
+            level</button> -->
+   <button
+    onclick='chart.removeNode("120")'
+    class="simptip-position-bottom"
+    data-tooltip='chart.removeNode("120")'
+   >
+    Remove #120
+   </button>
+   <button
+    onclick="chart.fit()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.fit()"
+   >
+    Fit
+   </button>
+   <button
+    onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.layout(["right","bottom","left","top"][index++%4]) &#xa; .render() &#xa; .fit()'
+   >
+    Swap Layouts
+   </button>
 
-        <button onclick='chart.setCentered("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setCentered("O-6162") &#xa; .render()'>Center O-6162 </button>
-        <button onclick='chart.setHighlighted("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setHighlighted("O-6162") &#xa; .render()'>Highlight O-6162 </button>
-        <button onclick='chart.setUpToTheRootHighlighted("O-6162").render()' class="simptip-position-bottom"
-            data-tooltip='chart.setUpToTheRootHighlighted("O-6162") &#xa; .render()'>Highlight O-6162 to root </button>
-        <button onclick='chart.clearHighlighting()' class="simptip-position-bottom"
-            data-tooltip='chart.clearHighlighting() &#xa; .render()'>Clear highlighting </button>
-        <button onclick='chart.fullscreen()' class="simptip-position-bottom" data-tooltip='chart.fullscreen()'>Full
-            Screen </button>
-        <button onclick='chart.zoomIn()' class="simptip-position-bottom" data-tooltip='chart.zoomIn()'>Zoom In </button>
-        <button onclick='chart.zoomOut()' class="simptip-position-bottom" data-tooltip='chart.zoomOut()'>Zoom Out
-        </button>
-        <button onclick='chart.exportImg()' class="simptip-position-bottom" data-tooltip='chart.exportImg()'>Export
-            Current Image
-        </button>
-        <button onclick='chart.exportImg({full:true})' class="simptip-position-bottom"
-            data-tooltip='chart.exportImg({full:true})'>Export
-            Export Full Image
-        </button>
-        <button onclick='chart.exportSvg()' class="simptip-position-bottom" data-tooltip='chart.exportSvg()'>Export
-            SVG
-        </button>
-        <button onclick='chart.expandAll()' class="simptip-position-bottom" data-tooltip='chart.expandAll()'>Expand All
-        </button>
-        <button onclick='chart.collapseAll()' class="simptip-position-bottom"
-            data-tooltip='chart.collapseAll()'>Collapse All
-        </button>
-        <button onclick='chart.connections([{from:"O-6067",to:"O-6070",label:"Conflicts of interest"}]).render()'
-            class="simptip-position-bottom" data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'>Multi Node
-            Connections
-        </button>
+   <button
+    onclick='chart.setCentered("134").render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.setCentered("134") &#xa; .render()'
+   >
+    Center #134
+   </button>
+   <button
+    onclick='chart.setHighlighted("134").render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.setHighlighted("134") &#xa; .render()'
+   >
+    Highlight #134
+   </button>
+   <button
+    onclick='chart.setUpToTheRootHighlighted("134").render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.setUpToTheRootHighlighted("134") &#xa; .render()'
+   >
+    Highlight #134 to root
+   </button>
+   <button
+    onclick="chart.clearHighlighting()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.clearHighlighting() &#xa; .render()"
+   >
+    Clear highlighting
+   </button>
+   <button
+    onclick="chart.fullscreen()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.fullscreen()"
+   >
+    Full Screen
+   </button>
+   <button
+    onclick="chart.zoomIn()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.zoomIn()"
+   >
+    Zoom In
+   </button>
+   <button
+    onclick="chart.zoomOut()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.zoomOut()"
+   >
+    Zoom Out
+   </button>
+   <button
+    onclick="chart.exportImg()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.exportImg()"
+   >
+    Export Current Image
+   </button>
+   <button
+    onclick="chart.exportImg({full:true})"
+    class="simptip-position-bottom"
+    data-tooltip="chart.exportImg({full:true})"
+   >
+    Export Export Full Image
+   </button>
+   <button
+    onclick="chart.exportSvg()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.exportSvg()"
+   >
+    Export SVG
+   </button>
+   <button
+    onclick="chart.expandAll()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.expandAll()"
+   >
+    Expand All
+   </button>
+   <button
+    onclick="chart.collapseAll()"
+    class="simptip-position-bottom"
+    data-tooltip="chart.collapseAll()"
+   >
+    Collapse All
+   </button>
+   <button
+    onclick='chart.connections([{from:"145",to:"201",label:"Conflicts of interest"}]).render()'
+    class="simptip-position-bottom"
+    data-tooltip='chart.connections({from:"",to:""}) &#xa; .render()'
+   >
+    Multi Node Connections
+   </button>
 
-        <button onclick='downloadPdf()' class="simptip-position-bottom" data-tooltip='downloadPdf()'>Download PDF
-        </button>
+   <button
+    onclick="downloadPdf()"
+    class="simptip-position-bottom"
+    data-tooltip="downloadPdf()"
+   >
+    Download PDF
+   </button>
 
-        <script>
-            function downloadPdf() {
-                chart.exportImg({
-                    save: false,
-                    onLoad: (base64 => {
-                        var pdf = new jspdf.jsPDF();
-                        var img = new Image()
-                        img.src = base64;
-                        img.onload = function () {
-                            pdf.addImage(img, 'JPEG', 5, 5, 595 / 3, img.height / img.width * 595 / 3);
-                            pdf.save('chart.pdf');
-                        }
+   <script>
+    function downloadPdf() {
+     chart.exportImg({
+      save: false,
+      onLoad: (base64) => {
+       var pdf = new jspdf.jsPDF();
+       var img = new Image();
+       img.src = base64;
+       img.onload = function () {
+        pdf.addImage(
+         img,
+         "JPEG",
+         5,
+         5,
+         595 / 3,
+         ((img.height / img.width) * 595) / 3
+        );
+        pdf.save("chart.pdf");
+       };
+      },
+     });
+    }
+   </script>
+  </div>
 
-                    })
-                })
+  <a href="https://github.com/bumbeishvili/d3-organization-chart">
+   <img
+    style="position: fixed; top: 0; right: 0; border: 0; z-index: 2"
+    width="149"
+    height="149"
+    src="https://bumbeishvili.github.io/d3-tooltip/forkme.png"
+    alt="Fork me on GitHub"
+   />
+  </a>
 
-            }
-        </script>
-    </div>
+  <!----------------  ORG CHART ESSENTIAL CONTENT ---------------->
 
-    <a href="https://github.com/bumbeishvili/d3-organization-chart">
-        <img style="position:fixed;top:0;right:0;border:0;z-index:2;" width="149" height="149"
-            src="https://bumbeishvili.github.io/d3-tooltip/forkme.png" alt="Fork me on GitHub">
-    </a>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="./build/d3-org-chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
+  <div
+   class="chart-container"
+   style="padding-top: 10px; height: 1200px; background-color: white"
+  ></div>
 
-    <!----------------  ORG CHART ESSENTIAL CONTENT ---------------->
+  <script>
+   var index = 0;
+   var chart;
+   d3.csv("misc/data.csv").then((dataFlattened) => {
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="./build/d3-org-chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.0.0/build/d3-flextree.js"></script>
-    <div class="chart-container" style=" padding-top:10px;  height:1200px ;background-color:white"> </div>
+    chart = new d3.OrgChart()
+     .container(".chart-container")
+     .pagingStep((d) => 5)
+      .minPagingVisibleNodes((d) => 3)
+     .data(dataFlattened)
+     // .scaleExtent([1,1])
+     // .svgHeight(window.innerHeight)
+     // .nodeWidth((d3Node) => {
+     //     return 200;
+     //     let i = 0;
+     //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
+     //     if (i && i == d3Node.parent.children.length - 1) { return 600; }
+     //     return (!i || i == d3Node.parent.children.length - 1) ? 300 : 100
+     // })
+     // .nodeHeight((d3Node) => {
+     //     return 100;
+     //     let i = 0;
+     //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
+     //     if (i && i == d3Node.parent.children.length - 1) { return 300; }
+     //     return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
+     // })
+     // .siblingsMargin(d3Node => 0)
+     // .childrenMargin(d3Node => 50)
+     // .neighbourMargin((n1, n2) => 50)
+     // .compactMarginPair(d3Node => 70)
+     // .compactMarginBetween(d3Node => 30)
+     // .setActiveNodeCentered(true)
+     // .layout(new URLSearchParams(new URL(document.location.href).search).get('layout') || "top")
+     // .onNodeClick(d => console.log(d + ' node clicked'))
+     // .linkUpdate(function (d3Node, i, arr) {
+     //     const link = this;
+     //     d3.select(link)
+     //         .attr('stroke-dasharray', !i ? '2 2' : 'none')
+     //         .attr('stroke-width', 3)
+     // })
+     // .nodeUpdate(function (data, i, arr) {
+     //     d3.select(this).on('click.node', (event, d, i) => {
+     //         console.log(d.nodeId + ' node clicked')
+     //     })
+     // })
+     // .connections(
+     //     [
+     //         { id: 1, from: "O-6067", to: "O-6068", label: "Directly Reports To" },
+     //         { id: 2, from: "O-6070", to: "O-6066", label: "Reports To" },
+     //         { id: 3, from: "O-6088", to: "O-6069", label: "They were coworkers once" },
+     //         { id: 3, from: "O-6164", to: "O-6070", label: "Possible conflicts of interest" }
+     //     ],
+     // )
+     //                     .nodeContent(function (d, i, arr, state) {
 
-    <script>
-        var index = 0;
-        var chart;
-        d3.csv('misc/data.csv')
-            .then(dataFlattened => {
-                chart = new d3.OrgChart()
-                    .container('.chart-container')
-                    .data(dataFlattened)
-                    .scaleExtent([1,1])
-                    // .svgHeight(window.innerHeight)
-                    // .nodeWidth((d3Node) => {
-                    //     return 200;
-                    //     let i = 0;
-                    //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
-                    //     if (i && i == d3Node.parent.children.length - 1) { return 600; }
-                    //     return (!i || i == d3Node.parent.children.length - 1) ? 300 : 100
-                    // })
-                    // .nodeHeight((d3Node) => {
-                    //     return 100;
-                    //     let i = 0;
-                    //     if (d3Node.parent) { i = d3Node.parent.children.indexOf(d3Node); }
-                    //     if (i && i == d3Node.parent.children.length - 1) { return 300; }
-                    //     return (!i || i == d3Node.parent.children.length - 1) ? 200 : 100
-                    // })
-                    // .siblingsMargin(d3Node => 0)
-                    // .childrenMargin(d3Node => 50)
-                    // .neightbourMargin((n1, n2) => 50)
-                    // .compactMarginPair(d3Node => 70)
-                    // .compactMarginBetween(d3Node => 30)
-                    // .setActiveNodeCentered(true)
-                    // .layout(new URLSearchParams(new URL(document.location.href).search).get('layout') || "top")
-                    // .onNodeClick(d => console.log(d + ' node clicked'))
-                    // .linkUpdate(function (d3Node, i, arr) {
-                    //     const link = this;
-                    //     d3.select(link)
-                    //         .attr('stroke-dasharray', !i ? '2 2' : 'none')
-                    //         .attr('stroke-width', 3)
-                    // })
-                    // .nodeUpdate(function (data, i, arr) {
-                    //     d3.select(this).on('click.node', (event, d, i) => {
-                    //         console.log(d.nodeId + ' node clicked')
-                    //     })
-                    // })
-                    // .connections(
-                    //     [
-                    //         { id: 1, from: "O-6067", to: "O-6068", label: "Directly Reports To" },
-                    //         { id: 2, from: "O-6070", to: "O-6066", label: "Reports To" },
-                    //         { id: 3, from: "O-6088", to: "O-6069", label: "They were coworkers once" },
-                    //         { id: 3, from: "O-6164", to: "O-6070", label: "Possible conflicts of interest" }
-                    //     ],
-                    // )
-                    //                     .nodeContent(function (d, i, arr, state) {
+     //                         return `
+     //                            <div style="padding:0px">
+     // <!--
+     //                             ${state.layout == 'top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+     //                             ${state.layout == 'bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1] + d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+     //                             ${state.layout == 'left' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${0}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+     //                             ${state.layout == 'right' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5; margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${d.width-d.flexCompactDim[1]}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
+     //                         -->
+     //                              <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
+     //                              ID: ${d.data.id} <br>
+     //                              Children Direct:${d.data._directSubordinates}<br>
+     //                              Children Total:${d.data._totalSubordinates}
+     //                             </div>
+     //                         `;
+     //                     })
 
-                    //                         return `
-                    //                            <div style="padding:0px">
-                    // <!--
-                    //                             ${state.layout == 'top' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-                    //                             ${state.layout == 'bottom' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-d.flexCompactDim[1] + d.height}px;margin-left:${-(d.flexCompactDim[0] / 2 - d.width) / 2 + state.compactMarginPair(d) / 4}px;width:${d.flexCompactDim[0]}px;height:${d.flexCompactDim[1]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-                    //                             ${state.layout == 'left' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5;margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${0}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-                    //                             ${state.layout == 'right' && state.compact && d.flexCompactDim && (d.flexCompactDim[0] || d.flexCompactDim[0] == 1) ? ` <div style="border:1px solid black;opacity:0.5; margin-top:${-(d.flexCompactDim[0]/2-d.height)/2+ state.compactMarginPair(d) / 4}px;margin-left:${d.width-d.flexCompactDim[1]}px;width:${d.flexCompactDim[1]}px;height:${d.flexCompactDim[0]}px;z-index:-1;position:absolute;background-color:red"></div>` : ''}
-                    //                         -->
-                    //                              <img src="${d.data.imageUrl}"  style="border-radius:100px;width:60px;height:60px;" />
-                    //                              ID: ${d.data.id} <br>
-                    //                              Children Direct:${d.data._directSubordinates}<br>
-                    //                              Children Total:${d.data._totalSubordinates}
-                    //                             </div>
-                    //                         `;
-                    //                     })
+     .nodeHeight((d) => 85 + 25)
+     .nodeWidth((d) => {
+      return 220 + 2;
+     })
+     .childrenMargin((d) => 50)
+     .onNodeClick((d) => console.log("ok"))
+     //  .layout('right')
+     .compactMarginBetween((d) => 35)
+     .compactMarginPair((d) => 30)
+     .neighbourMargin((a, b) => 20);
 
-                    .nodeHeight(d => 85)
-                    .nodeWidth(d => {
-                        return 220
-                    })
-                    .childrenMargin(d => 50)
-                    .onNodeClick(d => alert('ok'))
-                    .compactMarginBetween(d => 35)
-                    .compactMarginPair(d => 30)
-                    .neightbourMargin((a, b) => 20)
-                    .buttonContent(({ node, state }) => {
-                        return `<div style="color:#716E7B;border-radius:5px;padding:3px;font-size:10px;margin:auto auto;background-color:white;border: 1px solid #E4E2E9"> <span style="font-size:9px">${node.children ? `<i class="fas fa-angle-up"></i>` : `<i class="fas fa-angle-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
-                    })
-                    .linkUpdate(function (d, i, arr) {
-                        d3.select(this)
-                            .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : '#E4E2E9')
-                            .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 1)
+    // .buttonContent(({ node, state }) => {
+    //     return `<div style="color:#716E7B;border-radius:5px;padding:3px;font-size:10px;margin:auto auto;background-color:white;border: 1px solid #E4E2E9"> <span style="font-size:9px">${node.children ? `<i class="fas fa-angle-up"></i>` : `<i class="fas fa-angle-down"></i>`}</span> ${node.data._directSubordinates}  </div>`
+    // })
+    // .linkUpdate(function (d, i, arr) {
+    //     d3.select(this)
+    //         .attr("stroke", d => d.data._upToTheRootHighlighted ? '#152785' : '#E4E2E9')
+    //         .attr("stroke-width", d => d.data._upToTheRootHighlighted ? 5 : 1)
 
-                        if (d.data._upToTheRootHighlighted) {
-                            d3.select(this).raise()
-                        }
-                    })
+    //     if (d.data._upToTheRootHighlighted) {
+    //         d3.select(this).raise()
+    //     }
+    // })
+    //  .nodeContent(function (d, i, arr, state) {
+    //   const color = "#FFFFFF";
+    //   const imageDiffVert = 25 + 2;
+    //   return `
+    //                 <div style='width:${
+    //                  d.width
+    //                 }px;height:${d.height}px;padding-top:${imageDiffVert - 2}px;padding-left:1px;padding-right:1px'>
+    //                     <div style="font-family: 'Inter', sans-serif;background-color:${color};  margin-left:-1px;width:${d.width - 2}px;height:${d.height - imageDiffVert}px;border-radius:10px;border: 1px solid #E4E2E9">
+    //                         <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:5px">#${
+    //                          d.data.id
+    //                         }</div>
+    //                         <div style="background-color:${color};margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+    //                         <div style="margin-top:${
+    //                          -imageDiffVert - 20
+    //                         }px;">   <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
+    //                         <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
+    //                          d.data.name
+    //                         } </div>
+    //                         <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+    //                          d.data.position
+    //                         } </div>
 
+    //                     </div>
+    //                 </div>
+    //                         `;
+    //  });
 
+    chart.layoutBindings(
+     (() => {
+      const layouts = chart.layoutBindings();
+      layouts.top.linkY = (node) => node.y + 0;
+      layouts.top.linkCompactYStart = (node) => node.y + node.height / 2 + 15;
+      return layouts;
+     })()
+    );
 
+    chart.render();
+   });
+  </script>
 
-
-                    .nodeContent(function (d, i, arr, state) {
-                        const color = "#FFFFFF"
-                        console.log({data:d})
-                        return `
-                         <div style="font-family: 'Inter', sans-serif;background-color:${color}; position:absolute;margin-top:-1px; margin-left:-1px;width:${d.width}px;height:${d.height}px;border-radius:10px;border: 1px solid #E4E2E9">
-                            <div style="background-color:${color};position:absolute;margin-top:-25px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                            <img src=" ${d.data.imageUrl}" style="position:absolute;margin-top:-20px;margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
-                            
-                           <div style="color:#08011E;position:absolute;right:20px;top:17px;font-size:10px;"><i class="fas fa-ellipsis-h"></i></div>
-   
-                           <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:32px">  ${d.data.name} </div>
-                           <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.positionName} </div>
-   
-    
-                        </div>
-                        `;
-                    })
-
-
-
-
-
-
-                    .render()
-            })
-    </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <style>
-
-    </style>
-
-</body>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+   href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+   rel="stylesheet"
+  />
+  <link
+   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+   rel="stylesheet"
+  />
+  <style></style>
+ </body>
+</html>
