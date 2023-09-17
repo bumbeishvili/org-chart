@@ -1091,7 +1091,12 @@ export class OrgChart {
                 selector: "node-button-g",
                 data: (d) => [d]
             })
-            .on("click", (event, d) => this.onButtonClick(event, d));
+            .on("click", (event, d) => this.onButtonClick(event, d))
+            .on("keydown", (event, d) => {
+                if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                    this.onButtonClick(event, d)
+                }
+            });
 
         nodeButtonGroups.patternify({
             tag: 'rect',
