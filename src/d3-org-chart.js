@@ -165,6 +165,8 @@ export class OrgChart {
                     .attr("stroke", d => d.data._highlighted || d.data._upToTheRootHighlighted ? '#E27396' : 'none')
                     .attr("stroke-width", d.data._highlighted || d.data._upToTheRootHighlighted ? 10 : 1)
             },
+            nodeEnter: (d) => d, // Custom handling of node update
+            nodeExit: (d) => d, // Custom handling of exit node
             /* You can access and modify actual link DOM element in runtime using this method. */
             linkUpdate: function (d, i, arr) {
                 d3.select(this)
@@ -1053,6 +1055,7 @@ export class OrgChart {
                     }
                 }
             });
+        nodeEnter.each(attrs.nodeEnter)
 
         // Add background rectangle for the nodes
         nodeEnter
@@ -1202,6 +1205,7 @@ export class OrgChart {
         // Remove any exiting nodes after transition
         const nodeExitTransition = nodesSelection
             .exit()
+        nodeExitTransition.each(attrs.nodeExit)
 
         const maxDepthNode = nodeExitTransition.data().reduce((a, b) => a.depth < b.depth ? a : b, { depth: Infinity });
 
