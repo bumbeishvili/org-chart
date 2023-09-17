@@ -681,8 +681,10 @@ export class OrgChart {
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
     addNode(obj) {
         const attrs = this.getChartState();
-        const nodeFound = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.nodeId(obj))[0];
-        const parentFound = attrs.allNodes.filter(({ data }) => attrs.nodeId(data) === attrs.parentNodeId(obj))[0];
+        const root = attrs.generateRoot(attrs.data)
+        const descendants = root.descendants();
+        const nodeFound = descendants.filter(({ data }) => attrs.nodeId(data).toString() === attrs.nodeId(obj).toString())[0];
+        const parentFound = descendants.filter(({ data }) => attrs.nodeId(data).toString() === attrs.parentNodeId(obj).toString())[0];
         if (nodeFound) {
             console.log(`ORG CHART - ADD - Node with id "${attrs.nodeId(obj)}" already exists in tree`)
             return this;
@@ -1400,7 +1402,7 @@ export class OrgChart {
             })
             attrs.initialExpandLevel = 1;
         }
-        console.log(descendantsBefore.filter(d => d.data._expanded).length, descendantsBefore.length, attrs.initialExpandLevel)
+
 
         const hiddenNodesMap = {};
         attrs.root.descendants()
@@ -1426,9 +1428,19 @@ export class OrgChart {
                     if (hiddenNodesMap[child.parent.id]) {
                         hiddenNodesMap[child.id] = true;
                     }
-                    if (child.data._expanded) {
-                        hiddenNodesMap[child.id] = false;
-                        child.data._pagingButton = false;
+                    if (child.data._expanded || child.data._centered || child.data._highlighted || child.data._upToTheRootHighlighted) {
+                        let localNode = child;
+                        while (localNode && (hiddenNodesMap[localNode.id] || localNode.data._pagingButton)) {
+                            hiddenNodesMap[localNode.id] = false;
+                            if (localNode.data._pagingButton) {
+                                localNode.data._pagingButton = false;
+                                localNode.parent.children.forEach(ch => {
+                                    ch.data._expanded = true;
+                                    hiddenNodesMap[ch.id] = false;
+                                })
+                            }
+                            localNode = localNode.parent;
+                        }
                     }
                 })
             }
@@ -1590,11 +1602,15 @@ export class OrgChart {
     setCentered(nodeId) {
         const attrs = this.getChartState();
         // this.setExpanded(nodeId)
-        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        const root = attrs.generateRoot(attrs.data)
+        const descendants = root.descendants();
+        const node = descendants.filter(({ data }) => attrs.nodeId(data).toString() == nodeId.toString())[0];
         if (!node) {
             console.log(`ORG CHART - CENTER - Node with id (${nodeId}) not found in the tree`)
             return this;
         }
+        const ancestors = node.ancestors();
+        ancestors.forEach(d => d.data._expanded = true)
         node.data._centered = true;
         node.data._expanded = true;
         return this;
@@ -1602,11 +1618,15 @@ export class OrgChart {
 
     setHighlighted(nodeId) {
         const attrs = this.getChartState();
-        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        const root = attrs.generateRoot(attrs.data)
+        const descendants = root.descendants();
+        const node = descendants.filter(d => attrs.nodeId(d.data).toString() === nodeId.toString())[0];
         if (!node) {
             console.log(`ORG CHART - HIGHLIGHT - Node with id (${nodeId})  not found in the tree`);
             return this
         }
+        const ancestors = node.ancestors();
+        ancestors.forEach(d => d.data._expanded = true)
         node.data._highlighted = true;
         node.data._expanded = true;
         node.data._centered = true;
@@ -1615,11 +1635,15 @@ export class OrgChart {
 
     setUpToTheRootHighlighted(nodeId) {
         const attrs = this.getChartState();
-        const node = attrs.allNodes.filter(d => attrs.nodeId(d.data) === nodeId)[0];
+        const root = attrs.generateRoot(attrs.data)
+        const descendants = root.descendants();
+        const node = descendants.filter(d => attrs.nodeId(d.data).toString() === nodeId.toString())[0];
         if (!node) {
             console.log(`ORG CHART - HIGHLIGHTROOT - Node with id (${nodeId}) not found in the tree`)
             return this;
         }
+        const ancestors = node.ancestors();
+        ancestors.forEach(d => d.data._expanded = true)
         node.data._upToTheRootHighlighted = true;
         node.data._expanded = true;
         node.ancestors().forEach(d => d.data._upToTheRootHighlighted = true)
