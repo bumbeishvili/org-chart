@@ -1021,7 +1021,7 @@ export class OrgChart {
                 return `translate(${xj},${yj})`
             })
             .attr("cursor", "pointer")
-            .on("click", (event, node) => {
+            .on("click.node", (event, node) => {
                 const { data } = node;
                 if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
                     return;
@@ -1031,13 +1031,13 @@ export class OrgChart {
                     return;
                 }
                 if (!data._pagingButton) {
-                    attrs.onNodeClick(data);
+                    attrs.onNodeClick(node);
                     return;
                 }
                 console.log('event fired, no handlers')
             })
             //  Event handler to the expand button
-            .on("keydown", (event, node) => {
+            .on("keydown.node", (event, node) => {
                 const { data } = node;
                 if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
                     if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
@@ -1321,6 +1321,8 @@ export class OrgChart {
 
         // Redraw Graph
         this.update(d);
+        event.stopPropagation();
+
     }
 
     // This function changes `expanded` property to descendants
@@ -1715,7 +1717,7 @@ export class OrgChart {
         xhr.send();
     }
 
-    exportImg({ full = false, scale = 3, onLoad = d => d, save = true } = {}) {
+    exportImg({ full = false, scale = 3, onLoad = d => d, save = true, backgroundColor = "#FAFAFA" } = {}) {
         const that = this;
         const attrs = this.getChartState();
         const { svg: svgImg, root } = attrs
@@ -1733,7 +1735,9 @@ export class OrgChart {
 
             setTimeout(d => {
                 that.downloadImage({
-                    node: svg.node(), scale, isSvg: false,
+                    node: svg.node(), scale,
+                    isSvg: false,
+                    backgroundColor,
                     onAlreadySerialized: d => {
                         that.update(root)
                     },
@@ -1785,7 +1789,7 @@ export class OrgChart {
         return this;
     }
 
-    downloadImage({ node, scale = 2, imageName = 'graph', isSvg = false, save = true, onAlreadySerialized = d => { }, onLoad = d => { } }) {
+    downloadImage({ node, scale = 2, imageName = 'graph', isSvg = false, save = true, backgroundColor = "#FAFAFA", onAlreadySerialized = d => { }, onLoad = d => { } }) {
         // Retrieve svg node
         const svgNode = node;
 
@@ -1847,7 +1851,7 @@ export class OrgChart {
             canvas.height = rect.height * quality;
             // Draw background
             const context = canvas.getContext('2d');
-            context.fillStyle = '#FAFAFA';
+            context.fillStyle = backgroundColor;;
             context.fillRect(0, 0, rect.width * quality, rect.height * quality);
             context.drawImage(image, 0, 0, rect.width * quality, rect.height * quality);
             // Set some image metadata
