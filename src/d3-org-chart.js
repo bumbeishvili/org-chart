@@ -1886,4 +1886,11 @@ export class OrgChart {
         const measurement = ctx.measureText(text);
         return measurement.width;
     }
+
+    // Clear after moving off from the page
+    clear() {
+        const attrs = this.getChartState();
+        d3.select(window).on(`resize.${attrs.id}`, null);
+        attrs.svg && attrs.svg.selectAll("*").remove();
+    }
 }
