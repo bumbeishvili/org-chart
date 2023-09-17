@@ -1358,23 +1358,21 @@ export class OrgChart {
             let parent = d.parent;
 
             // While we can go up
-            while (parent) {
+            while (parent && parent._children) {
                 // Expand all current parent's children
-                if (parent._children) {
-                    parent.children = parent._children;
-                }
-
+                parent.children = parent._children;
+                parent._children = null;
                 // Replace current parent holding object
                 parent = parent.parent;
             }
         }
 
-        // Recursivelly do the same for collapsed nodes
+        // Recursively do the same for collapsed nodes
         if (d._children) {
             d._children.forEach((ch) => this.expandSomeNodes(ch));
         }
 
-        // Recursivelly do the same for expanded nodes
+        // Recursively do the same for expanded nodes
         if (d.children) {
             d.children.forEach((ch) => this.expandSomeNodes(ch));
         }
