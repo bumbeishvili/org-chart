@@ -4,5 +4,13 @@ We are using live server and nodemon during development.
 
 nodemon command is
 ```npm
-nodemon --exec npm install --ignore build/
+nodemon --watch ./src/d3-org-chart.js --exec npm install --ignore build/
+```
+
+
+Npm publish RC
+
+```npm
+npm version prerelease --preid=next
+npm publish --tag beta
 ```
