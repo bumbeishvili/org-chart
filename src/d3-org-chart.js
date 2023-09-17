@@ -724,11 +724,13 @@ export class OrgChart {
         // Filter out retrieved nodes and reassign data
         attrs.data = attrs.data.filter(d => !d._filteredOut);
 
-        const updateNodesState = this.updateNodesState.bind(this);
-
-        // Update state of nodes and redraw graph
-        updateNodesState();
-
+        if (attrs.data.length == 0) {
+            this.render();
+        } else {
+            const updateNodesState = this.updateNodesState.bind(this);
+            // Update state of nodes and redraw graph
+            updateNodesState();
+        }
         return this;
     }
 
