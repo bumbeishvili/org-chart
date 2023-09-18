@@ -684,6 +684,11 @@ export class OrgChart {
     // This function can be invoked via chart.addNode API, and it adds node in tree at runtime
     addNode(obj) {
         const attrs = this.getChartState();
+        if (obj && (attrs.parentNodeId(obj) == null || attrs.parentNodeId(obj) == attrs.nodeId(obj)) && attrs.data.length == 0) {
+            attrs.data.push(obj);
+            this.render()
+            return this;
+        }
         const root = attrs.generateRoot(attrs.data)
         const descendants = root.descendants();
         const nodeFound = descendants.filter(({ data }) => attrs.nodeId(data).toString() === attrs.nodeId(obj).toString())[0];
@@ -692,10 +697,7 @@ export class OrgChart {
             console.log(`ORG CHART - ADD - Node with id "${attrs.nodeId(obj)}" already exists in tree`)
             return this;
         }
-        if (!parentFound) {
-            console.log(`ORG CHART - ADD - Parent node with id "${attrs.parentNodeId(obj)}" not found in the tree`)
-            return this;
-        }
+
         if (obj._centered && !obj._expanded) obj._expanded = true;
         attrs.data.push(obj);
 
