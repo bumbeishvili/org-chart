@@ -41,7 +41,7 @@ Highly customizable org chart built with d3 v7.
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-36myfl?file=index.html">
-      Online Data <br/>
+      Online JSON Data <br/>
       <img  width=180  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
