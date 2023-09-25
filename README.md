@@ -41,7 +41,7 @@ Highly customizable org chart built with d3 v7.
    </td>
     <td>
      <a href="https://stackblitz.com/edit/js-36myfl?file=index.html">
-      Online Data <br/>
+      Online JSON Data <br/>
       <img  width=180  src="https://user-images.githubusercontent.com/6873202/209858323-9e135676-b95f-491f-897c-182f5d87ffae.png"/>   
      </a>
    </td>
@@ -295,7 +295,7 @@ Have you impressively customized an organizational chart and want to be featured
 
 Check out several libraries and frameworks integrations
 
-- [Vue.js Integration](https://stackblitz.com/edit/d3-org-chart-vue-integration-su3d6r)
+- [Vue.js Integration](https://stackblitz.com/edit/vue-wx7syy?file=src%2FChart.js)
 - [React integration](https://stackblitz.com/edit/d3-org-chart-react-integration-hooks)
 - [Angular integration](https://stackblitz.com/edit/angular-ivy-gneris)
 
