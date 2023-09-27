@@ -2,6 +2,7 @@
   "name": "d3-org-chart",
   "version": "3.1.1",
   "module": "index",
+  "type": "module",
   "description": "Highly customizable org chart, created with d3",
   "keywords": [
     "d3",
@@ -49,11 +50,11 @@
     "uglify-js": "3"
   },
   "dependencies": {
-    "d3-selection": "3",
     "d3-array": "3",
+    "d3-flextree": "2.1.2",
     "d3-hierarchy": "3",
-    "d3-zoom": "3",
+    "d3-selection": "3",
     "d3-shape": "3",
-    "d3-flextree": "2.1.2"
+    "d3-zoom": "3"
   }
 }
