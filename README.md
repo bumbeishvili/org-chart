@@ -10,7 +10,7 @@
      <a href="https://stackblitz.com/edit/web-platform-o5t1ha"><img width="100%" src="https://user-images.githubusercontent.com/6873202/129306455-09f47e5e-0dc8-41b5-8fe2-da3fa4e0f7ed.gif"></a>
 </p>
 
-[Medium article about this project](https://bumbeishvili.medium.com/introducing-a-new-org-chart-130368314f04)
+[Medium article about this project](https://bumbeishvili.medium.com/introducing-a-new-v3-version-of-the-org-chart-ca1b63320a4b)
 
 Highly customizable org chart built with d3 v7.
 
