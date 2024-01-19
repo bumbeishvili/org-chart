@@ -2009,7 +2009,6 @@ export class OrgChart {
         };
 
         const allNodes = d3.selectAll(`g.node:not(.${attrs.draggingClass()})`);
-        allNodes.select('rect').attr('fill', 'none');
 
         const lastTarget = attrs.dragTargetNode;
 
