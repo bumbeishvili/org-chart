@@ -87,10 +87,9 @@ export class OrgChart {
             enableDragDrop: (d) => {},
             onDragStart: (node, dragEvent) => {},
             onDrag: (node, dragEvent) => {},
-            onDragEnd: (node, dragEvent) => {},
+            onDrop: (dragNode, targetNode, dragEvent) => {},
             onDragTarget: (dragNode, targetNode, dragEvent) => {},
             outDragTarget: (dragNode, targetNode, dragEvent) => {},
-            onDropNode: (dragNode, targetNode, dragEvent) => {},
             onDragFilter: (node, dragEvent) => {},
             draggingClass: () => 'dragging',
             draggableClass: () => 'draggable',
@@ -1969,7 +1968,7 @@ export class OrgChart {
         if (!attrs.dragNode) return;
         
         const g = d3.select(element);
-        
+
         // This condition is designed to run at the start of a drag only
         if (attrs.isDragStart) {
             attrs.isDragStart = false;
@@ -2068,9 +2067,9 @@ export class OrgChart {
         d3.select(element).remove();
 
         const node = attrs.data.find((x) => x.id === dragEvent.subject.id);
+        attrs.onDrop.apply(element, [attrs.dragNode, attrs.dragTargetNode]);
         node.parentId = attrs.dragTargetNode.id;
 
-        attrs.onDropNode.apply(element, [attrs.dragNode, attrs.dragTargetNode]);
 
         attrs.dragTargetNode = null;
         attrs.dragNode = null;
