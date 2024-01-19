@@ -4,6 +4,7 @@ import { tree, stratify } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
 import { flextree } from 'd3-flextree';
 import { linkHorizontal } from 'd3-shape';
+import { drag } from "d3-drag";
 
 const d3 = {
     selection,
@@ -17,7 +18,8 @@ const d3 = {
     zoom,
     zoomIdentity,
     linkHorizontal,
-    flextree
+    flextree,
+    drag
 }
 
 export class OrgChart {
@@ -37,6 +39,12 @@ export class OrgChart {
             allowedNodesCount: {},
             zoomBehavior: null,
             generateRoot: null,
+            dragNode: null,
+            dragTargetNode: null,
+            dragStartX: null,
+            dragStartY: null,
+            isDragStart: false,
+
 
             /*  INTENDED FOR PUBLIC OVERRIDE */
 
@@ -75,6 +83,17 @@ export class OrgChart {
             onZoomEnd: e => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
             onExpandOrCollapse: (d) => d, // Callback for node expand or collapse
+            enableDragDrop: false,
+            onDragStart: (node, dragEvent) => d,
+            onDrag: (node, dragEvent) => d,
+            onDragEnd: (node, dragEvent) => d,
+            onDragTarget: (dragNode, targetNode, dragEvent) => d,
+            outDragTarget: (dragNode, targetNode, dragEvent) => d,
+            onDropNode: (dragNode, targetNode, dragEvent) => d,
+            onDragFilter: (node, dragEvent) => d,
+            draggingClass: () => 'dragging',
+            draggableClass: () => 'draggable',
+            droppableClass: () => 'droppable',
 
             /*
             * Node HTML content generation , remember that you can access some helper methods:
@@ -1057,6 +1076,26 @@ export class OrgChart {
                     }
                 }
             });
+        
+        if (attrs.enableDragDrop) {
+            const self = this;
+            nodeEnter.call(
+                d3.drag()
+                .filter(function (dragEvent, node) {
+                    return this.classList.contains(attrs.draggableClass()) && attrs.onDragFilter.apply(this, [node, dragEvent]);
+                })
+                .on('start', function (dragEvent, node) {
+                    self.dragStart(this, dragEvent, node);
+                })
+                .on('drag', function (dragEvent) {
+                    self.drag(this, dragEvent);
+                })
+                .on('end', function (dragEvent) {
+                    self.dragEnd(this, dragEvent);
+                })
+            );
+        }
+
         nodeEnter.each(attrs.nodeEnter)
 
         // Add background rectangle for the nodes
@@ -1905,5 +1944,135 @@ export class OrgChart {
         const attrs = this.getChartState();
         d3.select(window).on(`resize.${attrs.id}`, null);
         attrs.svg && attrs.svg.selectAll("*").remove();
+    }
+
+
+    dragStart(element, dragEvent, node) {
+        const attrs = this.getChartState();
+        attrs.dragNode = node;
+        
+        const width = dragEvent.subject.width;
+        const half = width / 2;
+        const x = dragEvent.x - half;
+        attrs.dragStartX = x;
+        attrs.dragStartY = parseFloat(dragEvent.y);
+        attrs.isDragStart = true;
+
+        d3.select(element).classed(attrs.draggingClass(), true);
+
+        attrs.onDragStart.apply(element, [node, dragEvent]);
+    }
+
+    drag(element, dragEvent) {
+        const attrs = this.getChartState();
+        if (!attrs.dragNode) return;
+        
+        // This condition is designed to run at the start of a drag only
+        if (attrs.isDragStart) {
+            attrs.isDragStart = false;
+
+            // This sets the Z-Index above all other nodes, by moving the dragged node to be the last-child.
+            const g = d3.select(element);
+            g.raise();
+
+            const descendants = dragEvent.subject.descendants();
+            
+            // Remove links associated with the dragNode
+            const linksToRemove = [...(descendants || []), dragEvent.subject];
+            state['linksWrapper']
+                .selectAll('path.link')
+                .data(linksToRemove, (d) => state.nodeId(d))
+                .remove();
+
+            // Remove all descendant nodes associated with the dragging node
+            const nodesToRemove = descendants.filter(
+                (x) => x.data.id !== dragEvent.subject.id
+            );
+            if (nodesToRemove) {
+                state['nodesWrapper']
+                    .selectAll('g.node')
+                    .data(nodesToRemove, (d) => state.nodeId(d))
+                    .remove();
+            }
+        }
+
+        attrs.dragTargetNode = null;
+        const cP = {
+            width: dragEvent.subject.width,
+            height: dragEvent.subject.height,
+            left: dragEvent.x,
+            right: dragEvent.x + dragEvent.subject.width,
+            top: dragEvent.y,
+            bottom: dragEvent.y + dragEvent.subject.height,
+            midX: dragEvent.x + dragEvent.subject.width / 2,
+            midY: dragEvent.y + dragEvent.subject.height / 2,
+        };
+
+        const allNodes = d3.selectAll(`g.node:not(.${attrs.draggingClass()})`);
+        allNodes.select('rect').attr('fill', 'none');
+
+        const lastTarget = attrs.dragTargetNode;
+
+        allNodes
+            .filter(function (d2, i) {
+                const cPInner = {
+                    left: d2.x,
+                    right: d2.x + d2.width,
+                    top: d2.y,
+                    bottom: d2.y + d2.height,
+                };
+
+                if (
+                    cP.midX > cPInner.left &&
+                    cP.midX < cPInner.right &&
+                    cP.midY > cPInner.top &&
+                    cP.midY < cPInner.bottom &&
+                    this.classList.contains(attrs.droppableClass())
+                ) {
+                    attrs.dragTargetNode = d2;
+                    return d2;
+                }
+            })
+
+        attrs.dragStartX += parseFloat(dragEvent.dx);
+        attrs.dragStartY += parseFloat(dragEvent.dy);
+        g.attr('transform', 'translate(' + attrs.dragStartX + ',' + attrs.dragStartY + ')');
+        
+        if (lastTarget) {
+            attrs.outDragTarget.apply(element, [attrs.dragNode, lastTarget, dragEvent]);
+        }
+        
+        attrs.onDragTarget.apply(element, [attrs.dragNode, attrs.dragTargetNode, dragEvent]);
+    }
+
+    dragEnd(element, dragEvent) {
+        if (!this.dragNode) {
+            return;
+        }
+
+        const attrs = this.getChartState();
+
+        d3.select(element).classed(attrs.draggingClass(), false);
+
+        if (!attrs.dragTargetNode) {
+            this.render();
+            return;
+        }
+
+        if (dragEvent.subject.parent.id === attrs.dragTargetNode.id) {
+            this.render();
+            return;
+        }
+
+        d3.select(element).remove();
+
+        const node = attrs.data.find((x) => x.id === dragEvent.subject.id);
+        node.parentId = attrs.dragTargetNode.id;
+
+        attrs.onDropNode.apply(element, [attrs.dragNode, attrs.dragTargetNode]);
+
+        attrs.dragTargetNode = null;
+        attrs.dragNode = null;
+        this.render();
     }
 }
