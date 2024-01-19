@@ -1,4 +1,4 @@
-import { selection, select } from "d3-selection";
+import { selection, select, selectAll } from "d3-selection";
 import { max, min, sum, cumsum } from "d3-array";
 import { tree, stratify } from "d3-hierarchy";
 import { zoom, zoomIdentity } from "d3-zoom";
@@ -9,6 +9,7 @@ import { drag } from "d3-drag";
 const d3 = {
     selection,
     select,
+    selectAll,
     max,
     min,
     sum,
@@ -83,14 +84,14 @@ export class OrgChart {
             onZoomEnd: e => { }, // Callback for zoom & panning end
             onNodeClick: (d) => d, // Callback for node click
             onExpandOrCollapse: (d) => d, // Callback for node expand or collapse
-            enableDragDrop: false,
-            onDragStart: (node, dragEvent) => d,
-            onDrag: (node, dragEvent) => d,
-            onDragEnd: (node, dragEvent) => d,
-            onDragTarget: (dragNode, targetNode, dragEvent) => d,
-            outDragTarget: (dragNode, targetNode, dragEvent) => d,
-            onDropNode: (dragNode, targetNode, dragEvent) => d,
-            onDragFilter: (node, dragEvent) => d,
+            enableDragDrop: (d) => {},
+            onDragStart: (node, dragEvent) => {},
+            onDrag: (node, dragEvent) => {},
+            onDragEnd: (node, dragEvent) => {},
+            onDragTarget: (dragNode, targetNode, dragEvent) => {},
+            outDragTarget: (dragNode, targetNode, dragEvent) => {},
+            onDropNode: (dragNode, targetNode, dragEvent) => {},
+            onDragFilter: (node, dragEvent) => {},
             draggingClass: () => 'dragging',
             draggableClass: () => 'draggable',
             droppableClass: () => 'droppable',
@@ -1077,7 +1078,7 @@ export class OrgChart {
                 }
             });
         
-        if (attrs.enableDragDrop) {
+        if (attrs.enableDragDrop()) {
             const self = this;
             nodeEnter.call(
                 d3.drag()
@@ -1967,21 +1968,22 @@ export class OrgChart {
         const attrs = this.getChartState();
         if (!attrs.dragNode) return;
         
+        const g = d3.select(element);
+        
         // This condition is designed to run at the start of a drag only
         if (attrs.isDragStart) {
             attrs.isDragStart = false;
 
             // This sets the Z-Index above all other nodes, by moving the dragged node to be the last-child.
-            const g = d3.select(element);
             g.raise();
 
             const descendants = dragEvent.subject.descendants();
             
             // Remove links associated with the dragNode
             const linksToRemove = [...(descendants || []), dragEvent.subject];
-            state['linksWrapper']
+            attrs['linksWrapper']
                 .selectAll('path.link')
-                .data(linksToRemove, (d) => state.nodeId(d))
+                .data(linksToRemove, (d) => attrs.nodeId(d))
                 .remove();
 
             // Remove all descendant nodes associated with the dragging node
@@ -1989,9 +1991,9 @@ export class OrgChart {
                 (x) => x.data.id !== dragEvent.subject.id
             );
             if (nodesToRemove) {
-                state['nodesWrapper']
+                attrs['nodesWrapper']
                     .selectAll('g.node')
-                    .data(nodesToRemove, (d) => state.nodeId(d))
+                    .data(nodesToRemove, (d) => attrs.nodeId(d))
                     .remove();
             }
         }
