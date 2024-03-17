@@ -344,6 +344,8 @@ Thanks [contractzen](https://www.contractzen.com/) for the significant contribut
 
 I am available for freelance data visualization work. Please [contact me](https://davidb.dev/about) in case you'd like me to help you with my experience and expertise
 
-You can also [book data viz related consultation session](https://www.fiverr.com/share/4XxG21) with me
+You can also [book data viz related consultation session](https://www.fiverr.com/share/4XxG21) with me.
+
+You might not need a consultation, but you want to appreciate the time and effort I am putting into this library, and if you correspond with an organization, you might also want to enjoy private QA about org chart over emails. In that case, you can support the org chart via [polar.sh/bumbeishvili](https://polar.sh/bumbeishvili/subscriptions)
 
 
