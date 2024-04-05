@@ -206,6 +206,19 @@ Data driven size <img width=180 src="https://user-images.githubusercontent.com/6
 
 
 
+## Community Samples
+
+<table>
+<tr>
+   <td>
+     <a href="https://stackblitz.com/edit/js-bmyjfc?file=index.html">
+      Drag & Drop Nodes  <br/>
+      <img  width=180  src="https://private-user-images.githubusercontent.com/6873202/319910498-11d1ac91-94f7-427d-9f8a-3429e8d56092.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTIzMDQ2MDEsIm5iZiI6MTcxMjMwNDMwMSwicGF0aCI6Ii82ODczMjAyLzMxOTkxMDQ5OC0xMWQxYWM5MS05NGY3LTQyN2QtOWY4YS0zNDI5ZThkNTYwOTIuZ2lmP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDQwNSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDA0MDVUMDgwNTAxWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NmQzNTA3MjNhZTQ3ZjQwYWE1NGI2Mzc5Y2M3NWEwOGJlMTk0ZDM3MmY1YTExZGUwZTZiZTFkNGJjNjMxNTYyMSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ._A4EdT7VA6dL3ATDcOM23RGKKAwHLxDapXm07uqb6uM"/>   
+     </a>
+   </td>
+</tr>
+</table>
+
 
 ## How to use
 
