@@ -223,7 +223,7 @@ Data driven size <img width=180 src="https://user-images.githubusercontent.com/6
 ## How to use
 
 
-Just copy this code and paste at - https://realtimehtml.com/
+Just copy this code and paste at - https://realtimehtml.com/ or <a href="https://goonlinetools.com/realtime-html-editor/#h6ch8zb31q6mk71t37zx7">click here</a> to run code instantly
 
 ```html
 <script src="https://d3js.org/d3.v7.min.js"></script>
