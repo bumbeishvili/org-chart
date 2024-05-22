@@ -213,7 +213,7 @@ Data driven size <img width=180 src="https://user-images.githubusercontent.com/6
    <td>
      <a href="https://stackblitz.com/edit/js-bmyjfc?file=index.html">
       Drag & Drop Nodes  <br/>
-      <img  width=180  src="https://private-user-images.githubusercontent.com/6873202/319911593-42c868cd-8535-4fd2-94f8-4a28fb6d8bfa.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTIzMDQ3OTQsIm5iZiI6MTcxMjMwNDQ5NCwicGF0aCI6Ii82ODczMjAyLzMxOTkxMTU5My00MmM4NjhjZC04NTM1LTRmZDItOTRmOC00YTI4ZmI2ZDhiZmEuZ2lmP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDQwNSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDA0MDVUMDgwODE0WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NGY2NWE5NjhmNTZmMTU1YTU4ZDBmZjdhODZhODMzMmU4OTJkMGMzMjZhYWZiZDU5N2I2ZjNhNTQ4MDU3OTA2NCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.ayLLUKZaqeqAnK9hB8TuBRFkzwcjgzXDLberCRI3Kis"/>   
+      <img  width=180  src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/drag-drop.gif"/>   
      </a>
    </td>
 </tr>
