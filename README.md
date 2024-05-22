@@ -222,16 +222,11 @@ Multi Root <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/As
 
 <table>
 <tr>
-   <td>
-     <a href="https://stackblitz.com/edit/js-bmyjfc?file=index.html">
-      Drag & Drop Nodes  <br/>
-      <img  width=180  src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/drag-drop.gif"/>   
-     </a>
-   </td>
+
 
   <td>
-     <a href="https://stackblitz.com/edit/js-qm3aga?file=index.html">
-Multi Root <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/multi-roots.gif"/>
+     <a href="https://stackblitz.com/edit/js-bmyjfc?file=index.html">
+Drag & Drop Nodes <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/drag-drop.gif"/>
            </a>
    </td>
 
