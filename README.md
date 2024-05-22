@@ -228,6 +228,13 @@ Multi Root <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/As
       <img  width=180  src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/drag-drop.gif"/>   
      </a>
    </td>
+
+  <td>
+     <a href="https://stackblitz.com/edit/js-qm3aga?file=index.html">
+Multi Root <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/Assets/master/Other/multi-roots.gif"/>
+           </a>
+   </td>
+
 </tr>
 </table>
 
