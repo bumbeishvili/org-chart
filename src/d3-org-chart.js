@@ -1467,7 +1467,7 @@ export class OrgChart {
         attrs.root = d3
             .stratify()
             .id((d) => attrs.nodeId(d))
-            .parentId(d => attrs.parentNodeId(d))(attrs.data.filter(d => hiddenNodesMap[d.id] !== true));
+            .parentId(d => attrs.parentNodeId(d))(attrs.data.filter(d => hiddenNodesMap[d.id] !== true && hiddenNodesMap[d.nodeId] !== true));
 
         attrs.root.each((node, i, arr) => {
             let _hierarchyHeight = node._hierarchyHeight || node.height
