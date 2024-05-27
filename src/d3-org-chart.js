@@ -1070,7 +1070,7 @@ export class OrgChart {
         // Node update styles
         const nodeUpdate = nodeEnter
             .merge(nodesSelection)
-            .style("font", "12px sans-serif");
+            .style("font", attrs.defaultFont, "12px sans-serif");
 
         // Add foreignObject element inside rectangle
         const fo = nodeUpdate.patternify({
