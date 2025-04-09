@@ -211,6 +211,22 @@ Multi Root <img width=180 src="https://raw.githubusercontent.com/bumbeishvili/As
 
 
 
+<tr>
+   
+   <td>
+     <a href="https://stackblitz.com/edit/js-jxlesrne?file=index.html">
+Minimap <img width=180 src=""/>
+           </a>
+   </td>
+
+  
+
+
+   
+</tr>
+
+
+
 
 
 </table>
