@@ -73,7 +73,7 @@ export class OrgChart {
             onZoomStart: e => { }, // Callback for zoom & panning start
             onZoom: e => { }, // Callback for zoom & panning 
             onZoomEnd: e => { }, // Callback for zoom & panning end
-            onNodeClick: (d) => d, // Callback for node click
+            onNodeClick: (d, event) => d, // Callback for node click
             onExpandOrCollapse: (d) => d, // Callback for node expand or collapse
 
             /*
@@ -1036,7 +1036,7 @@ export class OrgChart {
                     return;
                 }
                 if (!data._pagingButton) {
-                    attrs.onNodeClick(node);
+                    attrs.onNodeClick(node, event);
                     return;
                 }
                 console.log('event fired, no handlers')
